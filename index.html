@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Requests</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <div id="demoBanner" class="demobanner" style="display:none">Test mode — data stays on this device. <a href="#" id="demoSeed">Load samples</a> · <a href="#" id="demoWipe">Start fresh</a></div>
+
+  <!-- LOGIN -->
+  <div id="loginView" style="display:none">
+    <div class="login">
+      <h1>Requests</h1>
+      <p>Enter your work email and we'll send you a sign-in link. No passwords.</p>
+      <input id="loginEmail" type="email" placeholder="you@company.com.au" autocomplete="email">
+      <button id="loginBtn" type="button">Email me a link</button>
+      <div class="loginmsg" id="loginMsg"></div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div id="listView" style="display:none">
+    <div class="pagepad">
+      <div class="listtop">
+        <h1>Requests</h1>
+        <button class="alertbtn" id="alertBtn" type="button" aria-label="Turn on urgent alerts for this device"><svg viewBox="0 0 24 24"><path d="M12 3a5.5 5.5 0 0 0-5.5 5.5c0 3.5-1.2 4.7-1.9 5.4-.4.4-.1 1.1.5 1.1h13.8c.6 0 .9-.7.5-1.1-.7-.7-1.9-1.9-1.9-5.4A5.5 5.5 0 0 0 12 3z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></svg></button>
+      </div>
+      <div class="tabs">
+        <button class="tabbtn on" id="tabReq" type="button">Requests<span class="tcnt" id="cntReq" style="display:none"></span></button>
+        <button class="tabbtn" id="tabAcc" type="button">Accepted<span class="tcnt" id="cntAcc" style="display:none"></span></button>
+      </div>
+      <div class="catbar" id="catBar"></div>
+      <div id="reqList"></div>
+    </div>
+  </div>
+
+  <!-- DETAIL -->
+  <div id="detailView" style="display:none">
+    <div class="urgstrip" id="dUrgPill" style="display:none"><span class="dot late pulse"></span>URGENT</div>
+    <!-- the came-in age lives top right, out of the way — it's context, not content -->
+    <div class="topbar">
+      <button class="backlink" id="backBtn" type="button">‹ Requests</button>
+      <span class="cameline" id="dCameIn">—</span>
+    </div>
+    <div class="navhead" style="padding-top:16px">
+      <div class="what-lg" id="dWhat">—</div>
+      <div class="notesub" id="dNote" style="display:none"></div>
+      <div class="duestrip" id="dDue" style="display:none"></div>
+      <!-- who they are on top, how to reach them below — number reads once, the round
+           buttons are the one way to call or email (Noah 2026-08-31) -->
+      <div class="whorow">
+        <div class="whoA" id="dWho">—</div>
+        <div class="whoB">
+          <span class="whonum" id="dNum">—</span>
+          <span class="whobtns">
+            <a class="ringbtn mailbtn" id="dMail" style="display:none">
+              <svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/></svg>
+            </a>
+            <a class="ringbtn" id="dRing">
+              <svg viewBox="0 0 24 24"><path d="M6.8 3.8h2.6l1.5 4-2 1.5a13.6 13.6 0 0 0 5.8 5.8l1.5-2 4 1.5v2.6c0 1.3-1 2.3-2.3 2.2C10.6 18.8 5.2 13.4 4.6 6.1c-.1-1.3.9-2.3 2.2-2.3z"/></svg>
+            </a>
+          </span>
+        </div>
+      </div>
+      <div class="qaline" id="dQa"></div>
+    </div>
+    <div class="pagepad" style="padding-top:0">
+      <!-- photos are part of what's wrong — they sit with the facts (Noah 2026-08-20, back after a trial below Texts) -->
+      <div id="dPhotos" style="display:none;flex-direction:column;gap:10px;margin-top:12px"></div>
+      <div class="seclabel avhead"><span id="availLabel">Start day</span><span class="avhint" id="availHint" style="display:none">select one</span><button class="avchange" id="availChange" type="button" style="display:none">Change</button></div>
+      <div class="avsub" id="avSub" style="display:none"></div>
+      <div id="availRow"></div>
+      <div class="whocard">
+      <div class="owndd">
+        <button class="ownsel" id="ownSel" type="button"><span class="seltxt" id="ownSelTxt"></span><span class="chev">▾</span></button>
+        <div class="ownmenu" id="ownMenu"></div>
+      </div>
+      <button class="msgrow" id="tlToggle" type="button">
+        <svg viewBox="0 0 24 24"><path d="M21 11.8a8.6 8.6 0 0 1-8.6 8.6c-1.5 0-2.9-.4-4.1-1.1L4 20.2l.9-4A8.6 8.6 0 1 1 21 11.8z"/><circle cx="8.6" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12.4" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="16.2" cy="12" r=".95" fill="currentColor" stroke="none"/></svg>
+        <b id="tlLabel">Texts</b> <span class="msgcount" id="tlCount"></span>
+        <span class="msgchev" id="tlChev">▸</span>
+      </button>
+      </div><!-- /whocard -->
+      <div class="timeline" id="tl" style="display:none"></div>
+      <a class="sitecard" id="dSiteCard" target="_blank" rel="noopener">
+        <div class="sitemap" id="dMap" style="display:none"></div>
+        <div class="siterow">
+          <div class="sitetxt"><b id="dSiteName">—</b><span id="dSiteAddr"></span></div>
+          <span class="sitego">Directions ›</span>
+        </div>
+      </a>
+      <button class="cantlink" id="cantDo" type="button" style="display:none">Can't do it anymore?</button>
+    </div>
+    <div class="actbar" id="actBar">
+      <button class="actbtn decl" id="abDecline" type="button">Decline</button>
+      <button class="actbtn acc" id="abAccept" type="button">Accept</button>
+    </div>
+  </div>
+
+  <!-- accepting is a promise to the customer — one breath before it goes out -->
+  <div class="sheetwrap" id="okWrap" style="display:none">
+    <div class="sheetdim" id="okDim"></div>
+    <div class="sheet">
+      <span class="sheeturg" id="okUrg" style="display:none">URGENT</span>
+      <b id="okTitle">Accept this job?</b>
+      <!-- on a landline job these three read as one card: the instruction, the words,
+           and the number to ring. Everywhere else they're plain stacked elements. -->
+      <div id="okCard">
+        <p id="okBody"></p>
+        <textarea id="okReason" rows="1" placeholder="Give them a reason" style="display:none"></textarea>
+        <div class="okbubble" id="okBubble" style="display:none"></div>
+        <a class="okcall" id="okCall" style="display:none"><svg viewBox="0 0 24 24"><path d="M6.8 3.8h2.6l1.5 4-2 1.5a13.6 13.6 0 0 0 5.8 5.8l1.5-2 4 1.5v2.6c0 1.3-1 2.3-2.3 2.2C10.6 18.8 5.2 13.4 4.6 6.1c-.1-1.3.9-2.3 2.2-2.3z"/></svg><span id="okCallTxt">Call</span></a>
+      </div>
+      <div class="sheetbtns">
+        <button class="actbtn ghost" id="okNo" type="button">Go back</button>
+        <button class="actbtn acc" id="okYes" type="button">Accept</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="vendor/leaflet.min.css">
+<script src="vendor/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="store.js"></script>
+<script>
+const C = window.APP_CONFIG;
+if(window.IS_DEMO){
+  document.getElementById('demoBanner').style.display = 'block';
+  document.getElementById('demoSeed').onclick = async (e) => { e.preventDefault(); await seedDemo(); refreshList(); };
+  document.getElementById('demoWipe').onclick = (e) => { e.preventDefault(); localStorage.removeItem('reqapp'); location.reload(); };
+}
+
+const views = ['loginView','listView','detailView'];
+function showView(v){ views.forEach(x => document.getElementById(x).style.display = (x === v ? 'block' : 'none')); window.scrollTo(0,0); }
+function firstName(r){ return (r.customer_name || 'Customer').split(' ')[0]; }
+function esc(s){ const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function whatLine(r){
+  const note = (r.note || '').trim();
+  /* "Something else" is form-speak — when the customer wrote a note, the note IS the
+     story, don't prefix it with the box they ticked (Noah 2026-08-17) */
+  if(r.category === 'Something else' && note) return note;
+  return r.category + (note ? ' — ' + note : '');
+}
+function ago(iso){
+  const mins = Math.max(0, (Date.now() - new Date(iso).getTime()) / 60000);
+  if(mins < 2) return 'just now';
+  if(mins < 60) return Math.round(mins) + ' mins ago';
+  if(mins < 60 * 24){ const h = Math.round(mins / 60); return h + (h === 1 ? ' hour ago' : ' hours ago'); }
+  const days = Math.round(mins / 1440);
+  return days === 1 ? 'yesterday' : days + ' days ago';
+}
+/* how loud the wait time reads — per-type pace from config (Dad's standard: a service
+   call goes orange after an hour, red after two; quotes and other run on days).
+   Urgent never comes through here — it's forced red from minute one. */
+function waitTier(r){
+  const h = (Date.now() - new Date(r.created_at).getTime()) / 3600e3;
+  const clock = (C.WAIT_CLOCK || {})[reqType(r)] || [24, 48];
+  return h >= clock[1] ? 'late' : h >= clock[0] ? 'stale' : 'fresh';
+}
+function teamColor(name){ const m = C.TEAM.find(t => t.name === name); return m ? m.color : '#8e8e93'; }
+/* which of the form's four types a request is — the urgent flag wins, anything unrecognised lands in Other */
+function reqType(r){
+  if(r.urgent || r.req_type === 'urgent') return 'urgent';
+  return (r.req_type === 'service' || r.req_type === 'quote' || r.req_type === 'other') ? r.req_type : 'other';
+}
+function crew(r){ return Array.isArray(r.assignees) ? r.assignees : (r.assignee ? [r.assignee] : []); }
+function crewNames(list){
+  if(!list.length) return '';
+  if(list.length === 1) return list[0];
+  if(list.length === 2) return list[0] + ' & ' + list[1];
+  return list.slice(0, -1).join(', ') + ' & ' + list[list.length - 1];
+}
+function avatarStack(r, pulse){
+  const c = crew(r);
+  /* an urgent with nobody on it should grab the collar — red pulsing ?, not calm grey */
+  if(!c.length) return '<span class="ownc unowned' + (r.urgent && r.status === 'new' ? ' hot' : '') + '">?</span>';
+  return '<span class="avstack">' + c.map(n =>
+    `<span class="ownc${pulse ? ' live' : ''}" style="background:${teamColor(n)}">${esc(n.charAt(0))}</span>`).join('') + '</span>';
+}
+function fmtDay(iso){
+  const d = new Date(iso);
+  return d.getDate() + ' ' + d.toLocaleDateString('en-AU', { month: 'short' });
+}
+function fmtTime(iso){
+  const d = new Date(iso);
+  let h = d.getHours(), m = String(d.getMinutes()).padStart(2,'0'), ap = h >= 12 ? 'pm' : 'am';
+  h = h % 12 || 12;
+  return h + ':' + m + ' ' + ap;
+}
+
+/* ---------- list ---------- */
+/* grouped by the form's four request types (Noah's call 2026-08-17 — the six issue
+   sections at once read as too much). Inside one type, the issue headers take over. */
+const CATS = [
+  { cat:'Alarm going off / beeping', label:'Alarm', ic:'<svg viewBox="0 0 24 24"><path d="M12 3.5a5.8 5.8 0 0 0-5.8 5.8v3c0 .7-.2 1.3-.6 1.9L4.3 16h15.4l-1.3-1.8a3.3 3.3 0 0 1-.6-1.9v-3A5.8 5.8 0 0 0 12 3.5z"/><path d="M9.9 19a2.2 2.2 0 0 0 4.2 0"/></svg>' },
+  { cat:'Extinguisher issue', label:'Extinguisher', ic:'<svg viewBox="0 0 24 24"><rect x="9" y="8" width="6.4" height="12" rx="2.8"/><path d="M12.2 8V5.8"/><path d="M10 4.5h4.4"/><path d="M9.2 9.5C7 9.3 5.8 8 5.6 6"/><path d="M14.4 4.5l3.2-1v2l-3.2-1z"/></svg>' },
+  { cat:'Exit light or door issue', label:'Exit / emergency light', ic:'<svg viewBox="0 0 24 24"><rect x="2.5" y="5.8" width="14" height="12.4" rx="1.3"/><circle cx="10.76" cy="9.02" r="0.95" fill="currentColor" stroke="none"/><path d="M10.44 10.38l-.72 2.48"/><path d="M10.32 10.82l1.84.84"/><path d="M10.32 10.82l-1.68.44"/><path d="M9.72 12.86l1.84 1.08-.48 2"/><path d="M9.72 12.86l-1.36 1.6-1.52.48"/><path d="M18.4 12h3.1"/><path d="M20.1 10.45l1.55 1.55-1.55 1.55"/></svg>' },
+  { cat:'Sprinkler / pump / leak', label:'Leak', ic:'<svg viewBox="0 0 24 24"><path d="M12 2.3S5.8 9.7 5.8 14.4a6.2 6.2 0 0 0 12.4 0C18.2 9.7 12 2.3 12 2.3z"/><path d="M9 14.7a3.1 3.1 0 0 0 2.8 3.1"/></svg>' },
+  { cat:'Hydrant / hose reel issue', label:'Hydrant', ic:'<svg viewBox="0 0 24 24"><path d="M12 2.8v1"/><path d="M8 8a4 4 0 0 1 8 0"/><path d="M6.6 8h10.8"/><rect x="8.8" y="8" width="6.4" height="9.6"/><circle cx="7.3" cy="12.4" r="1.2"/><circle cx="16.7" cy="12.4" r="1.2"/><path d="M7 19.6h10"/></svg>' },
+  { cat:'Fire door / passive fire', label:'Fire door', ic:'<svg viewBox="0 0 24 24"><rect x="4.5" y="4" width="9.5" height="16" rx="1.2"/><path d="M9.3 8.9c.15 1.1-.4 1.85-1 2.5-.25-.35-.45-.75-.55-1.2-.8.75-1.35 1.6-1.35 2.55a2.9 2.9 0 0 0 5.8 0c0-2.05-1.75-3.3-2.9-3.85z"/><path d="M16 12h4.5"/><path d="M18.5 9.8l2.2 2.2-2.2 2.2"/></svg>' },
+  { cat:'Smoke alarm issue', label:'Smoke alarm', ic:'<svg viewBox="0 0 24 24"><path d="M4.2 9.6h15.6"/><path d="M6.6 9.6a5.4 5.4 0 0 0 10.8 0"/><circle cx="12" cy="12.4" r="1" fill="currentColor" stroke="none"/></svg>' },
+  /* quote-only categories (2026-08-28, "quotes are bigger jobs") — same icons as the form */
+  { cat:'New system / install', label:'New install', ic:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8.2v7.6"/><path d="M8.2 12h7.6"/></svg>' },
+  { cat:"Upgrade or replace what's there", label:'Upgrade / replace', ic:'<svg viewBox="0 0 24 24"><path d="M6 12a6 6 0 0 1 10.2-4.2"/><path d="M16.6 4.6v3.4h-3.4"/><path d="M18 12a6 6 0 0 1-10.2 4.2"/><path d="M7.4 19.4V16h3.4"/></svg>' },
+  { cat:'Defect / repair from a report', label:'Defects', ic:'<svg viewBox="0 0 24 24"><rect x="5.5" y="4.4" width="13" height="16" rx="2"/><rect x="9.6" y="2.9" width="4.8" height="3" rx="1"/><path d="M12 9.8v4"/><circle cx="12" cy="16.9" r=".95" fill="currentColor" stroke="none"/></svg>' },
+  { cat:'Regular testing and maintenance', label:'Testing / maintenance', ic:'<svg viewBox="0 0 24 24"><rect x="4.5" y="5.5" width="15" height="14.5" rx="2"/><path d="M8 3.5v3"/><path d="M16 3.5v3"/><path d="M4.5 9.5h15"/><path d="M9.3 14.7l2 2 3.4-3.6"/></svg>' },
+  { cat:'Evacuation diagrams / training', label:'Evac diagrams', ic:'<svg viewBox="0 0 24 24"><path d="M4.5 6.3 9.5 4l5 2.3 5-2.3v13.4l-5 2.3-5-2.3-5 2.3V6.3z"/><path d="M9.5 4v13.4"/><path d="M14.5 6.3v13.4"/></svg>' },
+  { cat:'Certificate / paperwork needed', label:'Certification / AFSS', ic:'<svg viewBox="0 0 24 24"><rect x="5" y="3.8" width="14" height="16.4" rx="2"/><path d="M8.5 8.5h7"/><path d="M8.5 11.8h7"/><circle cx="12" cy="16.2" r="1.7"/></svg>' },
+  /* stored value stays 'Something else' (old requests keep rendering) — the shown word
+     is Other, Dad's ask 2026-08-25; the TYPE below took "Something else" in the swap */
+  { cat:'Something else', label:'Other', ic:'<svg viewBox="0 0 24 24"><path d="M21 11.8a8.6 8.6 0 0 1-8.6 8.6c-1.5 0-2.9-.4-4.1-1.1L4 20.2l.9-4A8.6 8.6 0 1 1 21 11.8z"/><circle cx="8.6" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12.4" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="16.2" cy="12" r=".95" fill="currentColor" stroke="none"/></svg>' },
+];
+const TYPES = [
+  { key:'urgent',  label:'Urgent' },
+  { key:'service', label:'Service' },
+  { key:'quote',   label:'Quote' },
+  { key:'other',   label:'Something else' },
+];
+/* the issue reads as its icon, not its name — icon + the customer's note, on cards and
+   the detail header both (Noah 2026-08-17: the written-out category was too much text).
+   No note → the short label; a category we don't know → plain words, never a wrong icon. */
+function cardTitle(r){
+  const c = CATS.find(x => x.cat === r.category);
+  if(!c) return esc(whatLine(r));
+  const note = (r.note || '').trim();
+  return `<span class="wic">${c.ic}</span>` + esc(note || c.label);
+}
+let requests = [];
+let showDeclined = false;
+let showDone = false; /* completed works fold away like declined — tap to open (Noah 2026-08-20) */
+let activeTab = 'req';
+let typeFilter = 'all';
+document.getElementById('tabReq').onclick = () => { activeTab = 'req'; refreshList(); };
+document.getElementById('tabAcc').onclick = () => { activeTab = 'acc'; refreshList(); };
+/* type filter chips — the four the customer picked from, All up front and on by default */
+(function buildTypeBar(){
+  const bar = document.getElementById('catBar');
+  const mkChip = (key, html) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'catchip'; b.dataset.key = key;
+    b.innerHTML = html;
+    b.onclick = () => { typeFilter = key; refreshList(); };
+    bar.appendChild(b);
+  };
+  mkChip('all', '<span>All</span>');
+  TYPES.forEach(t => mkChip(t.key, '<span>' + t.label + '</span>'));
+})();
+async function refreshList(){
+  requests = await Store.listRequests();
+  const wrap = document.getElementById('reqList'); wrap.innerHTML = '';
+  /* not-yet-accepted jobs live in the category sections; accepted (= name + day) move to the Accepted tab */
+  const untouched = requests.filter(r => r.status === 'new');
+  const urgent = untouched.filter(r => r.urgent);
+  const rest   = untouched.filter(r => !r.urgent);
+  const inProg = requests.filter(r => r.status === 'booked');
+  const done     = requests.filter(r => r.status === 'done');
+  const declined = requests.filter(r => r.status === 'declined');
+  /* longest-waiting first */
+  const order = list => list.slice().sort((a, b) => a.created_at.localeCompare(b.created_at));
+  /* accepted: urgent first, then longest-waiting */
+  const orderProg = list => list.slice().sort((a, b) => ((b.urgent ? 1 : 0) - (a.urgent ? 1 : 0)) || a.created_at.localeCompare(b.created_at));
+
+  const sec = (title, count, mood, icon) => {
+    const h = document.createElement('div'); h.className = 'lsec' + (mood ? ' ' + mood : '');
+    h.innerHTML = `<span class="seci">${icon || ''}<span>${title}</span></span>` + (count == null ? '' : `<span class="cnt">${count}</span>`);
+    wrap.appendChild(h);
+  };
+  const card = (r, html) => {
+    const d = document.createElement('div');
+    d.className = 'req' + ((r.status === 'done' || r.status === 'declined') ? ' muted' : '') +
+      ((r.urgent && r.status !== 'done' && r.status !== 'declined') ? ' urg' : '');
+    d.innerHTML = html; d.onclick = () => openDetail(r.id); wrap.appendChild(d);
+  };
+
+  /* tab chrome */
+  document.getElementById('tabReq').className = 'tabbtn' + (activeTab === 'req' ? ' on' : '');
+  document.getElementById('tabAcc').className = 'tabbtn' + (activeTab === 'acc' ? ' on' : '');
+  const cR = document.getElementById('cntReq'), cA = document.getElementById('cntAcc');
+  cR.style.display = untouched.length ? '' : 'none'; cR.textContent = untouched.length;
+  cR.classList.toggle('hot', urgent.length > 0);
+  cA.style.display = inProg.length ? '' : 'none'; cA.textContent = inProg.length;
+  pingCheck(urgent);
+
+  if(!requests.length){
+    wrap.innerHTML = '<div class="empty">No requests yet.<br>Send someone the link and this is where they land.</div>';
+    if(window.IS_DEMO){
+      const sb = document.createElement('button');
+      sb.style.cssText = 'display:block;margin:0 auto;border:none;background:var(--card);border-radius:12px;padding:12px 18px;font-family:var(--font);font-size:14.5px;font-weight:600;color:var(--blue);cursor:pointer';
+      sb.textContent = 'Load sample requests (test mode)';
+      sb.onclick = async () => { await seedDemo(); refreshList(); };
+      wrap.appendChild(sb);
+    }
+    return;
+  }
+  const activeCard = (r, inCatSection, inUrgentSection) => {
+    const ns = r.building_code === 'general' ? ' <span class="duepill" style="color:var(--blue)">New site</span>' : '';
+    /* the URGENT header already says it once — don't repeat it on every card under it */
+    const urg = (r.urgent && !inUrgentSection) ? '<span class="urgmeta">URGENT</span><span>· </span>' : '';
+    /* under an issue header the issue's already said (icon and all) — just their note,
+       or the bare label when they wrote nothing; never a second icon */
+    const noteTxt = (r.note || '').trim();
+    const cat = CATS.find(x => x.cat === r.category);
+    const title = inCatSection ? esc(noteTxt || (cat ? cat.label : whatLine(r))) : cardTitle(r);
+    let meta;
+    if(r.status === 'new'){
+      /* urgent clocks run red from minute one — no easing in through green */
+      const tier = r.urgent ? 'late' : waitTier(r);
+      const pulse = r.urgent ? ' pulse' : '';
+      meta = `${urg}<span class="dot ${tier}${pulse}"></span><span class="wait ${tier}">${ago(r.created_at)}</span><span>· ${esc(r.building_name)}</span>${ns}`;
+    } else {
+      const pill = (r.status === 'booked' && r.booked_label && r.booked_label !== 'ASAP') ? `<span class="duepill onwhite">${esc(r.booked_label)}</span><span>· </span>` : '';
+      meta = `${urg}${pill}<span>${esc(r.building_name)}</span>${ns}`;
+    }
+    card(r, `<div class="top"><div class="what">${title}</div>${avatarStack(r, r.status !== 'new')}</div>
+      <div class="meta">${meta}</div>`);
+  };
+
+  /* chip row filters both tabs */
+  document.querySelectorAll('.catchip').forEach(b => b.classList.toggle('on', b.dataset.key === typeFilter));
+
+  /* All = one section per type; one type picked = the issue headers take over */
+  const typeSections = list => {
+    TYPES.forEach(t => {
+      const items = order(list.filter(r => reqType(r) === t.key));
+      if(!items.length) return;
+      if(t.key === 'urgent') sec('Urgent', null, 'hot');
+      else sec(t.label, items.length);
+      /* the section header says the type once — cards don't repeat it */
+      items.forEach(r => activeCard(r, false, t.key === 'urgent'));
+    });
+  };
+  const issueSections = list => {
+    const known = new Set(CATS.map(c => c.cat));
+    CATS.forEach(c => {
+      const items = order(list.filter(r => r.category === c.cat));
+      if(!items.length) return;
+      sec(c.label, items.length, '', c.ic);
+      items.forEach(r => activeCard(r, true, typeFilter === 'urgent'));
+    });
+    const strays = order(list.filter(r => !known.has(r.category)));
+    if(strays.length){
+      sec('More', strays.length);
+      strays.forEach(r => activeCard(r, false, typeFilter === 'urgent'));
+    }
+  };
+  const EMPTY = { urgent:'Nothing urgent right now.', service:'No service calls waiting.', quote:'No quote requests waiting.', other:'Nothing else waiting.' };
+
+  if(activeTab === 'req'){
+    const f = typeFilter === 'all' ? untouched : untouched.filter(r => reqType(r) === typeFilter);
+    if(!f.length){
+      wrap.innerHTML = '<div class="empty">' + (typeFilter === 'all' ? 'Nothing waiting — all caught up.' : EMPTY[typeFilter]) + '</div>';
+      return;
+    }
+    if(typeFilter === 'all') typeSections(f);
+    else issueSections(f);
+    return;
+  }
+
+  /* accepted tab — same chip filter, same shape */
+  const fT = arr => typeFilter === 'all' ? arr : arr.filter(r => reqType(r) === typeFilter);
+  const aProg = orderProg(fT(inProg)), aDone = fT(done), aDecl = fT(declined);
+  if(!aProg.length && !aDone.length && !aDecl.length){
+    wrap.innerHTML = '<div class="empty">' + (typeFilter === 'all'
+      ? 'Nothing accepted yet.<br>Take a job off the Requests tab and it lands here.'
+      : 'Nothing accepted here yet.') + '</div>';
+    return;
+  }
+  if(typeFilter === 'all') typeSections(aProg);
+  else issueSections(aProg);
+  if(aDone.length){
+    /* "Completed works", collapsible — same tuck-away as declined (Noah 2026-08-20) */
+    const h = document.createElement('button'); h.type = 'button'; h.className = 'lsec good lsectoggle';
+    h.innerHTML = `<span class="seci"><span>Completed works</span><span class="secchev">${showDone ? '▾' : '▸'}</span></span><span class="cnt">${aDone.length}</span>`;
+    h.onclick = () => { showDone = !showDone; refreshList(); };
+    wrap.appendChild(h);
+    if(showDone) aDone.forEach(r => {
+      const when = r.done_at ? `<span>· ${fmtDay(r.done_at)}</span>` : '';
+      card(r, `<div class="top"><div class="what">${cardTitle(r)}</div>${avatarStack(r, false)}</div>
+        <div class="meta"><span>${esc(r.building_name)}</span>${when}</div>`);
+    });
+  }
+  /* declined: kept on record (the customer was told why — that's the paper trail),
+     but tucked away off the working list */
+  if(aDecl.length){
+    /* same section-toggle shape as Completed works, in the quiet grey (Noah 2026-08-20) */
+    const t = document.createElement('button'); t.className = 'lsec lsectoggle'; t.type = 'button';
+    t.innerHTML = `<span class="seci"><span>Declined</span><span class="secchev">${showDeclined ? '▾' : '▸'}</span></span><span class="cnt">${aDecl.length}</span>`;
+    t.onclick = () => { showDeclined = !showDeclined; refreshList(); };
+    wrap.appendChild(t);
+    if(showDeclined){
+      aDecl.forEach(r => {
+        card(r, `<div class="top"><div class="what">${cardTitle(r)}</div>${avatarStack(r, false)}</div>
+          <div class="meta"><span>${esc(r.building_name)}</span><span>· Declined</span></div>`);
+      });
+    }
+  }
+}
+
+/* ---------- detail ---------- */
+let cur = null;
+let siteMap = null;
+function renderSiteMap(bld){
+  const el = document.getElementById('dMap');
+  if(!(bld && bld.lat && bld.lng && window.L)){ el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  if(siteMap){ siteMap.remove(); siteMap = null; }
+  /* zoom 14, not 15 — enough suburb context to recognise where you're going (Noah 2026-08-17) */
+  siteMap = L.map(el, { zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false,
+    boxZoom:false, keyboard:false, touchZoom:false }).setView([bld.lat, bld.lng], 14);
+  siteMap.attributionControl.setPrefix(false);
+  /* positron — the minimal light-grey look (same one Uptick uses), free, retina via {r} */
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(siteMap);
+  /* the pin carries the category icon — an alarm job pins a bell, a leak pins a drop */
+  const catIc = (CATS.find(c => c.cat === cur.category) || {}).ic || '';
+  const icInner = catIc.replace(/<\/?svg[^>]*>/g, '');
+  L.marker([bld.lat, bld.lng], { icon: L.divIcon({ className: 'sitepin', iconSize: [34, 42], iconAnchor: [17, 40],
+    html: `<div class="pinwrap"><svg class="pinbody" viewBox="0 0 24 24"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="#fa233b" stroke="#fff" stroke-width="1.4"/></svg><svg class="pinic" viewBox="0 0 24 24">${icInner}</svg></div>` }) }).addTo(siteMap);
+  setTimeout(() => siteMap && siteMap.invalidateSize(), 60);
+  /* centre the glyph on its drawn shape, not its box — lopsided icons (exit arrow, subbies)
+     sat off-centre in the pin head (Noah 2026-08-20) */
+  setTimeout(() => {
+    const ic = document.querySelector('.sitepin .pinic');
+    if(ic && ic.getBBox){
+      try { const bb = ic.getBBox();
+        ic.setAttribute('viewBox', (bb.x + bb.width/2 - 12) + ' ' + (bb.y + bb.height/2 - 12) + ' 24 24');
+      } catch(e){}
+    }
+  }, 90);
+}
+
+async function openDetail(id){
+  cur = await Store.getRequest(id);
+  if(!cur) return;
+  /* first open of an UNTOUCHED request marks it seen — that's the only time "seen" means anything.
+     once it's accepted/booked/done, seen is self-evident and never gets stamped.
+     The seen TEXT rides on the same moment (Dad's rule from the car 2026-08-26: a client
+     having to ring and chase is bad practice): the customer hears a human's looking, once
+     ever. If the office books straight away the booked text follows close behind — accepted
+     as fine for V1 (Noah 2026-08-28, keeps the code dumb). Landline can't be texted, so the
+     office gets a ring note on the timeline instead. */
+  if(cur.status === 'new'){
+    const evs0 = await Store.getEvents(id);
+    if(!evs0.some(e => /^seen/.test(e.text))){
+      await Store.addEvent(id, 'seen');
+      if(cur.phone_kind === 'landline'){
+        await Store.addEvent(id, "seen update not texted — landline, give them a ring");
+      } else {
+        await Store.addEvent(id, 'SMS→ ' + smsText('seen', cur), true);
+      }
+    }
+  }
+  /* detail header: the JOB is the title, the customer's words sit under it in quotes —
+     a sentence blown up as a headline read silly (Noah 2026-08-31). Cards keep the note. */
+  const dcat = CATS.find(x => x.cat === cur.category);
+  const dnote = (cur.note || '').trim();
+  document.getElementById('dWhat').innerHTML = dcat
+    ? `<span class="wic">${dcat.ic}</span>` + esc(dcat.label)
+    : esc(whatLine(cur));
+  const noteEl = document.getElementById('dNote');
+  noteEl.textContent = (dcat && dnote) ? '\u201C' + dnote + '\u201D' : '';
+  noteEl.style.display = (dcat && dnote) ? '' : 'none';
+  /* urgent lives in a sticky pill top-right (stays put while you scroll); the site moved to its own card */
+  /* every type wears its header — urgent red (pulsing), service blue, quote purple, other ink (Noah 2026-08-20) */
+  const strip = document.getElementById('dUrgPill');
+  const t = reqType(cur);
+  if(cur.status === 'done' || cur.status === 'declined'){
+    strip.style.display = 'none';
+  } else {
+    strip.style.display = 'flex';
+    strip.className = 'urgstrip ' + t;
+    strip.innerHTML = (t === 'urgent' ? '<span class="dot late pulse"></span>' : '') +
+      { urgent:'URGENT', service:'SERVICE', quote:'QUOTE', other:'SOMETHING ELSE' }[t];
+  }
+  /* the ref rides the came-in line — small, top right, context not content.
+     Same number the customer's receipt shows, so "it's about R-1024" can be found. */
+  document.getElementById('dCameIn').textContent = (cur.ref ? cur.ref + ' · ' : '') + 'came in ' + ago(cur.created_at);
+  /* stored normalised (0294810000) — make it readable again */
+  const prettyPhone = (raw) => {
+    const d = String(raw || '').replace(/\D/g, '');
+    if(/^04\d{8}$/.test(d)) return d.slice(0,4) + ' ' + d.slice(4,7) + ' ' + d.slice(7);
+    if(/^0[2378]\d{8}$/.test(d)) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + ' ' + d.slice(6);
+    return raw;
+  };
+  /* A landline can't receive any of the update texts. It's a fact about the NUMBER, so
+     it rides with the number — not as a red shouting chip (Noah 2026-08-30). The Texts
+     section spells out what it means for whoever opens it. */
+  const isLandline = cur.phone_kind === 'landline';
+  /* Two deliberate lines instead of one long one that dangled its last word:
+       who they are   — name · role, in ink
+       how to reach   — number · landline, then the email, in grey
+     The number reads once, plain — the round button beside it is the one way to call
+     (Noah 2026-08-17: name + number + a ring card was the same thing three times) */
+  document.getElementById('dWho').innerHTML =
+    '<span class="whoname">' + esc(firstName(cur))
+      + (cur.requester_role ? ' · ' + esc(cur.requester_role.toLowerCase()) : '') + '</span>';
+  document.getElementById('dNum').textContent = prettyPhone(cur.customer_phone) + (isLandline ? ' · landline' : '');
+  document.getElementById('dRing').href = 'tel:' + String(cur.customer_phone).replace(/[^\d+]/g, '');
+  /* their email, when they gave one — the envelope writes to them; no address text,
+     same one-way-to-do-it rule as the number (Noah 2026-08-31). Quote and paperwork go here (2026-08-28). */
+  const mailBtn = document.getElementById('dMail');
+  mailBtn.style.display = cur.customer_email ? '' : 'none';
+  if(cur.customer_email) mailBtn.href = 'mailto:' + cur.customer_email;
+  /* the AFSS deadline runs the whole job, so it gets its own strip with a countdown,
+     not a grey row lost in the answers — orange inside two weeks, red inside three
+     days or overdue (Noah 2026-08-31) */
+  const dueEl = document.getElementById('dDue');
+  dueEl.style.display = 'none';
+  if(cur.afss_due){
+    const dd = new Date(cur.afss_due + 'T00:00:00');
+    if(!isNaN(dd)){
+      const days = Math.round((dd - new Date(new Date().setHours(0,0,0,0))) / 86400000);
+      const when = days < 0 ? (-days) + (days === -1 ? ' day' : ' days') + ' overdue'
+                 : days === 0 ? 'today'
+                 : days === 1 ? 'tomorrow'
+                 : 'in ' + days + ' days';
+      dueEl.textContent = 'Due ' + DAYS3[dd.getDay()] + ' ' + dd.getDate() + ' ' + MONS3[dd.getMonth()] + ' · ' + when;
+      /* first thing the eye lands on: orange always, red when it's on top of them (Noah 2026-08-31) */
+      dueEl.className = 'duestrip ' + (days <= 3 ? 'now' : 'soon');
+      dueEl.style.display = '';
+    }
+  }
+
+  /* site card: name + address, mini map when we know where it is, tap → maps app */
+  const bld = cur.building_code !== 'general' ? await Store.getBuilding(cur.building_code) : null;
+  document.getElementById('dSiteName').textContent = cur.building_name + (cur.building_code === 'general' ? ' (new site)' : '');
+  document.getElementById('dSiteAddr').textContent = (bld && bld.address) ? bld.address : '';
+  const q = encodeURIComponent(cur.building_name + (bld && bld.address ? ' ' + bld.address : ''));
+  document.getElementById('dSiteCard').href = /iPhone|iPad|Mac/.test(navigator.userAgent)
+    ? 'https://maps.apple.com/?q=' + q : 'https://www.google.com/maps/search/?api=1&query=' + q;
+  renderSiteMap(bld);
+
+  const qa = document.getElementById('dQa');
+  const answers = cur.answers || [];
+  /* chips read fast — the full question wording lives on the customer form */
+  const SHORTQ = {
+    'Is it going off right now?': 'Going off now',
+    'Is it the whole building?': 'Whole building',
+    'Has the fire brigade shown up?': 'Brigade there',
+    'Been used or discharged?': 'Used or discharged',
+    'Damaged or leaking?': 'Damaged or leaking',
+    'More than one affected?': 'More than one',
+    'Is the light completely out?': 'Completely out',
+    'More than one light?': 'More than one',
+    'Area used at night?': 'Used at night',
+    'Still leaking right now?': 'Still leaking',
+    'Causing flooding or damage?': 'Flooding or damage',
+    'Near any electrical gear?': 'Near electrics',
+    'Deadline coming up?': 'Deadline soon',
+    'Is it for your AFSS?': 'For their AFSS',
+    'Is someone chasing you for it?': 'Being chased for it'
+  };
+  const shortQ = q => SHORTQ[q] || q.replace(/\?$/, '');
+  const ansRows = answers.map(x =>
+    `<div class="ansrow"><span class="ansq">${esc(shortQ(x.q))}</span><span class="ansa">${esc(String(x.a).charAt(0).toUpperCase() + String(x.a).slice(1).toLowerCase())}</span></div>`);
+  /* the certification deadline moved up to its own countdown strip under the contact
+     card (Noah 2026-08-31) — it used to be a Due date row here */
+  /* the accepted call-out is a fact of the request, so it sits with the other facts —
+     last row of the answers card, not a loose line in the header (Noah 2026-08-17) */
+  if(cur.scc_accepted && cur.scc_amount)
+    /* the amount and the rate, not just "Yes" — an after-hours $180 should look
+       different from an everyday $75 without opening the timeline */
+    ansRows.push(`<div class="ansrow"><span class="ansq">Call-out accepted</span><span class="ansa">$${cur.scc_amount}${cur.rate_type && cur.rate_type !== 'normal hours' ? ' · ' + esc(cur.rate_type) : ''}${cur.hourly_amount ? ' · then $' + cur.hourly_amount + '/hr' : ''}</span></div>`);
+  else if(cur.scc_accepted && cur.rate_card)
+    /* rate card accepted, no visit booked yet — both figures until the booked
+       time locks one in (then the row above takes over) */
+    ansRows.push(`<div class="ansrow"><span class="ansq">Rates accepted</span><span class="ansa">$${esc(String(cur.rate_card.normal))} / $${esc(String(cur.rate_card.after))} after hours${cur.hourly_amount ? ' · then $' + cur.hourly_amount + '/hr' : ''}</span></div>`);
+  else if(cur.req_type === 'quote')
+    ansRows.push(`<div class="ansrow"><span class="ansq">Call-out cost</span><span class="ansa">None — quote</span></div>`);
+  /* the specs answer rides with the other facts; the files themselves sit below with the photos */
+  if(cur.req_type === 'quote' && cur.specs_have){
+    const nsf = Array.isArray(cur.specs_files) ? cur.specs_files.length : 0;
+    ansRows.push(`<div class="ansrow"><span class="ansq">Plans / drawings</span><span class="ansa">${esc(cur.specs_have)}${nsf ? ' · ' + nsf + (nsf === 1 ? ' file' : ' files') : ''}</span></div>`);
+  }
+  qa.innerHTML = ansRows.length ? `<div class="anscard">` + ansRows.join('') + `</div>` : '';
+
+  /* customer's photos — an array now, but old requests only have the single field */
+  const pw = document.getElementById('dPhotos');
+  const shots = (Array.isArray(cur.photos) && cur.photos.length) ? cur.photos : (cur.photo ? [cur.photo] : []);
+  pw.innerHTML = '';
+  pw.style.display = shots.length ? 'flex' : 'none';
+  /* stacked full width, one under the other — a photo of a leak is no use cropped
+     into a thumbnail, and on a phone there's only ever one column anyway */
+  shots.forEach(src => {
+    const a = document.createElement('a');
+    a.href = src; a.target = '_blank'; a.rel = 'noopener';
+    a.style.cssText = 'display:block;width:100%';
+    const im = document.createElement('img');
+    im.src = src; im.alt = 'customer photo';
+    im.style.cssText = 'width:100%;border-radius:14px;display:block';
+    a.appendChild(im); pw.appendChild(a);
+  });
+  /* quote specs and any attached PDFs ride along here — images show like photos,
+     PDFs open in a new tab */
+  const specsF = (Array.isArray(cur.specs_files) ? cur.specs_files : [])
+    .concat(Array.isArray(cur.docs) ? cur.docs : []);
+  specsF.forEach(f => {
+    const a = document.createElement('a');
+    a.href = f.data; a.target = '_blank'; a.rel = 'noopener';
+    if(f.type && f.type.indexOf('image/') === 0){
+      a.style.cssText = 'display:block;width:100%';
+      const im = document.createElement('img');
+      im.src = f.data; im.alt = f.name || 'attached specs';
+      im.style.cssText = 'width:100%;border-radius:14px;display:block';
+      a.appendChild(im);
+    } else {
+      a.download = f.name || 'specs.pdf';
+      a.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;background:var(--card);border-radius:14px;padding:14px 16px;font-weight:600;font-size:14.5px;color:var(--ink);text-decoration:none';
+      a.innerHTML = '<svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:var(--sub);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto"><path d="M13.5 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9z"/><path d="M13.5 3.5V9H19"/></svg><span></span>';
+      a.querySelector('span').textContent = f.name || 'attached PDF';
+    }
+    pw.appendChild(a);
+  });
+  pw.style.display = (shots.length || specsF.length) ? 'flex' : 'none';
+
+  /* fresh drafts on every open — a walked-away pick never survives (Noah 2026-08-20) */
+  availEdit = false;
+  pendingDay = null;
+  pendingDayOk = false;
+  pendingCrew = crew(cur).slice();
+  tlOpen = false;
+
+  /* who's on it — dropdown, tick as many as are going */
+  renderOwnPicker();
+  renderAvail();
+
+  refreshActBar();
+  await refreshTimeline();
+
+  document.getElementById('ownMenu').classList.remove('open');
+  showView('detailView');
+}
+function renderOwnPicker(){
+  const cs = curCrew();
+  const txt = document.getElementById('ownSelTxt');
+  /* who only — the start lives in the START DAY section, said once (Noah 2026-08-20) */
+  const when = '';
+  const TEAM_AV = `<span class="ownc sm" style="background:var(--ink)"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M15.5 6.2a3.2 3.2 0 0 1 0 4.9M17.5 13.9a5.5 5.5 0 0 1 3 5.1"/></svg></span>`;
+  txt.innerHTML = cs.length
+    ? (wholeTeam(cs)
+      ? `${TEAM_AV}<span class="selcol"><span>Everyone</span>${when}</span>`
+      : `<span class="avstack">${cs.map(n => `<span class="ownc sm" style="background:${teamColor(n)}">${esc(n.charAt(0))}</span>`).join('')}</span><span class="selcol"><span>${esc(crewNames(cs))}</span>${when}</span>`)
+    : '<span class="ownc unowned sm' + (cur.urgent && cur.status === 'new' ? ' hot' : '') + '">?</span><span class="ph">Assign work</span>';
+  const menu = document.getElementById('ownMenu'); menu.innerHTML = '';
+  C.TEAM.forEach(t => {
+    const on = cs.includes(t.name);
+    const b = document.createElement('button'); b.className = 'mrow'; b.type = 'button';
+    b.innerHTML = `<span class="avatar" style="background:${t.color}">${t.name.charAt(0)}</span><span class="nm">${t.name}</span>${on ? '<span class="tick">✓</span>' : ''}`;
+    b.onclick = () => toggleCrew(t.name);
+    menu.appendChild(b);
+  });
+  /* one-off names on this job (subbies) get their own rows so they can be unticked */
+  cs.filter(n => !C.TEAM.some(t => t.name === n)).forEach(n => {
+    const b = document.createElement('button'); b.className = 'mrow'; b.type = 'button';
+    b.innerHTML = `<span class="avatar" style="background:#8e8e93">${esc(n.charAt(0))}</span><span class="nm">${esc(n)}</span><span class="tick">✓</span>`;
+    b.onclick = () => toggleCrew(n);
+    menu.appendChild(b);
+  });
+  /* everyone at once */
+  const allOn = C.TEAM.length && C.TEAM.every(t => cs.includes(t.name));
+  const ev = document.createElement('button'); ev.className = 'mrow'; ev.type = 'button';
+  ev.innerHTML = `<span class="avatar" style="background:var(--ink)"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M15.5 6.2a3.2 3.2 0 0 1 0 4.9M17.5 13.9a5.5 5.5 0 0 1 3 5.1"/></svg></span><span class="nm">Everyone</span>${allOn ? '<span class="tick">✓</span>' : ''}`;
+  ev.onclick = assignEveryone;
+  menu.appendChild(ev);
+  /* someone outside the team — a subbie for this job only */
+  const se = document.createElement('button'); se.className = 'mrow'; se.type = 'button';
+  se.innerHTML = `<span class="avatar addav">+</span><span class="nm quiet">Someone else…</span>`;
+  se.onclick = (e) => {
+    e.stopPropagation();
+    const row = document.createElement('div'); row.className = 'subbierow';
+    row.innerHTML = `<input placeholder="Their name" maxlength="24"><button type="button">Add</button>`;
+    const inp = row.querySelector('input');
+    const go = () => { const n = inp.value.trim(); if(n) toggleCrew(n); };
+    row.querySelector('button').onclick = go;
+    inp.onkeydown = (k) => { if(k.key === 'Enter') go(); };
+    row.onclick = (k) => k.stopPropagation();
+    menu.replaceChild(row, se); inp.focus();
+  };
+  menu.appendChild(se);
+  /* Done closes the picker — its presence says "tick more than one" (Noah 2026-08-20) */
+  const dn = document.createElement('button'); dn.className = 'menudone'; dn.type = 'button';
+  dn.textContent = 'Confirm';
+  dn.onclick = (e) => {
+    e.stopPropagation();
+    menu.classList.remove('open');
+    if(cur.status === 'new' && curCrew().length){
+      if(!(isPaperwork() || cur.urgent || pendingDay)) nudgeDays();
+    }
+  };
+  menu.appendChild(dn);
+}
+async function assignEveryone(){
+  const all = C.TEAM.map(t => t.name);
+  const wasNone = !curCrew().length;
+  const keepSubbies = curCrew().filter(n => !all.includes(n));
+  const next = all.concat(keepSubbies);
+  if(cur.status === 'new') pendingCrew = next;
+  else cur = await Store.updateRequest(cur.id, { assignees: next }, 'on it: ' + crewNames(next));
+  renderOwnPicker(); refreshTimeline(); refreshActBar(); refreshList();
+}
+/* accepted = a name + a start day, always. crew picks alone don't accept and don't text —
+   the single customer message goes when the day's locked in. */
+function wholeTeam(names){ return C.TEAM.length > 1 && names.length === C.TEAM.length && C.TEAM.every(t => names.includes(t.name)); }
+function gotItPhrase(names){
+  /* says the job's accepted, keeps the personal bit — "Locked in, Kerry — Noah's on it"
+     (one name is personal, two or more is "the team"; Kerry doesn't know Jake from Tom anyway) */
+  const who = names.length === 1 ? names[0] + "'s on it" : "the team's on it";
+  return 'Locked in, ' + firstName(cur) + '. ' + who.charAt(0).toUpperCase() + who.slice(1);
+}
+/* 0294810000 -> (02) 9481 0000. Top level so the confirm sheet can use it too. */
+function prettyPhoneOut(raw){
+  const d = String(raw || '').replace(/\D/g, '');
+  if(/^04\d{8}$/.test(d)) return d.slice(0,4) + ' ' + d.slice(4,7) + ' ' + d.slice(7);
+  if(/^0[2378]\d{8}$/.test(d)) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + ' ' + d.slice(6);
+  return raw;
+}
+/* Same news, two channels. A mobile gets the text; a landline customer gets told on the
+   phone, and nobody says "Locked in, Bruce" out loud (Noah 2026-08-30). Every path builds
+   both wordings and this picks the one that's actually going to happen — for the confirm
+   sheet AND for what lands on the record. */
+function saidOrSent(textWords, sayWords){
+  return (cur && cur.phone_kind === 'landline') ? sayWords : textWords;
+}
+/* who's coming, in phone words: "Noah's on his way" / "the team's on the way" */
+function crewComing(names){
+  return names.length === 1 ? names[0] + "'s on his way" : "the team's on the way";
+}
+function isPaperwork(){ return cur.category === 'Certificate / paperwork needed'; }
+function hasOfferedDays(){ return !!(cur.avail_days && cur.avail_days.length); }
+function nudgeDays(){
+  setTimeout(() => {
+    const ar = document.getElementById('availRow');
+    ar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    ar.classList.add('nudge');
+    setTimeout(() => ar.classList.remove('nudge'), 1700);
+  }, 250);
+}
+async function toggleCrew(name){
+  const cs = curCrew();
+  const wasNone = !cs.length;
+  const removing = cs.includes(name);
+  if(removing && cs.length === 1 && cur.status === 'booked'){
+    return; /* a booked job keeps someone on it — the tick stays put */
+  }
+  const next = removing ? cs.filter(n => n !== name) : cs.concat(name);
+  /* fresh request: the pick is a draft. Nothing is stored, logged or shown on the list
+     until Accept confirms it — walk away and it's forgotten (Noah 2026-08-20) */
+  if(cur.status === 'new'){
+    pendingCrew = next;
+  } else {
+    /* booked jobs are confirmed — crew changes are real and stick */
+    cur = await Store.updateRequest(cur.id, { assignees: next }, next.length ? 'on it: ' + crewNames(next) : "nobody's on it");
+  }
+  /* menu stays open — tick as many as are going, Done closes it (Noah 2026-08-20) */
+  renderOwnPicker(); refreshTimeline(); refreshActBar(); refreshList();
+}
+let tlOpen = false;
+document.getElementById('tlToggle').onclick = () => {
+  tlOpen = !tlOpen;
+  document.getElementById('tl').style.display = tlOpen ? '' : 'none';
+  document.getElementById('tlChev').textContent = tlOpen ? '▾' : '▸';
+};
+/* the events marking a text the app couldn't send because the number is a landline.
+   They stay in the stored record; they just don't earn screen space (see below). */
+const NOT_TEXTED = /not texted — landline/;
+/* an update for a landline customer: the words the office says when they ring */
+const TO_SAY = /^TOSAY→ /;
+async function refreshTimeline(){
+  const evs = await Store.getEvents(cur.id);
+  /* the count is messages, not bookkeeping — however the message travels */
+  document.getElementById('tlCount').textContent =
+    '(' + evs.filter(e => e.sms || TO_SAY.test(e.text) || /^customer added/.test(e.text)).length + ')';
+  document.getElementById('tl').style.display = tlOpen ? '' : 'none';
+  document.getElementById('tlChev').textContent = tlOpen ? '▾' : '▸';
+  /* reads like the customer's phone: green bubbles = texts they get, grey = what they sent in.
+     bookkeeping that a bubble already says (accepted, booked, done, declined) doesn't get its own
+     line — the texts carry the story. only "Seen" earns a caption, cos no text says it. */
+  const rows = evs.map(e => {
+    if(e.sms){
+      const msg = e.text.replace(/^SMS→ /, '');
+      return `<div class="tlsms"><div class="tlstamp">texted ${esc(firstName(cur))} · ${fmtTime(e.at)}</div><div class="tlbubble">${esc(msg)}</div></div>`;
+    }
+    /* the same update on a landline job — words to say on the phone, never sent. Sits on
+       the outgoing side like a text (it IS the update) but grey, and the stamp says how
+       it travels (2026-08-30). V1 doesn't send real texts either, so both are a record
+       of what the customer is being told, not proof it landed. */
+    if(TO_SAY.test(e.text)){
+      const msg = e.text.replace(TO_SAY, '');
+      return `<div class="tlsay"><div class="tlstamp">ring ${esc(firstName(cur))} · ${fmtTime(e.at)}</div><div class="tlsaybody">${esc(msg)}</div></div>`;
+    }
+    const m = e.text.match(/^customer added · [“"](.*)[”"]$/);
+    if(m){
+      return `<div class="tlin"><div class="tlstamp">${esc(firstName(cur))} added · ${fmtTime(e.at)}</div><div class="tlinbubble">${esc(m[1])}</div></div>`;
+    }
+    /* a text the app WANTED to send but couldn't — landline. It earns a line: this is the
+       moment the office has to pick up the phone instead (Noah 2026-08-28: "No texts yet"
+       read like one was still coming, and for a landline none ever is). */
+    /* seen + call-out stamps stay in the record but out of the thread — the office can't
+       know what Dave's eyes did, and the fee already lives in the answers card (Noah 2026-08-20).
+       The landline not-texted events are the same deal (Noah 2026-08-30: a log of things
+       that never happened doesn't make sense on screen) — kept in the record, off the page. */
+    return '';
+  }).filter(Boolean);
+  /* A landline with nothing in the thread has no thread: no text was ever sent and none
+     ever will be, so the whole section goes (Noah 2026-08-30 — "do we even need the text
+     tab for it?"). The who row already says landline and the green button is the action.
+     It comes back the moment there IS something real to read: a note the customer added
+     from their receipt, or — on an old record written before the landline fix — a text
+     the app believed it sent. A mobile always keeps the section: a text IS coming. */
+  /* the section is named for how these updates actually travel — a landline job's
+     updates are phone calls, so calling them Texts would be the same lie again */
+  document.getElementById('tlLabel').textContent = (cur.phone_kind === 'landline') ? 'Calls' : 'Texts';
+  const bare = !rows.length && cur.phone_kind === 'landline';
+  document.getElementById('tlToggle').style.display = bare ? 'none' : '';
+  document.querySelector('.whocard').classList.toggle('solo', bare);
+  if(bare){ document.getElementById('tl').innerHTML = ''; document.getElementById('tl').style.display = 'none'; return; }
+  document.getElementById('tl').innerHTML = rows.join('') || '<div class="tlev">No texts yet</div>';
+}
+document.getElementById('ownSel').onclick = (e) => {
+  e.stopPropagation();
+  if(cur && (cur.status === 'done' || cur.status === 'declined')) return; /* closed jobs don't re-crew */
+  document.getElementById('ownMenu').classList.toggle('open');
+};
+document.addEventListener('click', (e) => {
+  if(!e.target.isConnected) return; /* row was re-rendered mid-tap — not an outside click */
+  const menu = document.getElementById('ownMenu');
+  if(menu.classList.contains('open') && !e.target.closest('.owndd')) menu.classList.remove('open');
+});
+document.getElementById('backBtn').onclick = () => { showView('listView'); refreshList(); };
+/* status row is a readout — the flow updates it, nothing on it is tappable */
+/* ---------- their offered days — one row each, time in words ---------- */
+function prefWord(pref){
+  /* these say when the customer's AROUND, not how long the job takes — "All day" read like duration */
+  if(!pref || pref === 'Anytime') return 'Anytime';
+  if(pref === 'AM') return 'Morning';
+  if(pref === 'PM') return 'Afternoon';
+  return pref.replace('–', ' – '); /* "10am–2pm" → "10am – 2pm" */
+}
+let availEdit = false; /* booked days are locked — the Change link opens them up */
+let pendingDay = null; /* day tapped but not yet accepted — Accept commits name + day together */
+let pendingCrew = []; /* names picked but not yet accepted — walking away forgets them (Noah 2026-08-20) */
+function curCrew(){ return cur && cur.status === 'new' ? pendingCrew : crew(cur); }
+const DAYS3 = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONS3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* ---------- the booked time picks the rate (Dad's rule, car run 2026-08-26) ----------
+   A service customer accepts the rate card at send; no figure is locked until the
+   office books the visit. The booked label carries the day (and sometimes a window),
+   and that's what runs against the rate table — not the clock at logging. */
+function rateForBooking(label){
+  if(!C.RATES || !C.RATES.normal || C.RATES.normal.amount == null) return null;
+  const R = C.RATES;
+  const after = R.afterHours || R.normal;
+  const or = r => (r && r.amount != null) ? r : after;   /* unset slot → after hours */
+  if(!label) return null;
+  const now = new Date();
+  /* ASAP means attending right now — now's slot on the table is the honest rate */
+  if(label === 'ASAP'){
+    const ymdNow = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    if((R.publicHolidays || []).includes(ymdNow)) return or(R.publicHoliday);
+    if(now.getDay() === 6) return or(R.saturday);
+    if(now.getDay() === 0) return or(R.sunday);
+    const nhN = R.normalHours || { days: [1,2,3,4,5], start: '08:00', end: '16:00' };
+    const toMinN = s => { const p = String(s).split(':'); return (+p[0]) * 60 + (+p[1] || 0); };
+    const minsN = now.getHours() * 60 + now.getMinutes();
+    return ((nhN.days || [1,2,3,4,5]).includes(now.getDay()) && minsN >= toMinN(nhN.start) && minsN < toMinN(nhN.end))
+      ? R.normal : after;
+  }
+  const [day, pref] = String(label).split(' · ');
+  const m = String(day).match(/(\d{1,2}) (\w{3})/);
+  if(!m) return null;
+  const mi = MONS3.indexOf(m[2]);
+  if(mi < 0) return null;
+  /* labels don't carry a year — a month reading far in the past means next year */
+  let dt = new Date(now.getFullYear(), mi, +m[1]);
+  if(dt < new Date(now.getFullYear(), now.getMonth(), now.getDate() - 45)) dt = new Date(now.getFullYear() + 1, mi, +m[1]);
+  const ymd = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+  if((R.publicHolidays || []).includes(ymd)) return or(R.publicHoliday);
+  if(dt.getDay() === 6) return or(R.saturday);
+  if(dt.getDay() === 0) return or(R.sunday);
+  const nh = R.normalHours || { days: [1,2,3,4,5], start: '08:00', end: '16:00' };
+  if(!(nh.days || [1,2,3,4,5]).includes(dt.getDay())) return after;
+  /* a custom window like "6pm–8pm" can put a weekday visit after hours; a bare day,
+     AM, PM or Anytime books inside the working day, so it reads as normal hours */
+  const t = String(pref || '').match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i);
+  if(t){
+    let h = (+t[1]) % 12; if(/pm/i.test(t[3])) h += 12;
+    const mins = h * 60 + (+t[2] || 0);
+    const toMin = s => { const p = String(s).split(':'); return (+p[0]) * 60 + (+p[1] || 0); };
+    if(mins < toMin(nh.start) || mins >= toMin(nh.end)) return after;
+  }
+  return R.normal;
+}
+/* does this request's rate lock at booking? Only service calls that accepted the
+   card — rate_card on the request is the marker. Urgent locked at Accept, and old
+   stored requests carry their send-time figure: booking never rewrites either.
+   A rebook DOES re-run the table — moving Thursday to Saturday moves the rate. */
+function cardRate(){ return !!(cur && cur.req_type === 'service' && cur.scc_accepted && cur.rate_card); }
+/* the sentence in the booking text — Dad's example: "That's the $75 call-out." */
+function rateSentence(r){
+  if(!r) return '';
+  const kind = r.name === 'normal hours' ? '' : r.name.replace('after hours', 'after-hours') + ' ';
+  return " That's the $" + r.amount + ' ' + kind + 'call-out.';
+}
+/* an offered day that's already been and gone */
+function offerGone(item){
+  const m = String(typeof item === 'string' ? item : item.day).match(/(\d{1,2}) (\w{3})/);
+  if(!m) return false;
+  const mi = MONS3.indexOf(m[2]);
+  if(mi < 0) return false;
+  const now = new Date(), today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return new Date(now.getFullYear(), mi, +m[1]) < today0;
+}
+function renderAvail(){
+  const ar = document.getElementById('availRow'); ar.innerHTML = '';
+  /* urgent jobs don't carry offered days — accepting means ASAP */
+  let rawDays = (!cur.urgent && cur.avail_days && cur.avail_days.length) ? cur.avail_days : null;
+  /* offers that have already passed aren't offers anymore (booked jobs keep their record) */
+  if(rawDays && cur.status !== 'booked'){
+    rawDays = rawDays.filter(item => !offerGone(item));
+    if(!rawDays.length) rawDays = null;
+  }
+  const booked = cur.status === 'booked';
+  const avhead = document.querySelector('.avhead');
+  avhead.style.display = '';
+  const sub = document.getElementById('avSub');
+  sub.style.display = 'none';
+  if(cur.urgent && cur.status === 'new'){
+    /* urgent jobs don't pick days — the ASAP start is a fact of the request,
+       so it lives in the answers card with the other facts. No section here. */
+    avhead.style.display = 'none';
+    ar.innerHTML = '';
+    return;
+  }
+  if(cur.status === 'done' || cur.status === 'declined'){
+    /* closed jobs are a record, not a form — no day picking, no section (Noah 2026-08-20) */
+    avhead.style.display = 'none';
+    ar.innerHTML = '';
+    return;
+  }
+  if(booked && (!cur.booked_label || cur.booked_label === 'ASAP')){
+    /* accepted ASAP (and paperwork with no day): the start already happened or is happening —
+       nothing to read, nothing to change, no section (Noah 2026-08-20) */
+    avhead.style.display = 'none';
+    ar.innerHTML = '';
+    return;
+  }
+  const lbl = document.getElementById('availLabel'), chg = document.getElementById('availChange');
+  lbl.textContent = 'Start day';
+  /* ASAP isn't a day — nothing to change it to, so no Change (Noah 2026-08-20) */
+  chg.style.display = (booked && cur.booked_label !== 'ASAP') ? '' : 'none';
+  chg.textContent = availEdit ? 'Cancel' : 'Change';
+  const hint = document.getElementById('availHint');
+  if(cur.status === 'new' && !pendingDay){
+    hint.style.display = '';
+    hint.textContent = rawDays ? '(select one)' : '(ring ' + firstName(cur) + ', no days offered)';
+  } else hint.style.display = 'none';
+  if(rawDays){
+    buildBossCal(ar, rawDays, booked && !availEdit);
+    return;
+  }
+  if(cur.category === 'Certificate / paperwork needed' && !booked){
+    ar.innerHTML = '<span style="font-size:14px;color:var(--sub);font-weight:500">Paperwork job — no visit to book</span>';
+    return;
+  }
+  /* no offered days — ring them, agree on a day, set it here */
+  const list = document.createElement('div'); list.className = 'offerlist';
+  if(booked){
+    const r = document.createElement('button'); r.type = 'button'; r.className = 'offrow on';
+    const bl = cur.booked_label === 'ASAP' ? 'As soon as possible' : cur.booked_label;
+    r.innerHTML = `<span>✓ ${esc(bl)}</span>`;
+    r.onclick = () => { if(availEdit){ availEdit = false; renderAvail(); } };
+    list.appendChild(r);
+  }
+  if(!booked && pendingDay){
+    /* day's picked — the explainer and Choose row step aside; just the day, ✕ to unpick
+       (Noah 2026-08-20: the three-stack looked cluttered) */
+    const pr = document.createElement('button'); pr.type = 'button'; pr.className = 'offrow on';
+    pr.innerHTML = `<span>✓ ${esc(pendingDay)}</span><span class="unpick">✕</span>`;
+    pr.onclick = () => pickDay(pendingDay);
+    list.appendChild(pr);
+  }
+  if((!booked && !pendingDay) || availEdit) addSetDayRow(list);
+  if(!booked) list.classList.add('daycard');   /* ring + set-day live in one card, like crew + messages */
+  ar.appendChild(list);
+}
+/* the "Set the start day" row + our own calendar (same look as the customer form's,
+   not the browser's grey box) — used when they offered no days, and under Change
+   when the days they did offer don't work anymore */
+function addSetDayRow(list, sub){
+  const r = document.createElement('button'); r.type = 'button'; r.className = 'offrow setday';
+  /* one row: the action leads, the why rides under it (Noah 2026-08-20) */
+  r.innerHTML = (sub
+    ? `<span class="ndcol"><b>Set the day</b><span class="ndsub">${esc(sub)}</span></span>`
+    : `<span>Set the day</span>`) + `<span class="when">Choose</span>`;
+  const calWrap = document.createElement('div'); calWrap.className = 'cal bosscal'; calWrap.style.display = 'none';
+  let open = false;
+  r.onclick = () => {
+    open = !open;
+    calWrap.style.display = open ? '' : 'none';
+    r.querySelector('.when').textContent = open ? 'Close' : 'Choose';
+    if(open) drawSetCal(calWrap);
+  };
+  list.appendChild(r);
+  list.appendChild(calWrap);
+}
+const MN_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let setCalM = null, setCalY = null;
+function drawSetCal(wrap){
+  const now = new Date(), TY = now.getFullYear(), TM = now.getMonth(), TD = now.getDate();
+  /* first month with a tappable day — on the month's last day that's next month (Noah 2026-08-31) */
+  let fM = TM, fY = TY;
+  if(TD >= new Date(TY, TM + 1, 0).getDate()){ if(fM === 11){ fM = 0; fY++; } else fM++; }
+  if(setCalM === null){ setCalM = fM; setCalY = fY; }
+  wrap.innerHTML = '';
+  const head = document.createElement('div'); head.className = 'calhead';
+  head.innerHTML = `<span class="mlabel">${MN_FULL[setCalM]} <span class="yr">${setCalY}</span></span>
+    <span class="calnav"><button type="button" id="scPrev" ${setCalY === fY && setCalM === fM ? 'disabled' : ''}>‹</button><button type="button" id="scNext">›</button></span>`;
+  wrap.appendChild(head);
+  const dow = document.createElement('div'); dow.className = 'caldow';
+  dow.innerHTML = ['MON','TUE','WED','THU','FRI','SAT','SUN'].map(d => `<span>${d}</span>`).join('');
+  wrap.appendChild(dow);
+  const g = document.createElement('div'); g.className = 'calgrid';
+  const offset = (new Date(setCalY, setCalM, 1).getDay() + 6) % 7;
+  const dim = new Date(setCalY, setCalM + 1, 0).getDate();
+  for(let i = 0; i < offset; i++){ const b = document.createElement('button'); b.type = 'button'; b.className = 'calday blank'; g.appendChild(b); }
+  for(let d = 1; d <= dim; d++){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'calday'; b.textContent = d;
+    const isPast = (setCalY === TY && setCalM === TM && d <= TD);
+    if(isPast) b.classList.add('past');
+    if(setCalY === TY && setCalM === TM && d === TD) b.classList.add('today');
+    if(!isPast) b.onclick = () => {
+      const dt = new Date(setCalY, setCalM, d);
+      const label = DAYS3[dt.getDay()] + ' ' + dt.getDate() + ' ' + MONS3[dt.getMonth()];
+      if(cur.status === 'new') pickDay(label, true);
+      else bookOffer({ day: label, pref: '' });
+    };
+    g.appendChild(b);
+  }
+  wrap.appendChild(g);
+  head.querySelector('#scPrev').onclick = (e) => { e.stopPropagation(); if(setCalM === 0){ setCalM = 11; setCalY--; } else setCalM--; drawSetCal(wrap); };
+  head.querySelector('#scNext').onclick = (e) => { e.stopPropagation(); if(setCalM === 11){ setCalM = 0; setCalY++; } else setCalM++; drawSetCal(wrap); };
+}
+document.getElementById('availChange').onclick = () => { availEdit = !availEdit; setCalM = null; renderAvail(); };
+function buildBossCal(container, rawDays, locked){
+  let offers = rawDays.map(item => typeof item === 'string' ? { day: item, pref: '' } : { day: item.day, pref: item.pref || '' });
+  /* once booked, the days not taken are dead offers — they only come back under Change */
+  if(locked) offers = offers.filter(o => cur.booked_label === offerLabel(o));
+  /* booked onto a day of our own (set under Change) — no offer matches, so show the booked day itself */
+  if(locked && !offers.length) offers = [{ day: cur.booked_label, pref: '' }];
+  const list = document.createElement('div'); list.className = 'offerlist daycard';
+  /* a confirmed pick stands alone, like the no-days flow — ✕ brings the offers back */
+  if(cur.status === 'new' && pendingDay && pendingDayOk){
+    const pr = document.createElement('button'); pr.type = 'button'; pr.className = 'offrow on';
+    pr.innerHTML = `<span>✓ ${esc(pendingDay)}</span><span class="unpick">✕</span>`;
+    pr.onclick = () => pickDay(pendingDay);
+    list.appendChild(pr);
+    container.appendChild(list);
+    return;
+  }
+  /* tap a day and the other offers step aside — picked day + Confirm, nothing else (Noah 2026-08-20) */
+  if(cur.status === 'new' && pendingDay) offers = offers.filter(o => offerLabel(o) === pendingDay);
+  offers.forEach(o => {
+    const label = offerLabel(o);
+    const on = cur.status === 'booked' ? cur.booked_label === label : pendingDay === label;
+    /* under Change, an offer that's already passed isn't an option anymore — it reads as history */
+    const dead = !locked && cur.status === 'booked' && !on && offerGone(o);
+    const r = document.createElement('button'); r.type = 'button';
+    r.className = 'offrow' + (on ? ' on' : '') + ((locked && !on) || dead ? ' locked' : '');
+    /* on the booked row, "all day" promises nothing — only show a real window */
+    const showWhen = !on || (o.pref && o.pref !== 'Anytime');
+    const unpick = (on && cur.status === 'new') ? '<span class="unpick">✕</span>' : '';
+    if(unpick){
+      /* picked row: day and window read as one phrase, ✕ on the right — no stray middle text (Noah 2026-08-20) */
+      r.innerHTML = `<span>✓ ${esc(o.day)}${(o.pref && o.pref !== 'Anytime') ? ' · ' + esc(prefWord(o.pref)) : ''}</span>` + unpick;
+    } else {
+      r.innerHTML = `<span>${on ? '✓ ' : ''}${esc(o.day)}</span>` + (dead ? '<span class="when">gone</span>' : (showWhen ? `<span class="when">${esc(prefWord(o.pref))}</span>` : ''));
+    }
+    if((!locked || on) && !dead) r.onclick = () => (cur.status === 'new' ? pickDay(label) : bookOffer(o));
+    list.appendChild(r);
+  });
+  /* a day's tapped but not locked — the green Confirm makes the choice (Noah 2026-08-20) */
+  if(cur.status === 'new' && pendingDay && !pendingDayOk){
+    const cf = document.createElement('button'); cf.type = 'button'; cf.className = 'menudone';
+    cf.textContent = 'Confirm';
+    cf.onclick = () => { pendingDayOk = true; renderAvail(); refreshActBar(); };
+    list.appendChild(cf);
+  }
+  /* Change mode: the customer's on the phone saying none of those work — set our own day */
+  if(!locked && cur.status === 'booked') addSetDayRow(list);
+  container.appendChild(list);
+}
+function offerLabel(o){ return o.day + (o.pref && o.pref !== 'Anytime' ? ' · ' + o.pref : ''); }
+let pendingDayOk = false; /* offered-day taps wait for the green Confirm; calendar picks confirm themselves (Noah 2026-08-20) */
+function pickDay(label, confirmed){
+  if(pendingDay === label){ pendingDay = null; pendingDayOk = false; }
+  else { pendingDay = label; pendingDayOk = !!confirmed; }
+  renderAvail(); refreshActBar();
+}
+async function bookOffer(o){
+  if(!curCrew().length){
+    /* no words — take them to the assign menu, same as Accept does */
+    document.querySelector('.owndd').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('ownMenu').classList.add('open');
+    return;
+  }
+  const label = offerLabel(o);
+  if(cur.status === 'booked'){
+    if(cur.booked_label === label){
+      /* tapping the booked day keeps it — just closes Change mode */
+      if(availEdit){ availEdit = false; renderAvail(); }
+      return;
+    }
+    if(!availEdit) return; /* locked — hit Change first */
+    availEdit = false;
+    /* moving the visit can move the rate — the table runs again and the text
+       says the new time AND the rate, so the customer is never guessing */
+    const mrl = cardRate() ? rateForBooking(label) : null;
+    cur = await Store.updateRequest(cur.id,
+      { status: 'booked', booked_label: label, ...(mrl ? { scc_amount: mrl.amount, rate_type: mrl.name } : {}) },
+      'moved booking to ' + label + (mrl ? ' · $' + mrl.amount + ' call-out' : ''),
+      'custom',
+      saidOrSent(
+        'Sorry ' + firstName(cur) + ", change of plan. We'll now be there " + whenWords(label) + '.'
+          + rateSentence(mrl) + " If that doesn't work, give us a call and we'll sort another day.",
+        'the visit has moved to ' + whenWords(label) + '.' + rateSentence(mrl)
+          + " Ask if that works — if not, sort another day on the call."));
+    openDetail(cur.id); refreshList();
+    return;
+  }
+  /* locking the day completes the accept — one combined message, who and when.
+     On a rate-card job the booked time also locks the rate, and the text carries
+     both (Dad's rule 2026-08-26): "We'll be there Thursday. That's the $75 call-out." */
+  const rl = cardRate() ? rateForBooking(label) : null;
+  const bookSms = gotItPhrase(curCrew()) + ". We'll be there " + whenWords(label) + '.' + rateSentence(rl) + ' See you then.';
+  const bookSay = "we'll be there " + whenWords(label) + '.' + rateSentence(rl);
+  const ok = await confirmAccept({ title: 'Accept this job?',
+    body: 'Books ' + label + '. ' + firstName(cur) + ' gets this text:',
+    sms: bookSms, say: bookSay,
+    yes: 'Accept & book' });
+  if(!ok) return;
+  const bnames = curCrew();
+  cur = await Store.updateRequest(cur.id,
+    { status: 'booked', booked_label: label, assignees: bnames, ...(rl ? { scc_amount: rl.amount, rate_type: rl.name } : {}) },
+    'accepted · on it: ' + crewNames(bnames) + ' · booked ' + label + (rl ? ' · $' + rl.amount + ' call-out locked' : ''),
+    'custom', saidOrSent(gotItPhrase(bnames) + ". We'll be there " + whenWords(label) + '.' + rateSentence(rl) + ' See you then.', bookSay));
+  activeTab = 'acc'; refreshList(); showView('listView');
+}
+
+/* bottom action bar — carries the whole flow: Accept (opens the picker) → Done. Status row just reports. */
+async function markDone(){
+  if(!cur || cur.status === 'done') return;
+  const dnames = crew(cur);
+  const who = dnames.length >= 2 ? 'The team' : crewNames(dnames);
+  /* same second look as accepting — a misclick here texts the customer (Noah 2026-08-20) */
+  const doneSay = 'the job\u2019s done' + (who ? ' \u2014 ' + who + ' sorted it' : '')
+    + '. Anything not right, ring us.';
+  const ok = await confirmAccept({ title: 'Job done?',
+    body: firstName(cur) + ' gets this text:',
+    sms: 'All done. ' + (who ? who + ' sorted it' : "It's sorted") + ". If anything's not right, call us anytime.",
+    say: doneSay,
+    yes: 'Confirm' });
+  if(!ok) return;
+  cur = await Store.updateRequest(cur.id, { status: 'done', done_at: new Date().toISOString() }, 'done · customer notified',
+    'custom', saidOrSent(smsText('done', cur, who), doneSay));
+  activeTab = 'acc'; refreshList(); showView('listView');
+}
+/* the are-you-sure sheet: every accept path passes through it. It shows the actual
+   text the customer will get — the fact of accepting — and runs hot on urgents.
+   On a LANDLINE nothing gets sent, so the sheet must not promise a text (Noah 2026-08-30:
+   "should say call them to tell them you're coming"). Same words, different delivery:
+   the sheet says ring them and the bubble becomes the script for that call, not a green
+   text. Done centrally so every path — accept, book, move, done, decline — tells the truth. */
+let okRes = null, okOpts = null, okScrollY = 0;
+function confirmAccept(o){
+  return new Promise(res => {
+    okRes = res; okOpts = o;
+    /* freeze the page behind the box — nothing scrolls until a choice is made (Noah 2026-08-20) */
+    okScrollY = window.scrollY;
+    document.body.style.top = -okScrollY + 'px';
+    document.body.classList.add('modallock');
+    document.getElementById('okUrg').style.display = o.urgent ? 'inline-flex' : 'none';
+    document.getElementById('okTitle').textContent = o.title;
+    /* landline: no script in the sheet at all (Noah 2026-08-30, after three goes at
+       styling one). The sheet says the one thing the office needs to know here — this
+       one gets a phone call, not a text — and hands them the number. What to say lands
+       on the record when they confirm, which is where it's useful afterwards. */
+    const ring = cur && cur.phone_kind === 'landline';
+    document.getElementById('okBody').textContent = ring
+      ? firstName(cur) + " is on a landline — you'll need to ring them."
+      : o.body;
+    const call = document.getElementById('okCall');
+    document.getElementById('okCard').className = ring ? 'ringcard' : '';
+    call.style.display = ring ? 'flex' : 'none';
+    if(ring){
+      call.href = 'tel:' + String(cur.customer_phone).replace(/[^\d+]/g, '');
+      document.getElementById('okCallTxt').textContent = 'Call ' + prettyPhoneOut(cur.customer_phone);
+    }
+    const bub = document.getElementById('okBubble');
+    bub.classList.toggle('saythis', ring);
+    const yes = document.getElementById('okYes');
+    const ta = document.getElementById('okReason');
+    yes.textContent = o.yes;
+    yes.className = 'actbtn ' + (o.danger ? 'decl' : 'acc');
+    if(o.reason){
+      /* reason mode: the bubble is there from the start with a slot showing exactly where
+         their words land; typing fills the slot live (Noah 2026-08-20) */
+      ta.style.display = ''; ta.value = ''; ta.style.height = '';
+      const preview = (r) => {
+        const parts = o.compose('\u0000').split('\u0000');
+        /* show the reason as it will actually read — tidied — not as it was typed */
+        const shown = r ? (o.tidyReason ? o.tidyReason(r) : r) : 'your reason';
+        return esc(parts[0]) + '<span class="' + (r ? 'okrsn' : 'okrsn ph') + '">' + esc(shown) + '</span>' + esc(parts[1] || '');
+      };
+      bub.style.display = ring ? 'none' : ''; bub.innerHTML = preview('');
+      yes.disabled = true;
+      ta.oninput = () => {
+        const r = ta.value.trim();
+        yes.disabled = !r;
+        bub.innerHTML = preview(r);
+        ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
+      };
+      setTimeout(() => ta.focus(), 120);
+    } else {
+      ta.style.display = 'none';
+      yes.disabled = false;
+      /* the preview is the text that goes out — on a landline none does, so there's
+         nothing to preview here */
+      bub.style.display = (ring || !o.sms) ? 'none' : '';
+      bub.textContent = ring ? '' : (o.sms || '');
+    }
+    document.getElementById('okWrap').style.display = 'flex';
+  });
+}
+function okDone(v){
+  const ta = document.getElementById('okReason');
+  ta.blur();
+  document.getElementById('okWrap').style.display = 'none';
+  document.body.classList.remove('modallock');
+  document.body.style.top = '';
+  window.scrollTo(0, okScrollY);
+  if(okRes){
+    const r = okRes; okRes = null;
+    r(v ? (okOpts && okOpts.reason ? { ok: true, reason: ta.value.trim() } : true) : false);
+  }
+  okOpts = null;
+}
+document.getElementById('okYes').onclick = () => okDone(true);
+document.getElementById('okNo').onclick = () => okDone(false);
+document.getElementById('okDim').onclick = () => okDone(false);
+/* day jobs: name + day both picked, Accept commits — books, records, texts, jumps */
+async function acceptWithDay(){
+  const names = curCrew();
+  if(!names.length || !pendingDay) return;
+  /* the booked time locks the rate on rate-card jobs — the text says both */
+  const rl = cardRate() ? rateForBooking(pendingDay) : null;
+  const dayText = gotItPhrase(names) + ". We'll be there " + whenWords(pendingDay) + '.' + rateSentence(rl) + ' See you then.';
+  const daySay = "we'll be there " + whenWords(pendingDay) + '.' + rateSentence(rl);
+  const ok = await confirmAccept({ title: 'Accept this job?',
+    body: 'Books ' + pendingDay + '. ' + firstName(cur) + ' gets this text:',
+    sms: dayText, say: daySay,
+    yes: 'Accept & book' });
+  if(!ok) return;
+  cur = await Store.updateRequest(cur.id,
+    { status: 'booked', booked_label: pendingDay, assignees: names, ...(rl ? { scc_amount: rl.amount, rate_type: rl.name } : {}) },
+    'accepted · on it: ' + crewNames(names) + ' · booked ' + pendingDay + (rl ? ' · $' + rl.amount + ' call-out locked' : ''),
+    'custom', saidOrSent(dayText, daySay));
+  pendingDay = null;
+  activeTab = 'acc'; refreshList(); showView('listView');
+}
+/* urgent + paperwork jobs: crew's picked, Accept commits — books, records, texts */
+async function acceptNow(){
+  const names = curCrew();
+  if(!names.length) return;
+  /* a service call gone urgent through its answers still carries a rate card —
+     ASAP means attending now, so now's rate is the one that locks */
+  const rl = cur.urgent && cardRate() ? rateForBooking('ASAP') : null;
+  const urgText = gotItPhrase(names) + ". We're getting there as soon as possible." + rateSentence(rl);
+  const urgSay  = crewComing(names) + ' now.' + rateSentence(rl);
+  const papText = gotItPhrase(names) + ". We'll get the paperwork sorted and send it over.";
+  const papSay  = "we're onto the paperwork and we'll send it over.";
+  const ok = await confirmAccept(cur.urgent
+    ? { urgent: true, title: 'Accepting means getting there ASAP',
+        body: firstName(cur) + ' gets this text:',
+        sms: urgText, say: urgSay,
+        yes: 'Accept' }
+    : { title: 'Accept this job?',
+        body: firstName(cur) + ' gets this text:',
+        sms: papText, say: papSay,
+        yes: 'Accept' });
+  if(!ok) return;
+  if(cur.urgent){
+    cur = await Store.updateRequest(cur.id,
+      { status: 'booked', booked_label: 'ASAP', assignees: names, ...(rl ? { scc_amount: rl.amount, rate_type: rl.name } : {}) },
+      'accepted · on it: ' + crewNames(names) + ' — ASAP' + (rl ? ' · $' + rl.amount + ' call-out locked' : ''), 'custom',
+      saidOrSent(urgText, urgSay));
+  } else {
+    cur = await Store.updateRequest(cur.id, { status: 'booked', assignees: names },
+      'accepted · on it: ' + crewNames(names), 'custom',
+      saidOrSent(papText, papSay));
+  }
+  activeTab = 'acc'; refreshList(); showView('listView');
+}
+function refreshActBar(){
+  const bar = document.getElementById('actBar');
+  const cant = document.getElementById('cantDo');
+  if(!cur || cur.status === 'done' || cur.status === 'declined'){ bar.style.display = 'none'; cant.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  /* once it's booked the customer's been told it's happening — decline stops being a headline
+     and becomes the quiet "Can't do it anymore?" link down the bottom */
+  const booked = cur.status === 'booked';
+  document.getElementById('abDecline').style.display = booked ? 'none' : '';
+  cant.style.display = booked ? 'block' : 'none';
+  /* the words match what's actually happening: a booked job gets cancelled, a fresh one gets declined */
+  cant.textContent = 'Cancel this job?';
+  const g = document.getElementById('abAccept');
+  if(cur.status === 'new'){
+    if(curCrew().length){
+      if(cur.urgent || isPaperwork()){
+        /* no day to pick on these — Accept is the commit */
+        g.textContent = 'Accept';
+        g.onclick = acceptNow;
+      } else if(pendingDay && pendingDayOk){
+        g.textContent = 'Accept';
+        g.onclick = acceptWithDay;
+      } else {
+        /* crew's picked — the other half of accepting is the start day */
+        g.textContent = 'Pick a start day';
+        g.onclick = nudgeDays;
+      }
+    } else {
+      g.textContent = 'Accept';
+      g.onclick = (e) => {
+        e.stopPropagation(); /* keep the outside-click closer from shutting the menu we just opened */
+        document.querySelector('.owndd').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('ownMenu').classList.add('open');
+      };
+    }
+  } else {
+    g.textContent = 'Done';
+    g.onclick = markDone;
+  }
+}
+async function doDecline(){
+  if(!cur) return;
+  const wasBooked = cur.status === 'booked';
+  /* The reason is typed by hand, so it arrives with no capital and no full stop and used
+     to land mid-sentence: "...take this one. we only do maintenance Give us a call…"
+     (spotted 2026-08-30). Tidy it once, here, and both the preview and the stored wording
+     use the tidied version — so what the office sees is exactly what goes out. */
+  const endStop = (r) => /[.!?]$/.test(r.trim()) ? r.trim() : r.trim() + '.';
+  const capStop = (r) => { const t = endStop(r); return t.charAt(0).toUpperCase() + t.slice(1); };
+  /* spoken keeps the lower case — it runs on from "we can't take this one — " */
+  const tidyReason = (r) => saidOrSent(capStop(r), endStop(r));
+  /* compose() takes an ALREADY-tidied reason, so the sentinel split stays clean */
+  const composeText = (r) => wasBooked
+    ? ("Sorry " + firstName(cur) + ", we've had to cancel this one. " + r + " Give us a call if you need a hand.")
+    : ("Sorry " + firstName(cur) + ", we can't take this one. " + r + " Give us a call if you need a hand.");
+  /* on the phone the apology is in the voice, not the wording — just the news and why.
+     No "give us a call" tail either: they're already on the call. */
+  const composeSay = (r) => (wasBooked ? "we've had to cancel this one \u2014 " : "we can't take this one \u2014 ") + r;
+  const compose = (r) => saidOrSent(composeText(r), composeSay(r));
+  /* one box, same shape as accepting: reason typed right in it, the exact words previewed,
+     urgent cancels carry the tag and the ring-first nudge (Noah 2026-08-20) */
+  const res = await confirmAccept({ danger: true, reason: true, compose, tidyReason, urgent: !!cur.urgent,
+    title: wasBooked ? 'Cancel this job?' : 'Decline this one?',
+    /* short and plain — the title says what's happening, the button confirms it (Noah 2026-08-20).
+       The ring-first nudge is dropped on a landline: the sheet already says to ring (2026-08-30) */
+    body: ((wasBooked && cur.urgent && cur.phone_kind !== 'landline') ? 'Ring ' + firstName(cur) + ' first if you can. ' : '')
+      + firstName(cur) + ' gets this text:',
+    yes: 'Confirm' });
+  if(!res || !res.reason) return;
+  const reason = res.reason;
+  cur = await Store.updateRequest(cur.id, { status: 'declined', declined_reason: reason },
+    (wasBooked ? 'cancelled — ' : 'declined — ') + reason,
+    'custom', /* compose() built the whole sentence — the store's declined wrap would double it */
+    compose(tidyReason(reason)));
+  /* done — back to the list you came from, not the dead request (Noah 2026-08-20) */
+  activeTab = wasBooked ? 'acc' : 'req';
+  refreshList(); showView('listView');
+}
+document.getElementById('abDecline').onclick = doDecline;
+document.getElementById('cantDo').onclick = doDecline;
+
+/* ---------- demo-mode sample data (never runs in live mode) ---------- */
+/* Rebuilt 2026-08-28 (Noah: a brand-new set to walk the app with). Same coverage rule
+   as always — one of everything the app can show: every type, every clock colour,
+   offered days with windows, no days, no note, photos, PDFs, a landline (urgent AND
+   quote), a new site, an unknown category, booked on an offered day, booked on a
+   company-set day, a subbie, a customer follow-up, done, declined — plus the new
+   fields (email, AFSS due date), the seen text on every opened sample, and one
+   deliberately old-shape quote so pre-rework records keep rendering. */
+async function seedDemo(){
+  const hrs = (n) => new Date(Date.now() - n * 3600 * 1000).toISOString();
+  const mk = async (req, ageHrs, patches, evts) => {
+    const r = await Store.createRequest(req);
+    const d = JSON.parse(localStorage.getItem('reqapp'));
+    const row = d.requests.find(x => x.id === r.id);
+    row.created_at = hrs(ageHrs);
+    if(patches) Object.assign(row, patches);
+    /* backdate the auto 'received' events, then lay in the sample's history */
+    (d.events[r.id] || []).forEach(e => e.at = row.created_at);
+    (evts || []).forEach(e => d.events[r.id].push({ at: hrs(ageHrs - (e.dh || 0)), text: e.text, sms: !!e.sms }));
+    localStorage.setItem('reqapp', JSON.stringify(d));
+    return r;
+  };
+  /* n-th working day from tomorrow, as the form would label it */
+  const fut = (n, pref) => {
+    const d = new Date(); let left = n;
+    while(left > 0){ d.setDate(d.getDate() + 1); if((C.WORKING_DAYS || [0,1,2,3,4,5,6]).includes(d.getDay())) left--; }
+    return { day: DAYS3[d.getDay()] + ' ' + d.getDate() + ' ' + MONS3[d.getMonth()], pref: pref || '' };
+  };
+  const lbl = o => o.day + (o.pref && o.pref !== 'Anytime' ? ' · ' + o.pref : '');
+  /* rate figures and the accepted card come from config — the samples stay honest
+     about what the app would really have stored under the 2026-08-26 rate rule:
+     service = card accepted at send, figure locked at booking; urgent = figure at send */
+  const RN = (C.RATES && C.RATES.normal && C.RATES.normal.amount) || 75;
+  const RA = (C.RATES && C.RATES.afterHours && C.RATES.afterHours.amount) || 180;
+  const rcWindow = () => {
+    const nh = (C.RATES && C.RATES.normalHours) || { days: [1,2,3,4,5], start: '08:00', end: '16:00' };
+    const t = s => { const p = String(s).split(':'); const h = +p[0], mn = +p[1] || 0;
+      return (((h + 11) % 12) + 1) + (mn ? ':' + String(mn).padStart(2, '0') : '') + (h >= 12 ? 'pm' : 'am'); };
+    const ds = (nh.days || [1,2,3,4,5]).slice().sort((a,b) => a - b);
+    return DAYS3[ds[0]] + '–' + DAYS3[ds[ds.length - 1]] + ', ' + t(nh.start) + '–' + t(nh.end);
+  };
+  const RC = () => ({ normal: RN, after: RA, window: rcWindow(), label: (C.RATES && C.RATES.label) || '' });
+  const photo = (label, bg) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260"><rect width="400" height="260" fill="' + bg + '"/>' +
+    '<ellipse cx="230" cy="90" rx="90" ry="40" fill="#8a7f6a" opacity=".55"/><ellipse cx="232" cy="96" rx="55" ry="22" fill="#6e6350" opacity=".6"/>' +
+    '<rect x="0" y="212" width="400" height="48" fill="#00000033"/><text x="14" y="243" font-family="sans-serif" font-size="20" fill="#fff">' + label + '</text></svg>');
+  const HV = { building_code:'harbourview', building_name:'Harbourview Apartments' };
+  const RSL = { building_code:'seaforth-rsl', building_name:'Seaforth RSL' };
+
+  /* one tiny valid PDF, reused wherever a sample attaches one */
+  const PDF = 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9NZWRpYUJveFswIDAgMjAwIDIwMF0+PmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1MiAwMDAwMCBuIAowMDAwMDAwMTAxIDAwMDAwIG4gCnRyYWlsZXI8PC9TaXplIDQvUm9vdCAxIDAgUj4+CnN0YXJ0eHJlZgoxNjQKJSVFT0Y=';
+  /* the seen text a sample carries when the office has already opened it — samples must
+     look like what today's app would really have stored (seen stamp + the text together) */
+  const seenTxt = (first, type) => type === 'urgent'
+    ? "SMS\u2192 Hi " + first + ", someone's looking at your request right now."
+    : (type === 'quote'
+      ? "SMS\u2192 Hi " + first + ", we're having a look at your quote request now. We'll be in touch soon."
+      : "SMS\u2192 Hi " + first + ", we're having a look at your request now. We'll be in touch soon.");
+
+  /* ---- Requests tab ---- */
+  /* URGENT — fresh alarm, nobody on it (red card, pulsing ?, ASAP row). Logged during
+     the working day, so now's rate at Accept was the normal $75. */
+  await mk({ ...HV, category:'Alarm going off / beeping', req_type:'urgent', urgent:true, scc_amount:RN, scc_accepted:true, rate_type:'normal hours',
+    answers:[{q:'Is it going off right now?',a:'Yes',urg:true},{q:'Is it the whole building?',a:'Yes',urg:false},{q:'Has the fire brigade shown up?',a:'No',urg:false}],
+    note:'whole building, started ten minutes ago', avail_days:[], time_pref:'per day', requester_role:'Building manager', customer_name:'Nathan Reid', customer_phone:'0413 550 291' }, 0.3);
+  /* URGENT — burst pipe at a NEW SITE, landline caller (ring chip + receipt ring note, no texts) */
+  await mk({ building_code:'general', building_name:'Marina Plaza, 7 Quay Rd', category:'Sprinkler / pump / leak', req_type:'urgent', urgent:true, scc_amount:RA, scc_accepted:true, rate_type:'after hours',
+    answers:[{q:'Still leaking right now?',a:'Yes',urg:true},{q:'Causing flooding or damage?',a:'Yes',urg:true},{q:'Near any electrical gear?',a:'No',urg:false}],
+    note:'sprinkler pipe burst in the basement car park', avail_days:[], time_pref:'per day', phone_kind:'landline',
+    requester_role:'Facilities manager', customer_name:'Bruce Hale', customer_phone:'(02) 9330 4177' }, 1.1);
+  /* SERVICE, green clock — leak with two photos and offered days incl. a window */
+  await mk({ ...RSL, category:'Sprinkler / pump / leak', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Still leaking right now?',a:'No',urg:false},{q:'Causing flooding or damage?',a:'No',urg:false},{q:'Near any electrical gear?',a:'Yes',urg:false}],
+    note:'slow drip over the kitchen pass', avail_days:[fut(1,'AM'), fut(3,'Anytime')], time_pref:'per day',
+    customer_name:'Tanya Brooks', customer_phone:'0407 992 615',
+    photos:[photo('sample photo \u2014 kitchen pass','#cfc8b8'), photo('sample photo \u2014 close up','#b1a996')] }, 0.4);
+  /* SERVICE, orange clock — no days picked (ring row + set-day) */
+  await mk({ ...HV, category:'Alarm going off / beeping', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Is it going off right now?',a:'No',urg:false},{q:'Is it the whole building?',a:'No',urg:false},{q:'Has the fire brigade shown up?',a:'No',urg:false}],
+    note:'fault light on the panel every night around 9', avail_days:[], time_pref:'per day', requester_role:'Property manager', customer_name:'Olivia Grant', customer_phone:'0439 208 774' }, 1.5);
+  /* SERVICE, red clock — smoke alarm, one offered day, already opened (seen + the seen text) */
+  await mk({ ...HV, category:'Smoke alarm issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[], note:'unit 9 chirping every minute', avail_days:[fut(2,'PM')], time_pref:'per day',
+    customer_name:'Harry Chen', customer_phone:'0426 311 508' }, 5,
+    null, [{ dh:0.4, text:'seen' }, { dh:0.4, text:seenTxt('Harry','service'), sms:true }]);
+  /* SERVICE — no note at all (card falls back to icon + short label) */
+  await mk({ ...RSL, category:'Fire door / passive fire', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[], note:'', avail_days:[fut(2,'Anytime')], time_pref:'per day', customer_name:'Jill Marsh', customer_phone:'0400 173 262' }, 2.8);
+  /* SERVICE — the long-waiting one (5+ days, deep red), opened days ago */
+  await mk({ ...RSL, category:'Extinguisher issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Been used or discharged?',a:'Yes',urg:false},{q:'Damaged or leaking?',a:'No',urg:false},{q:'More than one affected?',a:'No',urg:false}],
+    note:'one let off at the staff party, needs recharging', avail_days:[], time_pref:'per day', customer_name:'Frank Novak', customer_phone:'0418 445 930' }, 130,
+    null, [{ dh:2, text:'seen' }, { dh:2, text:seenTxt('Frank','service'), sms:true }]);
+  /* SERVICE — category this build does not know (plain words, no icon, More section) */
+  await mk({ ...HV, category:'Fire pump flow test witness', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[], note:'council wants the annual pump test witnessed', avail_days:[], time_pref:'per day',
+    customer_name:'Ingrid Bauer', customer_phone:'0421 067 349' }, 1.2);
+  /* SERVICE — Something else with a note and no questions (fee row alone on the card) */
+  await mk({ ...HV, category:'Something else', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[], note:'exit sign above the gym door hanging by its wires', avail_days:[], time_pref:'per day',
+    customer_name:'Marcus Reed', customer_phone:'0416 802 553' }, 0.8);
+  /* SERVICE — certification with the 2026-08-28 fields: a real due date + email.
+     Paperwork job, so no visit to book; the Due date row and mailto line both show. */
+  const dueSoon = new Date(Date.now() + 17 * 864e5);
+  await mk({ ...RSL, category:'Certificate / paperwork needed', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Deadline coming up?',a:'Yes',urg:false},{q:'Is it for your AFSS?',a:'Yes',urg:false},{q:'Is someone chasing you for it?',a:'Yes',urg:false}],
+    afss_due: dueSoon.getFullYear() + '-' + String(dueSoon.getMonth()+1).padStart(2,'0') + '-' + String(dueSoon.getDate()).padStart(2,'0'),
+    customer_email:'nadia@rossistrata.com.au',
+    note:'council already sent a reminder letter', avail_days:[], time_pref:'per day', requester_role:'Strata manager',
+    customer_name:'Nadia Rossi', customer_phone:'0432 559 807' }, 4);
+  /* QUOTE — testing contract, email + specs PDF (the full new-shape quote) */
+  await mk({ ...HV, category:'Regular testing and maintenance', req_type:'quote', customer_email:'p.hollis@harbourviewfm.com.au',
+    answers:[], note:'taking over the annual testing, 22 units plus commons', avail_days:[], time_pref:'per day',
+    specs_have:'Yes', specs_files:[{ name:'asset-register-2026.pdf', type:'application/pdf', data:PDF }],
+    requester_role:'Facilities manager', customer_name:'Peter Hollis', customer_phone:'0402 664 118' }, 2);
+  /* QUOTE — upgrade job from a landline customer (ring chip, receipt ring note, email for the quote) */
+  await mk({ ...RSL, category:"Upgrade or replace what's there", req_type:'quote', customer_email:'dorothy@seaforthrsl.com.au',
+    answers:[], note:'old conventional panel, want it swapped to addressable', avail_days:[], time_pref:'per day', phone_kind:'landline',
+    specs_have:'No',
+    requester_role:'Owner', customer_name:'Dorothy Klein', customer_phone:'(02) 9948 6021' }, 28);
+  /* QUOTE — defect list priced off a report, PDF + photo attached */
+  await mk({ ...HV, category:'Defect / repair from a report', req_type:'quote', customer_email:'simone.perry@stratacare.com.au',
+    answers:[], note:'July inspection defects, want items 3 to 9 priced', avail_days:[], time_pref:'per day',
+    specs_have:'No', requester_role:'Strata manager', customer_name:'Simone Perry', customer_phone:'0405 337 291',
+    photos:[photo('sample photo \u2014 defect notice','#d8d2c4')],
+    docs:[{ name:'inspection-report-Jul.pdf', type:'application/pdf', data:PDF }] }, 8);
+  /* SOMETHING ELSE (the renamed type) — free-text request, no fee, no questions */
+  await mk({ ...HV, category:'Something else', req_type:'other',
+    answers:[], note:'new tenant — who do we call about fire stuff going forward?', avail_days:[], time_pref:'per day',
+    requester_role:'Tenant', customer_name:'Kofi Mensah', customer_phone:'0431 794 226' }, 5);
+  /* SOMETHING ELSE — evac diagrams, an office-reply job with nothing to book */
+  await mk({ ...RSL, category:'Evacuation diagrams / training', req_type:'other',
+    answers:[], note:'bistro layout changed, diagrams need redoing and four new staff need warden training', avail_days:[], time_pref:'per day',
+    requester_role:'Building manager', customer_name:'Elena Voss', customer_phone:'0433 890 217' }, 16);
+  /* OLD-SHAPE COVERAGE, kept on purpose — a quote stored before the 2026-08-26/28 rework
+     (yes/no answers + offered days on a quote, no email). Old records must keep rendering. */
+  await mk({ ...RSL, category:'Extinguisher issue', req_type:'quote',
+    answers:[{q:'Been used or discharged?',a:'No',urg:false},{q:'Damaged or leaking?',a:'No',urg:false},{q:'More than one affected?',a:'Yes',urg:false}],
+    note:'six units due for replacement', avail_days:[fut(4,'PM')], time_pref:'per day',
+    customer_name:'Vera Lam', customer_phone:'0409 515 883' }, 40,
+    null, [{ dh:3, text:'seen' }, { dh:3, text:seenTxt('Vera','quote'), sms:true }]);
+
+  /* ---- Accepted tab ---- */
+  /* URGENT booked ASAP — two crew, night job so the $180 locked */
+  await mk({ ...RSL, category:'Alarm going off / beeping', req_type:'urgent', urgent:true, scc_amount:RA, scc_accepted:true, rate_type:'after hours',
+    answers:[{q:'Is it going off right now?',a:'Yes',urg:true},{q:'Is it the whole building?',a:'No',urg:false},{q:'Has the fire brigade shown up?',a:'Yes',urg:true}],
+    note:'function room alarm, brigade on site', avail_days:[], time_pref:'per day',
+    requester_role:'Building manager', customer_name:'Paddy Doyle', customer_phone:'0421 118 007' }, 2,
+    { status:'booked', assignees:['Noah','Jake'], booked_label:'ASAP' },
+    [{ dh:0.1, text:'seen' },
+     { dh:0.1, text:seenTxt('Paddy','urgent'), sms:true },
+     { dh:0.3, text:'accepted \u00b7 on it: Noah & Jake \u2014 ASAP' },
+     { dh:0.3, text:"SMS\u2192 Locked in, Paddy. The team's on it. We're getting there as soon as possible. That's the $" + RA + ' after-hours call-out.', sms:true }]);
+  /* SERVICE booked on a day the customer offered — Tom + a subbie, customer added a note after */
+  const gOffer = fut(1,'AM'), gOffer2 = fut(3,'Anytime');
+  await mk({ ...HV, category:'Exit light or door issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Is the light completely out?',a:'No',urg:false},{q:'More than one light?',a:'Yes',urg:false},{q:'Area used at night?',a:'Yes',urg:false}],
+    note:'four car park lights flickering', avail_days:[gOffer, gOffer2], time_pref:'per day',
+    customer_name:'Grace Field', customer_phone:'0404 218 664' }, 19,
+    /* booked onto a weekday morning \u2014 that time locked the normal rate */
+    { status:'booked', assignees:['Tom','Deano'], booked_label: lbl(gOffer), scc_amount:RN, rate_type:'normal hours' },
+    [{ dh:0.6, text:'seen' },
+     { dh:0.6, text:seenTxt('Grace','service'), sms:true },
+     { dh:1.5, text:'on it: Tom & Deano' },
+     { dh:1.6, text:'accepted \u00b7 booked ' + lbl(gOffer) + ' \u00b7 $' + RN + ' call-out locked' },
+     { dh:1.6, text:"SMS\u2192 Locked in, Grace. The team's on it. We'll be there " + whenWords(lbl(gOffer)) + ". That's the $" + RN + ' call-out. See you then.', sms:true },
+     { dh:4, text:'customer added \u00b7 \u201cuse the Bay St entrance, buzzer 04\u201d' }]);
+  /* QUOTE booked on a day the office set (quotes offer no days — the company picks) */
+  const qDay = fut(6,'');
+  await mk({ ...RSL, category:'New system / install', req_type:'quote', customer_email:'liam@suttonprojects.com.au',
+    answers:[], note:'mezzanine going into the storeroom, needs detection extended', avail_days:[], time_pref:'per day',
+    specs_have:'Yes', specs_files:[{ name:'mezzanine-drawings.pdf', type:'application/pdf', data:PDF }],
+    requester_role:'Building manager', customer_name:'Liam Sutton', customer_phone:'0417 903 415' }, 25,
+    { status:'booked', assignees:['Jake'], booked_label: lbl(qDay) },
+    [{ dh:2, text:'seen' },
+     { dh:2, text:seenTxt('Liam','quote'), sms:true },
+     { dh:3, text:'on it: Jake' },
+     { dh:3.2, text:'moved booking to ' + lbl(qDay) },
+     { dh:3.2, text:"SMS\u2192 Locked in, Liam. Jake's on it. We'll be there " + whenWords(lbl(qDay)) + '. See you then.', sms:true }]);
+  /* DONE — finished two days back */
+  await mk({ ...HV, category:'Hydrant / hose reel issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[], note:'hose reel by the pool won\u2019t rewind', avail_days:[], time_pref:'per day',
+    customer_name:'Rosa Marino', customer_phone:'0428 771 340' }, 118,
+    { status:'done', assignees:['Tom'], done_at: hrs(49), booked_label:'Tue 25 Aug', scc_amount:RN, rate_type:'normal hours' },
+    [{ dh:28, text:'seen' },
+     { dh:28, text:seenTxt('Rosa','service'), sms:true },
+     { dh:30, text:'on it: Tom' },
+     { dh:30, text:'accepted \u00b7 booked Tue 25 Aug \u00b7 $' + RN + ' call-out locked' },
+     { dh:30, text:"SMS\u2192 Locked in, Rosa. Tom's on it. We'll be there Tuesday 25 Aug. That's the $" + RN + ' call-out. See you then.', sms:true },
+     { dh:69, text:'done \u00b7 customer notified' },
+     { dh:69, text:"SMS\u2192 All done. Tom sorted it. If anything's not right, call us anytime.", sms:true }]);
+  /* DECLINED — on record, tucked away at the bottom */
+  await mk({ building_code:'general', building_name:'Corrimal Works, 18 Foundry Ln', category:'New system / install', req_type:'quote', customer_email:'v.sharma@corrimalworks.com.au',
+    answers:[], urgent:false, note:'full system for a new warehouse build', avail_days:[], time_pref:'per day',
+    specs_have:'No', requester_role:'Owner', customer_name:'Viktor Sharma', customer_phone:'0466 209 118' }, 90,
+    { status:'declined', assignees:['Noah'], declined_reason:"that's construction work \u2014 we're maintenance" },
+    [{ dh:2, text:'seen' },
+     { dh:2, text:seenTxt('Viktor','quote'), sms:true },
+     { dh:3, text:"declined \u2014 that's construction work \u2014 we're maintenance" },
+     { dh:3, text:"SMS\u2192 Sorry Viktor, we can't take this one. That's construction work, we're maintenance. Give us a call if you need a hand.", sms:true }]);
+}
+
+/* ---------- the urgent ping (2026-08-31, top of the V2 list) ---------- */
+/* The wait clock only worked if someone happened to be looking at the list. This
+   makes the list grab you: an urgent landing sets off a noise and a notification on
+   every device that has the app open, and keeps going every few minutes while nobody
+   has picked it up. The written half — the words the on-call person would be sent —
+   goes on the request's record the moment it lands (store.js and schema.sql).
+   HONEST LIMIT, worth saying out loud: this cannot reach a phone with the app shut.
+   That needs a sender (a Supabase function plus an SMS provider), and on an iPhone
+   the app has to be added to the home screen before notifications work at all.
+   Alerts are per device and off until someone turns them on, because a browser will
+   not make a noise or ask for notifications without being tapped first. */
+const PING_MS = ((C.URGENT_PING && C.URGENT_PING.repeatMins) || 0) * 60000;
+let pingKnown = null;      /* ids already shouted about. null = first load, don't shout at old ones */
+const pingAt = {};         /* id -> when we last shouted about it */
+let pingAudio = null;
+
+function alertsOn(){ try { return localStorage.getItem('reqapp_alerts') === 'on'; } catch(e){ return false; } }
+function renderAlertBtn(){
+  const b = document.getElementById('alertBtn');
+  const on = alertsOn();
+  b.className = 'alertbtn' + (on ? ' on' : '');
+  const blocked = (typeof Notification !== 'undefined' && Notification.permission === 'denied');
+  b.title = on
+    ? (blocked ? 'Sound on. Notifications are blocked for this site in the browser settings.' : 'Urgent alerts are on for this device')
+    : 'Turn on urgent alerts for this device';
+  b.setAttribute('aria-label', b.title);
+}
+function beep(){
+  try {
+    if(!pingAudio) pingAudio = new (window.AudioContext || window.webkitAudioContext)();
+    if(pingAudio.state === 'suspended') pingAudio.resume();
+    const t0 = pingAudio.currentTime;
+    [0, 0.28].forEach(off => {
+      const o = pingAudio.createOscillator(), g = pingAudio.createGain();
+      o.type = 'square'; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, t0 + off);
+      g.gain.exponentialRampToValueAtTime(0.25, t0 + off + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + off + 0.22);
+      o.connect(g); g.connect(pingAudio.destination);
+      o.start(t0 + off); o.stop(t0 + off + 0.24);
+    });
+  } catch(e){}
+}
+/* the tab title carries the count even with alerts off — a silent device still shows it */
+function pingTitle(n){ document.title = n ? '(' + n + ') URGENT · Requests' : 'Requests'; }
+function shout(r, fresh){
+  if(!alertsOn()) return;
+  beep();
+  if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+    try {
+      const n = new Notification(fresh ? 'Urgent request' : 'Urgent — still nobody on it', {
+        body: (r.building_name || '') + ' · ' + (r.category || '') + '\n' + firstName(r) + ' · ' + (r.customer_phone || ''),
+        tag: 'urgent-' + r.id, renotify: true
+      });
+      n.onclick = () => { window.focus(); openDetail(r.id); n.close(); };
+    } catch(e){}
+  }
+}
+function pingCheck(list){
+  const ids = list.map(r => r.id);
+  if(pingKnown === null){
+    /* opening the app must not set off an alarm for something that landed yesterday.
+       The clock starts now, so anything still sitting here re-pings on the normal repeat. */
+    pingKnown = new Set(ids); const t = Date.now(); ids.forEach(id => { pingAt[id] = t; });
+    pingTitle(list.length); return;
+  }
+  const now = Date.now();
+  list.forEach(r => {
+    const fresh = !pingKnown.has(r.id);
+    const due = PING_MS > 0 && (now - (pingAt[r.id] || 0)) >= PING_MS;
+    if(fresh || due){ shout(r, fresh); pingAt[r.id] = now; pingKnown.add(r.id); }
+  });
+  /* picked up, booked, done or declined — it stops being the thing we shout about */
+  Object.keys(pingAt).forEach(id => { if(ids.indexOf(id) === -1){ delete pingAt[id]; pingKnown.delete(id); } });
+  pingTitle(list.length);
+}
+document.getElementById('alertBtn').onclick = async () => {
+  if(alertsOn()){ try { localStorage.setItem('reqapp_alerts','off'); } catch(e){} renderAlertBtn(); return; }
+  try { localStorage.setItem('reqapp_alerts','on'); } catch(e){}
+  if(typeof Notification !== 'undefined' && Notification.permission === 'default'){
+    try { await Notification.requestPermission(); } catch(e){}
+  }
+  renderAlertBtn();
+  beep();   /* so whoever turned it on hears what they're listening for */
+};
+renderAlertBtn();
+
+/* ---------- auth + boot ---------- */
+async function boot(){
+  const user = await Store.getUser();
+  if(!user){ showView('loginView'); return; }
+  showView('listView');
+  await refreshList();
+  Store.onChange(() => { refreshList(); });
+  /* keep the aging labels fresh */
+  setInterval(refreshList, 60000);
+}
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  if(!email){ return; }
+  const res = await Store.signIn(email);
+  document.getElementById('loginMsg').textContent = res.ok
+    ? 'Check your email — tap the link on this device and you\'re in.'
+    : 'That didn\'t work — check the email address and try again.';
+};
+boot();
+</script>
+</body>
+</html>

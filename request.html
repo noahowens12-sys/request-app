@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Report an issue</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <div id="demoBanner" class="demobanner" style="display:none">Test mode — nothing here is public, data stays on this device</div>
+
+  <!-- FORM -->
+  <div id="formView">
+    <div class="navhead">
+      <div class="brandrow"><div class="logodot" id="brandDot">N</div><div class="brandname" id="brandName">—</div></div>
+      <div class="largetitle" id="pageTitle">What can we do for you?</div>
+      <div class="lede" id="siteLede">—</div>
+    </div>
+    <div class="pagepad" style="padding-top:4px">
+      <div class="typetiles" id="typeList"></div>
+      <div class="urgnote" id="urgNoteTop" style="display:none">If anyone's in danger, call <b>000</b> first.</div>
+      <div class="seclabel" id="whatLabel" style="display:none">What's wrong?</div>
+      <div class="tiles" id="tiles" style="display:none">
+        <button class="tile" data-req="Alarm going off / beeping"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M12 3.5a5.8 5.8 0 0 0-5.8 5.8v3c0 .7-.2 1.3-.6 1.9L4.3 16h15.4l-1.3-1.8a3.3 3.3 0 0 1-.6-1.9v-3A5.8 5.8 0 0 0 12 3.5z"/><path d="M9.9 19a2.2 2.2 0 0 0 4.2 0"/></svg>
+        </span><span class="tlb">Alarm</span></button>
+        <button class="tile" data-req="Extinguisher issue"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="9" y="8" width="6.4" height="12" rx="2.8"/><path d="M12.2 8V5.8"/><path d="M10 4.5h4.4"/><path d="M9.2 9.5C7 9.3 5.8 8 5.6 6"/><path d="M14.4 4.5l3.2-1v2l-3.2-1z"/></svg>
+        </span><span class="tlb">Extinguisher</span></button>
+        <button class="tile" data-req="Exit light or door issue"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="2.5" y="5.8" width="14" height="12.4" rx="1.3"/><circle cx="10.76" cy="9.02" r="0.95" fill="currentColor" stroke="none"/><path d="M10.44 10.38l-.72 2.48"/><path d="M10.32 10.82l1.84.84"/><path d="M10.32 10.82l-1.68.44"/><path d="M9.72 12.86l1.84 1.08-.48 2"/><path d="M9.72 12.86l-1.36 1.6-1.52.48"/><path d="M18.4 12h3.1"/><path d="M20.1 10.45l1.55 1.55-1.55 1.55"/></svg>
+        </span><span class="tlb">Exit/emergency light</span></button>
+        <button class="tile" data-req="Sprinkler / pump / leak"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M12 3.8S6.8 10 6.8 13.9a5.2 5.2 0 0 0 10.4 0C17.2 10 12 3.8 12 3.8z"/><path d="M9.5 14.2a2.6 2.6 0 0 0 2.3 2.6"/></svg>
+        </span><span class="tlb">Leak</span></button>
+        <button class="tile" data-req="Hydrant / hose reel issue"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M12 2.8v1"/><path d="M8 8a4 4 0 0 1 8 0"/><path d="M6.6 8h10.8"/><rect x="8.8" y="8" width="6.4" height="9.6"/><circle cx="7.3" cy="12.4" r="1.2"/><circle cx="16.7" cy="12.4" r="1.2"/><path d="M7 19.6h10"/></svg>
+        </span><span class="tlb">Hydrant</span></button>
+        <button class="tile" data-req="Fire door / passive fire"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="4.5" y="4" width="9.5" height="16" rx="1.2"/><path d="M9.3 8.9c.15 1.1-.4 1.85-1 2.5-.25-.35-.45-.75-.55-1.2-.8.75-1.35 1.6-1.35 2.55a2.9 2.9 0 0 0 5.8 0c0-2.05-1.75-3.3-2.9-3.85z"/><path d="M16 12h4.5"/><path d="M18.5 9.8l2.2 2.2-2.2 2.2"/></svg>
+        </span><span class="tlb">Fire door</span></button>
+        <button class="tile" data-req="Smoke alarm issue"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M4.2 9.6h15.6"/><path d="M6.6 9.6a5.4 5.4 0 0 0 10.8 0"/><circle cx="12" cy="12.4" r="1" fill="currentColor" stroke="none"/></svg>
+        </span><span class="tlb">Smoke alarm</span></button>
+        <!-- quote-only tiles (Dad 2026-08-25: "quotes are usually bigger jobs") — job-sized
+             things people price, not faults. syncCats hides them on every other type. -->
+        <button class="tile" data-req="New system / install"><span class="ic">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8.2v7.6"/><path d="M8.2 12h7.6"/></svg>
+        </span><span class="tlb">New install</span></button>
+        <button class="tile" data-req="Upgrade or replace what's there"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M6 12a6 6 0 0 1 10.2-4.2"/><path d="M16.6 4.6v3.4h-3.4"/><path d="M18 12a6 6 0 0 1-10.2 4.2"/><path d="M7.4 19.4V16h3.4"/></svg>
+        </span><span class="tlb">Upgrade / replace</span></button>
+        <button class="tile" data-req="Defect / repair from a report"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="5.5" y="4.4" width="13" height="16" rx="2"/><rect x="9.6" y="2.9" width="4.8" height="3" rx="1"/><path d="M12 9.8v4"/><circle cx="12" cy="16.9" r=".95" fill="currentColor" stroke="none"/></svg>
+        </span><span class="tlb">Defects</span></button>
+        <button class="tile" data-req="Regular testing and maintenance"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="4.5" y="5.5" width="15" height="14.5" rx="2"/><path d="M8 3.5v3"/><path d="M16 3.5v3"/><path d="M4.5 9.5h15"/><path d="M9.3 14.7l2 2 3.4-3.6"/></svg>
+        </span><span class="tlb">Testing / maintenance</span></button>
+        <button class="tile" data-req="Evacuation diagrams / training"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M4.5 6.3 9.5 4l5 2.3 5-2.3v13.4l-5 2.3-5-2.3-5 2.3V6.3z"/><path d="M9.5 4v13.4"/><path d="M14.5 6.3v13.4"/></svg>
+        </span><span class="tlb">Evac diagrams</span></button>
+        <button class="tile" data-req="Certificate / paperwork needed"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="5" y="3.8" width="14" height="16.4" rx="2"/><path d="M8.5 8.5h7"/><path d="M8.5 11.8h7"/><circle cx="12" cy="16.2" r="1.7"/></svg>
+        </span><span class="tlb">Certification / AFSS</span></button>
+        <button class="tile" data-req="Something else"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M21 11.8a8.6 8.6 0 0 1-8.6 8.6c-1.5 0-2.9-.4-4.1-1.1L4 20.2l.9-4A8.6 8.6 0 1 1 21 11.8z"/><circle cx="8.6" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12.4" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="16.2" cy="12" r=".95" fill="currentColor" stroke="none"/></svg>
+        </span><span class="tlb">Other</span></button>
+      </div>
+      <div id="qWrap"></div>
+      <div id="specsWrap" style="display:none">
+        <div class="qrow" id="specsRow">
+          <div class="qtext">Do you have any plans or drawings of the fire system?</div>
+          <div class="ynrow" id="specsYn"></div>
+        </div>
+        <div class="specattach" id="specsAttach" style="display:none">
+          <button class="specbtn" id="specsBtn" type="button"><svg viewBox="0 0 24 24"><path d="M21.2 11.1l-8.9 8.9a5.6 5.6 0 0 1-7.9-7.9l8.9-8.9a3.7 3.7 0 0 1 5.3 5.3l-8.9 8.9a1.9 1.9 0 0 1-2.6-2.6l8.2-8.2"/></svg>Attach them — PDF or photo</button>
+          <input type="file" id="specsFile" accept="image/*,.pdf,application/pdf" multiple style="display:none">
+          <div class="specfiles" id="specsFiles" style="display:none"></div>
+          <div class="specerr" id="specsErr" style="display:none"></div>
+        </div>
+      </div>
+      <div class="urgnote" id="urgNote" style="display:none">If anyone's in danger, call <b>000</b> first.</div>
+      <div class="notelabel" id="noteLabel" style="display:none">What's going on?</div>
+      <div class="notewrap" id="noteWrap" style="display:none">
+        <input id="noteInput" placeholder="eg. what, and where">
+        <button class="camerabtn" type="button" id="camBtn"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="2.6"/><path d="M8.7 7l1.3-2.2h4l1.3 2.2"/><circle cx="12" cy="13" r="3.4"/></svg></button>
+        <input type="file" id="camFile" accept="image/*,.pdf,application/pdf" multiple style="display:none">
+      </div>
+      <div class="shots" id="photoStrip" style="display:none"></div>
+      <div id="rest" style="display:none">
+      <div id="calSection">
+      <div class="seclabel"><span id="whenLabel">When can we start?</span> <span class="whenopt">(choose multiple)</span></div>
+      <div class="cal">
+        <div class="calhead">
+          <span class="mlabel" id="calLabel"></span>
+          <div class="calnav"><button id="calPrev" type="button">‹</button><button id="calNext" type="button">›</button></div>
+        </div>
+        <div class="caldow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+        <div class="calgrid" id="calGrid"></div>
+        <div id="dayPrefs"></div>
+      </div>
+      </div><!-- /calSection -->
+      <div class="grouped">
+        <div class="grow"><span class="gl">Site</span><span class="gv" id="siteName" style="display:none">—</span><input class="ginput" id="siteInput" placeholder="Building name or address" style="display:none"></div>
+        <div class="grow"><span class="gl">Name</span><input class="ginput" id="fName" placeholder="First and last name" autocomplete="name"></div>
+        <div class="grow"><span class="gl">Mobile</span><input class="ginput" id="fPhone" placeholder="Your number" inputmode="tel" autocomplete="tel"></div>
+        <!-- email (2026-08-28 review): quotes and certification paperwork go out by EMAIL
+             (Dad's own answers) — without this the office rings to ask where to send the
+             thing. Required on those paths, optional everywhere else. -->
+        <div class="grow"><span class="gl">Email</span><input class="ginput" id="fEmail" placeholder="Optional" type="email" inputmode="email" autocomplete="email"></div>
+        <div class="grow rolerow" id="roleRow"><span class="gl">Role</span><span class="gv unset" id="roleVal">Choose</span><svg class="gchev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg><select id="roleSel" class="selcover"></select></div>
+      </div>
+      <div class="feecard" id="feeCard" style="display:none">
+        <div class="feerow">
+          <span class="feecol"><b id="feeTitle">Service call cost</b><span class="feesub" id="feeSub">Covers the visit. Extra work is quoted or charged on the day.</span></span>
+          <span class="feeamt" id="feeAmt">—</span>
+        </div>
+        <div class="feerates" id="feeRates" style="display:none"></div>
+        <button class="feebtn" id="feeAccept" type="button"><span id="feeLbl">Accept the call-out cost</span><span class="feering" id="feeRing"></span></button>
+        <div class="feeterms" id="feeTerms" style="display:none">
+          <button class="termslink" id="termsLink" type="button">Our terms<svg class="tchev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+          <ul class="termslist" id="termsList" style="display:none"></ul>
+        </div>
+      </div>
+      <div class="formerr" id="formErr" style="display:none"></div>
+      <button class="sendbtn" id="sendBtn" type="button">Send<svg class="sarrow" viewBox="0 0 24 24"><path d="M4.5 12h14"/><path d="M12.5 6l6 6-6 6"/></svg></button>
+      <!-- one line of trust (2026-08-28 review): the form takes names, numbers and photos
+           of someone's building — say plainly what they're for. Not legally required at
+           Astute's size (OAIC small-business exemption), just decent. -->
+      <div class="privline">We only use this to handle your request.</div>
+      <a class="callbtn" id="callBtn" href="#" style="display:none"><svg viewBox="0 0 24 24"><path d="M6.8 3.8h2.6l1.5 4-2 1.5a13.6 13.6 0 0 0 5.8 5.8l1.5-2 4 1.5v2.6c0 1.3-1 2.3-2.3 2.2C10.6 18.8 5.2 13.4 4.6 6.1c-.1-1.3.9-2.3 2.2-2.3z"/></svg><span id="callBtnText">Call us</span></a>
+      </div><!-- /rest -->
+    </div>
+  </div>
+
+  <!-- RECEIPT -->
+  <div id="receiptView" style="display:none">
+    <div class="receipt">
+      <div class="tickwrap"><div class="tickring"></div><div class="bigtick">✓</div></div>
+      <h2 id="rcptTitle">Got it.</h2>
+      <p id="rcptSub">We'll confirm shortly. Updates go to your phone.</p>
+      <div class="refchip" id="rcptRef">—</div>
+      <div class="rcptmore">
+        <button class="morelink" id="moreLink" type="button">Forgot something?</button>
+        <div id="moreBox" style="display:none">
+          <textarea id="moreText" rows="1" placeholder="eg. the gate code is 4451"
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+          <button class="morebtn" id="moreSend" type="button">Add it</button>
+        </div>
+        <div class="moredone" id="moreDone" style="display:none">Added ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- day time sheet — same confirm-box pattern as the company side -->
+  <div class="sheetwrap" id="dayWrap" style="display:none">
+    <div class="sheetdim" id="dayDim"></div>
+    <div class="sheet">
+      <b id="dayTitle">—</b>
+      <div class="tprow" id="dayOpts" style="margin-top:16px"></div>
+      <div class="tplinks"><button class="tplink" id="dayXt" type="button">Exact times…</button></div>
+      <div class="tpslots" id="daySlots" style="display:none"></div>
+      <div class="sheetbtns" style="margin-top:14px">
+        <button class="actbtn ghost" id="dayNo" type="button">Go back</button>
+        <button class="actbtn acc" id="dayYes" type="button">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="store.js"></script>
+<script>
+const C = window.APP_CONFIG;
+/* logo if the company has one, coloured initial square if not */
+const bd = document.getElementById('brandDot');
+if(C.COMPANY_LOGO){ bd.classList.add('haslogo'); bd.innerHTML = C.COMPANY_LOGO; }
+else bd.textContent = C.COMPANY_INITIAL;
+document.getElementById('brandName').textContent = C.COMPANY_NAME;
+if (C.COMPANY_PHONE) {
+  const cb = document.getElementById('callBtn');
+  /* no number on show — just the icon and Call us; tapping dials */
+  cb.href = 'tel:' + C.COMPANY_PHONE.replace(/[^\d+]/g, '');
+  cb.style.display = 'flex';
+}
+if(window.IS_DEMO) document.getElementById('demoBanner').style.display = 'block';
+
+/* which building is this link for?
+   ?b=harbourview  -> building link (QR on the panel): site locked in
+   no ?b at all    -> the GENERAL link (missed-call text, website): they type the site */
+const params = new URLSearchParams(location.search);
+const bcode = params.get('b') || '';
+let building = null;
+(async () => {
+  building = bcode ? await Store.getBuilding(bcode) : null;
+  if(building){
+    document.getElementById('siteLede').textContent = building.name;
+    document.getElementById('siteName').textContent = building.name;
+    document.getElementById('siteName').style.display = '';
+  } else {
+    document.getElementById('siteLede').textContent = '';
+    document.getElementById('siteInput').style.display = '';
+  }
+})();
+
+/* request type — Dad's SCC: the money question comes before the what's-wrong question.
+   Type only changes three things: the money, the urgency, and the words. Same flow after.
+   Same tile language as the what's-wrong screen — one visual voice all the way down. */
+const RATES = (C.RATES && C.RATES.normal && C.RATES.normal.amount != null) ? C.RATES : null;
+/* Which rate applies right now — the clock decides, not the customer (Dad, 2026-08-20).
+   Weekends and public holidays with no figure set yet fall back to after hours. */
+function currentRate(){
+  if(!RATES) return null;
+  const d = new Date();
+  const after = RATES.afterHours || RATES.normal;
+  const or = r => (r && r.amount != null) ? r : after;   /* unset slot → after hours */
+  const ymd = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  if((RATES.publicHolidays || []).includes(ymd)) return or(RATES.publicHoliday);
+  if(d.getDay() === 6) return or(RATES.saturday);
+  if(d.getDay() === 0) return or(RATES.sunday);
+  const nh = RATES.normalHours || { days: [1,2,3,4,5], start: '08:00', end: '16:00' };
+  const toMin = s => { const p = String(s).split(':'); return (+p[0]) * 60 + (+p[1] || 0); };
+  const mins = d.getHours() * 60 + d.getMinutes();
+  const inHours = (nh.days || [1,2,3,4,5]).includes(d.getDay())
+    && mins >= toMin(nh.start) && mins < toMin(nh.end);
+  return inHours ? RATES.normal : after;
+}
+const TYPE_ICONS = {
+  service: '<svg viewBox="0 0 24 24"><path d="M20.2 6.3a5 5 0 0 1-6.9 6L7 18.6a2.1 2.1 0 0 1-3-3l6.3-6.3a5 5 0 0 1 6-6.9l-3 3 .6 2.7 2.7.6 3-3z"/></svg>',
+  quote:   '<svg viewBox="0 0 24 24"><path d="M12.6 3.5h7.9v7.9l-8.6 8.6a2 2 0 0 1-2.8 0l-5.1-5.1a2 2 0 0 1 0-2.8l8.6-8.6z"/><circle cx="16.3" cy="7.7" r="1.4"/></svg>',
+  urgent:  '<svg viewBox="0 0 24 24"><path d="M12 4.2 21.2 19.2H2.8L12 4.2z"/><path d="M12 10.2v3.8"/><path d="M12 16.6v.05"/></svg>',
+  other:   '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><circle cx="8.4" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="15.6" cy="12" r=".95" fill="currentColor" stroke="none"/></svg>'
+};
+/* Which of the six what's-wrong tiles make sense for each request type.
+   Paperwork can't be an emergency and an exit light out isn't one either, so
+   Urgent drops both. Everything else shows all six. Edit these lists to change
+   what a customer can pick — nothing else needs touching. */
+const ALL_CATS = [
+  'Alarm going off / beeping',
+  'Extinguisher issue',
+  'Exit light or door issue',
+  'Sprinkler / pump / leak',
+  'Hydrant / hose reel issue',
+  'Fire door / passive fire',
+  'Smoke alarm issue',
+  'Defect / repair from a report',
+  'Evacuation diagrams / training',
+  'Certificate / paperwork needed',
+  'Something else'
+];
+/* Urgent cut to three — Dad's call (2026-08-25): the only real emergency is an
+   alarm from the fire panel (the panel monitors hydrants, pumps, smoke detection
+   and EWIS/OWS — any alarm anywhere goes through it and the brigade attends), plus
+   a leak. Extinguishers and hydrants came out. */
+const URGENT_CATS = [
+  'Alarm going off / beeping',
+  'Sprinkler / pump / leak',
+  'Something else'
+];
+/* Quotes are bigger jobs, not faults (Dad 2026-08-25: "quotes are usually bigger
+   jobs not necessarily smaller stuff like alarms or exit lights"). So the quote
+   path gets job-sized tiles — the things fire companies actually price: installs,
+   upgrades, the defect list from a report, the testing contract, certification.
+   Checked against real fire company service menus before building (2026-08-28). */
+const QUOTE_CATS = [
+  'New system / install',
+  "Upgrade or replace what's there",
+  'Defect / repair from a report',
+  'Regular testing and maintenance',
+  'Certificate / paperwork needed',
+  'Something else'
+];
+const TYPES = [
+  { key:'service', label:'Service call', sub:'Come and fix it', col:'blue', fee:true,
+    ask:"What's wrong?",            when:'When can we start?',        cats:ALL_CATS,
+    feeTitle:'Service call cost' },
+  { key:'quote',   label:'Quote', sub:'Price it first', col:'purple', fee:false,
+    ask:'What do you need priced?', when:'When can we come and look?', cats:QUOTE_CATS },
+  /* "It can't wait" describes their situation — the old "We come ASAP" promised our
+     response before any human had accepted the job (Noah 2026-08-17) */
+  { key:'urgent',  label:'Urgent', sub:"It can't wait", col:'red', fee:true, hot:true,
+    ask:"What's wrong?",            when:'When can we start?',        cats:URGENT_CATS,
+    feeTitle:'Call-out cost' },
+  /* was "Other" — swapped with the tile (Noah 2026-08-28): Dad wants the last
+     what's-wrong tile called Other, and two Others meaning different things is
+     worse. The type key stays 'other' — only the words move. */
+  { key:'other',   label:'Something else', sub:"We'll text you back", col:'ink', fee:false,
+    ask:"What's it about?",         when:'When suits you?',           cats:ALL_CATS }
+];
+let reqType = null, typeOpen = true, sccAccepted = false, acceptedRate = null, acceptedHourly = null;
+function feeApplies(){ return !!(RATES && (reqType === 'service' || reqType === 'urgent')); }
+function buildTypes(){
+  const wrap = document.getElementById('typeList'); wrap.innerHTML = '';
+  /* picked + closed → the other three get out of the way; tap the row to bring them back */
+  if(reqType && !typeOpen){
+    wrap.classList.add('collapsed');
+    const t = TYPES.find(x => x.key === reqType);
+    const b = document.createElement('button'); b.type = 'button';
+    b.className = 'typesel c-' + t.col + (t.hot ? ' hot' : '');
+    /* no cost pill here — the fee gets its moment at the Accept card before send */
+    b.innerHTML = `<span class="ic">${TYPE_ICONS[t.key]}</span><span class="tlb">${t.label}</span><span class="tchange">Change</span>`;
+    b.onclick = () => { typeOpen = true; collapseBelow(); buildTypes(); };
+    wrap.appendChild(b);
+    return;
+  }
+  wrap.classList.remove('collapsed');
+  TYPES.forEach(t => {
+    const b = document.createElement('button'); b.type = 'button';
+    /* no stale highlight when the list reopens (Noah 2026-08-17) — the form below is
+       folded, so the question is being asked fresh. The pick itself survives: tapping
+       the same row carries on exactly where they left off. */
+    b.className = 'ttile c-' + t.col + (t.hot ? ' hot' : '');
+    /* no cost pill on the tiles (Noah 2026-08-17, reversing 2026-08-13) — the price
+       gets its one moment at the Accept card before send, where it has to be read */
+    b.innerHTML = `<span class="ic">${TYPE_ICONS[t.key]}</span><span class="tlb">${t.label}</span><span class="tsub">${t.sub}</span>`;
+    b.onclick = () => pickType(t.key);
+    wrap.appendChild(b);
+  });
+}
+/* hide the tiles that don't belong to this type; if the one already picked
+   just disappeared, wind the form back so nothing stale is left behind */
+function syncCats(){
+  const t = TYPES.find(x => x.key === reqType);
+  if(!t) return;
+  const allow = t.cats || ALL_CATS;
+  let lostPick = false;
+  document.querySelectorAll('.tile').forEach(el => {
+    const ok = allow.includes(el.dataset.req);
+    el.style.display = ok ? '' : 'none';
+    if(!ok && el.classList.contains('on')){ el.classList.remove('on'); lostPick = true; }
+  });
+  if(lostPick){
+    tileLabel = ''; qAnswers = [];
+    document.getElementById('qWrap').innerHTML = '';
+    document.getElementById('noteWrap').style.display = 'none';
+    document.getElementById('rest').classList.remove('showit');
+    photos = []; docs = []; drawPhotos();
+  }
+}
+/* Fold everything below the type picker out of sight. Nothing is destroyed —
+   pick the same type again and it all comes back exactly as it was. */
+function collapseBelow(){
+  ['whatLabel','tiles','qWrap','specsWrap','noteLabel','noteWrap','photoStrip','urgNote','urgNoteTop']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('rest').classList.remove('showit');
+}
+function pickType(key){
+  if(reqType !== key){
+    reqType = key;
+    sccAccepted = false; acceptedRate = null; acceptedHourly = null;   /* a new type means the cost gets accepted fresh */
+  }
+  typeOpen = false;                             /* picking tucks the other three away */
+  const t = TYPES.find(x => x.key === key);
+  /* "Other" means none of the boxes fit, so handing them the boxes next reads as a
+     broken form — and on this path the tiles change nothing anyway (no yes/no
+     questions, note already required, calendar already optional). Hide them and
+     file it under the bucket the office already has. */
+  const isOther = (key === 'other');
+  /* leaving Other: drop the category we filled in for them and put theirs back */
+  if(!isOther && autoCat){ autoCat = false; tileLabel = lastCatPick; }
+  /* the what's-wrong tiles pick up this type's colour — and so do the picked
+     calendar days (Noah 2026-08-25: solid black tiles felt disruptive; selected
+     days now wear the same soft-tint-and-ring look as a selected tile) */
+  document.getElementById('tiles').className = 'tiles scheme-' + t.col;
+  document.querySelector('.cal').className = 'cal scheme-' + t.col;
+  /* (the old quote-mode "Alarm → Detection" relabel is gone — quotes have their own
+     job-sized tiles now, so the alarm tile never shows there) */
+  document.getElementById('typeList').classList.remove('missing');
+  /* the question follows the type — nothing is "wrong" on a quote */
+  document.getElementById('whatLabel').textContent = t.ask;
+  document.getElementById('whatLabel').style.display = isOther ? 'none' : '';
+  document.getElementById('whenLabel').textContent = t.when;
+  document.getElementById('tiles').style.display = isOther ? 'none' : '';
+  document.getElementById('qWrap').style.display = '';
+  if(isOther){
+    autoCat = true;
+    tileLabel = OTHER_CAT;
+    document.querySelectorAll('.tile').forEach(x => x.classList.remove('on'));
+  } else {
+    syncCats();                     /* only the tiles that make sense for this type */
+    /* re-mark their tile — coming back from Other it lost its highlight */
+    document.querySelectorAll('.tile')
+      .forEach(x => x.classList.toggle('on', !!tileLabel && x.dataset.req === tileLabel));
+  }
+  if(tileLabel){
+    /* they came back to a type with a category already chosen — unfold it again */
+    buildQs(); syncNote();
+    document.getElementById('noteWrap').style.display = 'flex';
+    document.getElementById('rest').classList.add('showit');
+    if(photos.length) drawPhotos();
+  }
+  /* the opening question has been answered — it stops shouting */
+  document.querySelector('.navhead').classList.add('answered');
+  buildTypes(); syncUrgent(); syncSpecs(); syncEmail(); syncFee();
+}
+/* the normal-hours window in words, straight from config — "Mon–Fri, 8am–4pm".
+   Never hardcoded: change the window in config.js and every sentence follows. */
+function hoursWords(){
+  const nh = (RATES && RATES.normalHours) || { days: [1,2,3,4,5], start: '08:00', end: '16:00' };
+  const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const ds = (nh.days || [1,2,3,4,5]).slice().sort((a,b) => a - b);
+  let run = ds.length > 1;
+  for(let i = 1; i < ds.length; i++) if(ds[i] !== ds[i-1] + 1) run = false;
+  const dayTxt = run ? names[ds[0]] + '–' + names[ds[ds.length-1]] : ds.map(d => names[d]).join(', ');
+  const t = s => { const p = String(s).split(':'); const h = +p[0], m = +p[1] || 0;
+    return (((h + 11) % 12) + 1) + (m ? ':' + String(m).padStart(2, '0') : '') + (h >= 12 ? 'pm' : 'am'); };
+  return dayTxt + ', ' + t(nh.start) + '–' + t(nh.end);
+}
+/* what a service customer actually accepts — the whole rate card, not one figure
+   (Dad + Noah in the car, 2026-08-26). Snapshotted onto the request so the office
+   always knows exactly which figures were on the card they agreed to. */
+function rateCardSnap(){
+  const card = {
+    normal: RATES.normal.amount,
+    after: (RATES.afterHours || RATES.normal).amount,
+    window: hoursWords(),
+    label: RATES.label || ''
+  };
+  [['saturday','saturday'], ['sunday','sunday'], ['publicHoliday','public_holiday']].forEach(([k, out]) => {
+    if(RATES[k] && RATES[k].amount != null) card[out] = RATES[k].amount;
+  });
+  return card;
+}
+/* the fee card — Accept turns green, Send stays locked until it does.
+   SERVICE shows the whole rate card: the rate follows when the company attends,
+   not when the request is logged (Dad's rule, settled in the car 2026-08-26), so
+   no single figure exists yet — the office's booked time picks it, and the booking
+   text tells the customer the time and the rate together.
+   URGENT keeps the old shape: they want someone now, so now's rate shows and
+   freezes at Accept — the figure they agreed to can never quietly change. */
+function syncFee(){
+  const fc = document.getElementById('feeCard');
+  if(!feeApplies()){ fc.style.display = 'none'; return; }
+  fc.style.display = '';
+  /* an urgent job isn't a "service call" — the heading follows the type like everything else */
+  const ft = (TYPES.find(x => x.key === reqType) || {}).feeTitle;
+  if(ft) document.getElementById('feeTitle').textContent = ft;
+  const hr = (RATES.hourly && RATES.hourly.amount != null) ? RATES.hourly.amount : null;
+  const covers = hr
+    ? 'Covers the visit and the first hour. After that it’s $' + hr + ' an hour.'
+    : 'Covers the visit. Extra work is quoted or charged on the day.';
+  const amt = document.getElementById('feeAmt'), rl = document.getElementById('feeRates');
+  if(reqType === 'service'){
+    /* both rates on the card, figures from config — never hardcoded */
+    amt.style.display = 'none';
+    rl.style.display = '';
+    const gst = RATES.label ? '<small>' + RATES.label + '</small>' : '';
+    const rows = [
+      { a: RATES.normal.amount, t: 'if we attend ' + hoursWords() },
+      { a: (RATES.afterHours || RATES.normal).amount, t: 'outside those hours' }
+    ];
+    /* weekend / holiday slots only earn a row once their figure is actually set —
+       unset ones fall back to after hours, which "outside those hours" already covers */
+    [['saturday','Saturdays'], ['sunday','Sundays'], ['publicHoliday','public holidays']].forEach(([k, w]) => {
+      if(RATES[k] && RATES[k].amount != null) rows.push({ a: RATES[k].amount, t: w });
+    });
+    rl.innerHTML = rows.map(r => '<div class="raterow"><span class="rateamt">$' + r.a + gst + '</span><span class="ratetxt">' + r.t + '</span></div>').join('');
+    document.getElementById('feeSub').textContent =
+      covers + ' Which rate depends on when we come — we’ll text you the time and the rate when it’s booked in.';
+  } else {
+    amt.style.display = '';
+    rl.style.display = 'none';
+    const rate = acceptedRate || currentRate();
+    amt.innerHTML = '$' + rate.amount + '<small>' + (RATES.label || '') + '</small>';
+    /* outside normal hours the card says so — no surprise on the invoice */
+    document.getElementById('feeSub').textContent = (rate === RATES.normal)
+      ? covers
+      : 'That’s the ' + rate.name + ' rate. ' + covers;
+  }
+  const btn = document.getElementById('feeAccept');
+  btn.className = 'feebtn' + (sccAccepted ? ' on' : '');
+  document.getElementById('feeLbl').textContent = sccAccepted ? 'Accepted'
+    : (reqType === 'service' ? 'Accept the call-out rates' : 'Accept the call-out cost');
+  document.getElementById('feeRing').textContent = sccAccepted ? '✓' : '';
+}
+/* the company's terms — written in config, shown before the customer accepts */
+(function(){
+  const wrap = document.getElementById('feeTerms');
+  const lines = Array.isArray(C.TERMS) ? C.TERMS.filter(Boolean) : [];
+  if(!lines.length) return;
+  wrap.style.display = '';
+  const ul = document.getElementById('termsList');
+  ul.innerHTML = lines.map(t => '<li>' + t.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</li>').join('');
+  document.getElementById('termsLink').onclick = () => {
+    const open = ul.style.display !== 'none';
+    ul.style.display = open ? 'none' : '';
+    wrap.classList.toggle('open', !open);
+  };
+})();
+document.getElementById('feeAccept').onclick = () => {
+  sccAccepted = !sccAccepted;
+  /* urgent freezes the figure they said yes to. Service accepts the card —
+     the figure only exists once the office books a time. */
+  acceptedRate = (sccAccepted && reqType === 'urgent') ? currentRate() : null;
+  acceptedHourly = (sccAccepted && RATES.hourly && RATES.hourly.amount != null) ? RATES.hourly.amount : null;
+  document.getElementById('feeCard').classList.remove('missing');
+  syncFee();
+};
+
+/* yes/no question sets — the app asks, never instructs */
+const QSETS = {
+  "Alarm going off / beeping":[
+    {q:"Is it going off right now?",o:["Yes","No"],urg:"Yes"},
+    {q:"Is it the whole building?",o:["Yes","No"]},
+    {q:"Has the fire brigade shown up?",o:["Yes","No"],urg:"Yes"}],
+  "Extinguisher issue":[
+    {q:"Been used or discharged?",o:["Yes","No"]},
+    {q:"Damaged or leaking?",o:["Yes","No"]},
+    {q:"More than one affected?",o:["Yes","No"]}],
+  "Exit light or door issue":[
+    {q:"Is the light completely out?",o:["Yes","No"]},
+    {q:"More than one light?",o:["Yes","No"]},
+    {q:"Area used at night?",o:["Yes","No"]}],
+  "Sprinkler / pump / leak":[
+    {q:"Still leaking right now?",o:["Yes","No"],urg:"Yes"},
+    {q:"Causing flooding or damage?",o:["Yes","No"],urg:"Yes"},
+    {q:"Near any electrical gear?",o:["Yes","No"]}],
+  "Certificate / paperwork needed":[
+    /* dateWhen (2026-08-28 review): a Yes opens a date field. "Deadline coming up — Yes"
+       tells the office there IS a deadline; the AFSS game runs on WHEN (assessment
+       within 90 days before issue, late fines escalate weekly) — the date is the story. */
+    {q:"Deadline coming up?",o:["Yes","No"],dateWhen:"Yes",dateQ:"When's it due?"},
+    {q:"Is it for your AFSS?",o:["Yes","No"]},
+    {q:"Is someone chasing you for it?",o:["Yes","No"]}],
+  "Something else":[]
+};
+let tileLabel = "", qAnswers = [], dueDate = '';
+/* The category the office files an "Other" request under. Customer never sees the
+   string — the company side already labels this bucket "Other" and gives it the
+   speech-bubble icon, so nothing over there needs touching. */
+const OTHER_CAT = 'Something else';
+let autoCat = false;      /* true when we picked the category, not the customer */
+let lastCatPick = '';     /* their real tile choice, kept so switching back restores it */
+/* The yes/no sets are diagnostic — they tell the office what's happening right now
+   so they know whether to roll a truck. That only makes sense when something is
+   actually wrong. On a quote nothing is broken yet, and on "other" it isn't a job.
+   Asking "has the fire brigade shown up?" on a quote reads as a broken form. */
+function currentQs(){
+  if(reqType === 'quote' || reqType === 'other') return [];
+  return QSETS[tileLabel] || [];
+}
+/* paperwork doesn't need a site visit — no calendar for it.
+   "Something else" shows the calendar but doesn't require it (might not be a visit job). */
+const NO_VISIT = ["Certificate / paperwork needed"];
+const VISIT_OPTIONAL = ["Something else"];
+function needsVisit(){
+  /* on a quote the customer doesn't pick the date — the company does (Dad 2026-08-25).
+     No calendar, no offered days in the payload, nothing to validate. */
+  if(reqType === 'quote') return false;
+  return !NO_VISIT.includes(tileLabel);
+}
+/* a quote asks what they want priced; everything else asks where it is */
+/* With no yes/no questions there is nothing else describing the job — a quote
+   that says only "Alarm" is useless to the office. So the note stops being a
+   nice-to-have exactly when it becomes the only thing they've told us. */
+function noteRequired(){ return currentQs().length === 0; }
+function syncNote(){
+  /* no heading over the box — the example placeholder says what to write and how
+     much without spending words on either (Noah 2026-08-25: a header there is
+     clutter, the prompt in the box does the job). The one exception is Other:
+     with no tiles above it, the box is the whole form, so it keeps its heading. */
+  document.getElementById('noteLabel').style.display = (reqType === 'other') ? '' : 'none';
+  document.getElementById('noteInput').placeholder = noteEg();
+}
+function noteEg(){
+  /* quote tiles have their own examples now — fall back to a price-shaped prompt */
+  if(reqType === 'quote') return NOTE_EGS[tileLabel] || 'eg. what you need priced';
+  if(reqType === 'other') return 'eg. detector hanging off the ceiling';
+  return NOTE_EGS[tileLabel] || 'eg. what, and where';
+}
+function visitRequired(){
+  /* "Other" is a text-us-back request, not a booking — never force a day on it */
+  if(reqType === 'other') return false;
+  return needsVisit() && !VISIT_OPTIONAL.includes(tileLabel);
+}
+/* the note box's example asks the right question for what they picked */
+const NOTE_EGS = {
+  "Alarm going off / beeping": "eg. level 2, near the lifts",
+  "Extinguisher issue": "eg. near the kitchen",
+  "Exit light or door issue": "eg. level 1 stairwell",
+  "Sprinkler / pump / leak": "eg. back of house",
+  "Hydrant / hose reel issue": "eg. hose reel by the loading dock",
+  "Fire door / passive fire": "eg. level 3 stair door won't close",
+  "Smoke alarm issue": "eg. unit 12, chirping every minute",
+  "Defect / repair from a report": "eg. the defects from the May inspection",
+  "New system / install": "eg. new fit-out, needs full detection",
+  "Upgrade or replace what's there": "eg. old panel needs replacing",
+  "Regular testing and maintenance": "eg. annual testing, 14 units",
+  "Evacuation diagrams / training": "eg. updated diagrams for level 1",
+  "Certificate / paperwork needed": "eg. AFSS due soon",
+  "Something else": "eg. detector hanging off the ceiling"
+};
+/* urgent comes from two places now: the Urgent request type, or a danger answer */
+function answersUrgent(){
+  const set = currentQs();
+  return set.some((it, i) => it.urg && qAnswers[i] === it.urg);
+}
+function isUrgentNow(){ return reqType === 'urgent' || answersUrgent(); }
+function syncUrgent(){
+  const u = isUrgentNow();
+  /* the 000 line shows where the person is looking — the app never sits between a person and triple zero.
+     Urgent type picked → right under the type, first thing on screen.
+     Danger answer mid-form → next to the questions they just answered. */
+  document.getElementById('urgNoteTop').style.display = reqType === 'urgent' ? 'block' : 'none';
+  document.getElementById('urgNote').style.display = (u && reqType !== 'urgent') ? 'block' : 'none';
+  /* the send button joins the red, same as the type row, tiles and the 000 line */
+  document.getElementById('sendBtn').classList.toggle('urgent', u);
+  /* urgent jobs don't haggle over days — no calendar, we just come */
+  document.getElementById('calSection').style.display = (!u && needsVisit() && tileLabel) ? 'block' : 'none';
+}
+function buildQs(){
+  const wrap = document.getElementById('qWrap'); wrap.innerHTML = '';
+  const set = currentQs(); qAnswers = set.map(() => null);
+  dueDate = '';   /* a fresh question set forgets any date typed under the old one */
+  set.forEach((item, ix) => {
+    const r = document.createElement('div'); r.className = 'qrow'; r.style.animationDelay = (ix * .08) + 's';
+    const t = document.createElement('div'); t.className = 'qtext'; t.textContent = item.q;
+    const yn = document.createElement('div'); yn.className = 'ynrow';
+    /* a question can carry a follow-up date row (the AFSS deadline) — hidden until
+       the answer that makes it matter */
+    let dateRow = null;
+    if(item.dateWhen){
+      dateRow = document.createElement('div'); dateRow.className = 'qrow daterow'; dateRow.style.display = 'none';
+      const dt = document.createElement('div'); dt.className = 'qtext'; dt.textContent = item.dateQ || 'When?';
+      const di = document.createElement('input'); di.type = 'date'; di.className = 'datein';
+      const today = new Date();
+      di.min = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      di.onchange = () => { dueDate = di.value || ''; };
+      dateRow.appendChild(dt); dateRow.appendChild(di);
+    }
+    item.o.forEach(optLabel => {
+      const b = document.createElement('button'); b.className = 'ynbtn'; b.type = 'button'; b.textContent = optLabel;
+      b.onclick = () => {
+        [...yn.children].forEach(x => x.classList.remove('on')); b.classList.add('on'); qAnswers[ix] = optLabel;
+        r.classList.remove('missing');
+        if(dateRow){
+          const show = optLabel === item.dateWhen;
+          dateRow.style.display = show ? '' : 'none';
+          if(!show){ dueDate = ''; dateRow.querySelector('input').value = ''; }
+        }
+        syncUrgent();
+      };
+      yn.appendChild(b);
+    });
+    r.appendChild(t); r.appendChild(yn); wrap.appendChild(r);
+    if(dateRow) wrap.appendChild(dateRow);
+  });
+}
+document.querySelectorAll('.tile').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tile').forEach(x => x.classList.remove('on'));
+    t.classList.add('on'); tileLabel = t.dataset.req;
+    lastCatPick = tileLabel; autoCat = false;   /* their pick, not ours */
+    document.getElementById('noteWrap').style.display = 'flex';
+    syncNote();
+    document.getElementById('rest').classList.add('showit');
+    buildQs();
+    syncUrgent();
+    syncSpecs();
+    syncEmail();
+  };
+});
+buildTypes();
+
+/* calendar — real today, not a demo date */
+const NOW = new Date();
+const TODAY = { y: NOW.getFullYear(), m: NOW.getMonth(), d: NOW.getDate() };
+/* first month with a tappable day — on the month's last day that's next month (Noah 2026-08-31) */
+const CAL0 = (() => { let m = TODAY.m, y = TODAY.y;
+  if(TODAY.d >= new Date(TODAY.y, TODAY.m + 1, 0).getDate()){ if(m === 11){ m = 0; y++; } else m++; }
+  return { m, y }; })();
+let calM = CAL0.m, calY = CAL0.y;
+/* key "2026-7-6" -> {pref:'Anytime'|'AM'|'PM'|'custom', from:'10am', to:'2pm'} */
+const picked = new Map();
+/* How many days one request can carry. More days genuinely helps the office
+   schedule, so this isn't about scheduling room — every picked day brings its own
+   time window, and a request wearing eight of them is unreadable to whoever picks
+   it up. Four is the highest number that still means something: the working week
+   is five days, so a cap of five would let someone tick the lot. */
+const MAX_DAYS = 4;
+function lockedDayCount(){
+  let n = 0; for(const v of picked.values()) if(v.pref !== null) n++; return n;
+}
+function atDayCap(){ return lockedDayCount() >= MAX_DAYS; }
+/* Days this company works, straight from config. No list set = all seven open. */
+const WORK_DAYS = Array.isArray(C.WORKING_DAYS) ? C.WORKING_DAYS : [0,1,2,3,4,5,6];
+function worksOn(dow){ return WORK_DAYS.includes(dow); }
+const MN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DN = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+/* dim the column headings for the days this company doesn't work */
+(function markDowCols(){
+  const cols = document.querySelectorAll('.caldow span');
+  const order = [1,2,3,4,5,6,0];            /* the row runs MON…SUN */
+  cols.forEach((el, i) => { if(!worksOn(order[i])) el.classList.add('offcol'); });
+})();
+function drawCal(){
+  document.getElementById('calLabel').innerHTML = MN[calM] + ' <span class="yr">' + calY + '</span>';
+  document.getElementById('calPrev').disabled = (calY < CAL0.y || (calY === CAL0.y && calM <= CAL0.m));
+  const g = document.getElementById('calGrid'); g.innerHTML = '';
+  const first = new Date(calY, calM, 1).getDay();
+  const offset = (first + 6) % 7;
+  const dim = new Date(calY, calM + 1, 0).getDate();
+  for(let i = 0; i < offset; i++){ const b = document.createElement('button'); b.type='button'; b.className = 'calday blank'; g.appendChild(b); }
+  for(let d = 1; d <= dim; d++){
+    const b = document.createElement('button'); b.type='button'; b.className = 'calday'; b.textContent = d;
+    const key = calY + "-" + calM + "-" + d;
+    const isPast = (calY === TODAY.y && calM === TODAY.m && d <= TODAY.d)
+                || (calY < TODAY.y) || (calY === TODAY.y && calM < TODAY.m);
+    if(isPast) b.classList.add('past');
+    else if(!worksOn(new Date(calY, calM, d).getDay())) b.classList.add('off');
+    if(calY === TODAY.y && calM === TODAY.m && d === TODAY.d) b.classList.add('today');
+    if(picked.has(key)) b.classList.add('on');
+    /* full up — the days they haven't picked go quiet until one comes off */
+    else if(atDayCap() && !isPast && !b.classList.contains('off')) b.classList.add('full');
+    b.onclick = () => {
+      if(!picked.has(key) && atDayCap()) return;
+      openDaySheet(key);         /* picked or not, the sheet handles it */
+    };
+    g.appendChild(b);
+  }
+}
+document.getElementById('calPrev').onclick = () => { if(calM === 0){ calM = 11; calY--; } else calM--; drawCal(); };
+document.getElementById('calNext').onclick = () => { if(calM === 11){ calM = 0; calY++; } else calM++; drawCal(); };
+drawCal();
+function dayLabel(k){
+  const [y,m,d] = k.split('-').map(Number); const dt = new Date(y,m,d);
+  return DN[dt.getDay()] + " " + d + " " + MN[m].slice(0,3);
+}
+function sortedKeys(){
+  return [...picked.keys()].sort((a,b) => {
+    const [ya,ma,da] = a.split('-').map(Number), [yb,mb,db] = b.split('-').map(Number);
+    return new Date(ya,ma,da) - new Date(yb,mb,db);
+  });
+}
+
+/* tap a day → the time options come up as a sheet in the middle of the screen,
+   same pattern as the company side's confirm box: Go back / Confirm. Confirming
+   locks the day; it collapses to a tag under the calendar. */
+const TIMES_FROM = ['7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm'];
+const TIMES_TO   = ['9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm'];
+function prefLabel(st){
+  if(!st.pref || st.pref === 'Anytime') return 'anytime';
+  if(st.pref === 'AM') return 'morning';
+  if(st.pref === 'PM') return 'afternoon';
+  return st.pref; /* custom "10am–2pm" */
+}
+/* the sheet's working state — nothing lands in `picked` until Confirm */
+let sheetKey = null, sheetSel = 'Anytime', sheetFrom = '10am', sheetTo = '2pm', sheetScrollY = 0;
+function sheetIsCustom(){ return sheetSel !== 'Anytime' && sheetSel !== 'AM' && sheetSel !== 'PM'; }
+function drawSheetOpts(){
+  const row = document.getElementById('dayOpts'); row.innerHTML = '';
+  [['Anytime','Anytime'],['Morning','AM'],['Afternoon','PM']].forEach(([label, val]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tpopt';
+    if(sheetSel === val) b.classList.add('on');
+    b.textContent = label;
+    b.onclick = () => { sheetSel = val; document.getElementById('daySlots').style.display = 'none'; drawSheetOpts(); };
+    row.appendChild(b);
+  });
+}
+function drawSheetSlots(){
+  const slots = document.getElementById('daySlots'); slots.innerHTML = '';
+  const mk = (opts, cur, set) => {
+    const s = document.createElement('select'); s.className = 'tsel';
+    opts.forEach(o => { const op = document.createElement('option'); op.textContent = o; if(o === cur) op.selected = true; s.appendChild(op); });
+    s.onchange = () => { set(s.value); sheetSel = sheetFrom + '–' + sheetTo; drawSheetOpts(); };
+    return s;
+  };
+  const l1 = document.createElement('span'); l1.className = 'slotlbl'; l1.textContent = 'Between';
+  const l2 = document.createElement('span'); l2.className = 'slotlbl'; l2.textContent = 'and';
+  slots.appendChild(l1); slots.appendChild(mk(TIMES_FROM, sheetFrom, v => sheetFrom = v));
+  slots.appendChild(l2); slots.appendChild(mk(TIMES_TO, sheetTo, v => sheetTo = v));
+}
+function openDaySheet(key){
+  sheetKey = key;
+  const st = picked.get(key);
+  sheetSel = st ? st.pref : 'Anytime';
+  sheetFrom = st ? st.from : '10am';
+  sheetTo = st ? st.to : '2pm';
+  document.getElementById('dayTitle').textContent = dayLabel(key);
+  drawSheetOpts(); drawSheetSlots();
+  document.getElementById('daySlots').style.display = sheetIsCustom() ? 'flex' : 'none';
+  document.getElementById('dayWrap').style.display = 'flex';
+  /* freeze the page where it is — same trick as the company side, otherwise
+     the position:fixed lock snaps the scroll back to the top */
+  sheetScrollY = window.scrollY;
+  document.body.style.top = -sheetScrollY + 'px';
+  document.body.classList.add('modallock');
+}
+function closeDaySheet(){
+  sheetKey = null;
+  document.getElementById('dayWrap').style.display = 'none';
+  document.body.classList.remove('modallock');
+  document.body.style.top = '';
+  window.scrollTo(0, sheetScrollY);
+}
+document.getElementById('dayXt').onclick = () => {
+  const slots = document.getElementById('daySlots');
+  if(slots.style.display === 'none'){
+    sheetSel = sheetFrom + '–' + sheetTo;    /* opening it means "I want exact times" */
+    slots.style.display = 'flex'; drawSheetOpts();
+  } else {
+    sheetSel = 'Anytime'; slots.style.display = 'none'; drawSheetOpts();
+  }
+};
+document.getElementById('dayNo').onclick = closeDaySheet;
+document.getElementById('dayDim').onclick = closeDaySheet;
+document.getElementById('dayYes').onclick = () => {
+  if(!sheetKey) return;
+  picked.set(sheetKey, { pref: sheetIsCustom() ? sheetFrom + '–' + sheetTo : sheetSel, from: sheetFrom, to: sheetTo });
+  closeDaySheet();
+  document.querySelector('.cal').classList.remove('missing');
+  drawCal(); drawDayPrefs();
+};
+
+function drawDayPrefs(){
+  const wrap = document.getElementById('dayPrefs'); wrap.innerHTML = '';
+
+  /* quiet rows tucked into the bottom of the calendar card (Noah 2026-08-25 —
+     the black chips below the card read as noise). Tap a row to change the day,
+     the ✕ to take it off. */
+  const done = sortedKeys();
+  if(done.length){
+    const picks = document.createElement('div'); picks.className = 'picks';
+    done.forEach(k => {
+      const st = picked.get(k);
+      const t = document.createElement('button'); t.type = 'button'; t.className = 'pick';
+      t.innerHTML = '<span><b>' + dayLabel(k) + '</b><span class="pt">' + prefLabel(st) + '</span></span><span class="x">✕</span>';
+      t.onclick = (e) => {
+        if(e.target.classList.contains('x')){ picked.delete(k); drawCal(); drawDayPrefs(); }
+        else { openDaySheet(k); }
+      };
+      picks.appendChild(t);
+    });
+    wrap.appendChild(picks);
+  }
+
+  /* say why the rest of the calendar went quiet, rather than leaving them tapping */
+  if(atDayCap()){
+    const cap = document.createElement('div'); cap.className = 'daycap';
+    cap.textContent = "That's " + MAX_DAYS + " days, which is plenty to work with. Take one off if you'd rather a different one.";
+    wrap.appendChild(cap);
+  }
+}
+
+/* photos — opens the camera/library on a phone, compressed so they stay light.
+   More than one matters: a leak is three angles, not one. Capped so a request
+   can't get so heavy it fails to send on a bad signal in a basement.
+   PDFs come through the same button (Dad 2026-08-25: "When u attach photos can
+   u also attach pdfs?") — defect reports and old inspection reports ARE PDFs.
+   They ride in their own `docs` list so photos stay plain image strings and
+   nothing that already reads `photos` has to change. */
+const MAX_PHOTOS = 4;
+const MAX_DOCS = 3, MAX_DOC_BYTES = 4 * 1024 * 1024;
+let photos = [], docs = [];
+function docBytes(){ return docs.reduce((n, f) => n + (f.data ? f.data.length : 0), 0); }
+function attachFull(){ return photos.length >= MAX_PHOTOS && docs.length >= MAX_DOCS; }
+function drawPhotos(){
+  const strip = document.getElementById('photoStrip');
+  strip.innerHTML = '';
+  strip.style.display = (photos.length || docs.length) ? 'flex' : 'none';
+  photos.forEach((src, i) => {
+    const cell = document.createElement('div'); cell.className = 'shot';
+    const img = document.createElement('img'); img.src = src; img.alt = 'attached photo';
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'shotx'; x.textContent = '✕';
+    x.onclick = () => { photos.splice(i, 1); drawPhotos(); };
+    cell.appendChild(img); cell.appendChild(x); strip.appendChild(cell);
+  });
+  docs.forEach((f, i) => {
+    const chip = document.createElement('div'); chip.className = 'specchip';
+    const sp = document.createElement('span'); sp.textContent = f.name; chip.appendChild(sp);
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'chipx'; x.textContent = '✕';
+    x.onclick = () => { docs.splice(i, 1); drawPhotos(); };
+    chip.appendChild(x); strip.appendChild(chip);
+  });
+  /* the camera button says when there's no room left */
+  document.getElementById('camBtn').classList.toggle('full', attachFull());
+}
+document.getElementById('camBtn').onclick = () => {
+  if(attachFull()) return;
+  document.getElementById('camFile').click();
+};
+document.getElementById('camFile').onchange = (e) => {
+  [...(e.target.files || [])].forEach(f => {
+    if(f.type === 'application/pdf' || /\.pdf$/i.test(f.name)){
+      if(docs.length >= MAX_DOCS) return;
+      const fr = new FileReader();
+      fr.onload = () => {
+        /* size cap, not a squeeze — a PDF can't be recompressed in the browser */
+        if(docBytes() + fr.result.length > MAX_DOC_BYTES) return;
+        if(docs.length >= MAX_DOCS) return;
+        docs.push({ name: f.name, type: 'application/pdf', data: fr.result });
+        drawPhotos();
+      };
+      fr.readAsDataURL(f);
+    } else if(f.type && f.type.indexOf('image/') === 0){
+      if(photos.length >= MAX_PHOTOS) return;
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 1200;
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * scale); cv.height = Math.round(img.height * scale);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        if(photos.length < MAX_PHOTOS){ photos.push(cv.toDataURL('image/jpeg', .72)); drawPhotos(); }
+        URL.revokeObjectURL(img.src);
+      };
+      img.src = URL.createObjectURL(f);
+    }
+  });
+  e.target.value = '';           /* so picking the same file twice still fires */
+};
+
+/* email — required exactly where the office would EMAIL something back (2026-08-28
+   review): every quote (written quotes and small email quotes both go out by email,
+   Dad 2026-08-26) and the certification tile (the AFSS is paperwork someone sends).
+   Optional everywhere else, and the placeholder says which it is. */
+function emailRequired(){
+  return reqType === 'quote' || tileLabel === 'Certificate / paperwork needed';
+}
+function syncEmail(){
+  const el = document.getElementById('fEmail');
+  el.placeholder = emailRequired()
+    ? (reqType === 'quote' ? 'Where we send the quote' : 'Where we send the paperwork')
+    : 'Optional';
+}
+function emailLooksRight(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+
+/* who's asking — Dad 2026-08-25: "add the job description of person requesting work".
+   The list is the real NSW cast (checked 2026-08-26): building manager runs the
+   day-to-day upkeep, strata manager is the managing agent, property manager is the
+   rentals side, facilities manager is the commercial version, then owner and tenant.
+   One tap, required — who's asking changes who has authority and who pays. */
+const ROLES = ['Building manager', 'Strata manager', 'Property manager', 'Facilities manager', 'Owner', 'Tenant', 'Other'];
+let requesterRole = null;
+(function(){
+  /* a dropdown, not pills — seven pills in the card was an eye sore (Noah 2026-08-26).
+     The select itself is an invisible cover over the row, so tapping anywhere on it
+     opens the phone's own picker while the row keeps the card's look. */
+  const sel = document.getElementById('roleSel');
+  const ph = document.createElement('option');
+  ph.value = ''; ph.textContent = 'Choose'; ph.disabled = true; ph.selected = true; ph.hidden = true;
+  sel.appendChild(ph);
+  ROLES.forEach(lbl => {
+    const o = document.createElement('option'); o.value = lbl; o.textContent = lbl; sel.appendChild(o);
+  });
+  sel.onchange = () => {
+    requesterRole = sel.value || null;
+    const v = document.getElementById('roleVal');
+    v.textContent = sel.value || 'Choose';
+    v.classList.toggle('unset', !sel.value);
+    document.getElementById('roleRow').classList.remove('missing');
+  };
+})();
+
+/* quote specs/design — Dad 2026-08-25: "do u have any specifications or design of
+   the fire system that u want quoted." The one question a quote asks. Yes opens an
+   attach that takes PDFs as well as photos, because plans are PDFs. Everything is
+   capped at 4MB all up so demo mode (localStorage) can still swallow a request. */
+let specsHave = null, specsFiles = [];
+const SPECS_MAX_FILES = 3, SPECS_MAX_BYTES = 4 * 1024 * 1024;
+function specsBytes(){ return specsFiles.reduce((n, f) => n + (f.data ? f.data.length : 0), 0); }
+function syncSpecs(){
+  const on = (reqType === 'quote') && !!tileLabel;
+  document.getElementById('specsWrap').style.display = on ? '' : 'none';
+  document.getElementById('specsAttach').style.display = (on && specsHave === 'Yes') ? '' : 'none';
+}
+(function(){
+  const yn = document.getElementById('specsYn');
+  ['Yes', 'No'].forEach(lbl => {
+    const b = document.createElement('button'); b.className = 'ynbtn'; b.type = 'button'; b.textContent = lbl;
+    b.onclick = () => {
+      [...yn.children].forEach(x => x.classList.remove('on')); b.classList.add('on');
+      specsHave = lbl;
+      if(lbl === 'No'){ specsFiles = []; drawSpecs(); }   /* No means no — drop anything attached */
+      document.getElementById('specsRow').classList.remove('missing');
+      syncSpecs();
+    };
+    yn.appendChild(b);
+  });
+})();
+function specsSay(msg){
+  const el = document.getElementById('specsErr');
+  el.textContent = msg || ''; el.style.display = msg ? 'block' : 'none';
+}
+function drawSpecs(){
+  const box = document.getElementById('specsFiles'); box.innerHTML = '';
+  box.style.display = specsFiles.length ? 'flex' : 'none';
+  specsFiles.forEach((f, i) => {
+    const isImg = f.type && f.type.indexOf('image/') === 0;
+    const d = document.createElement('div'); d.className = isImg ? 'shot' : 'specchip';
+    if(isImg){
+      const img = document.createElement('img'); img.src = f.data; img.alt = f.name; d.appendChild(img);
+    } else {
+      const sp = document.createElement('span'); sp.textContent = f.name; d.appendChild(sp);
+    }
+    const x = document.createElement('button'); x.className = isImg ? 'shotx' : 'chipx';
+    x.type = 'button'; x.textContent = '✕';
+    x.onclick = () => { specsFiles.splice(i, 1); drawSpecs(); };
+    d.appendChild(x); box.appendChild(d);
+  });
+  document.getElementById('specsBtn').classList.toggle('full', specsFiles.length >= SPECS_MAX_FILES);
+}
+document.getElementById('specsBtn').onclick = () => {
+  if(specsFiles.length >= SPECS_MAX_FILES) return;
+  document.getElementById('specsFile').click();
+};
+document.getElementById('specsFile').onchange = (e) => {
+  specsSay('');
+  const files = [...(e.target.files || [])].slice(0, SPECS_MAX_FILES - specsFiles.length);
+  files.forEach(f => {
+    if(f.type === 'application/pdf' || /\.pdf$/i.test(f.name)){
+      const fr = new FileReader();
+      fr.onload = () => {
+        if(specsBytes() + fr.result.length > SPECS_MAX_BYTES){
+          specsSay("That file's too big to send here — answer Yes anyway and email it to us.");
+          return;
+        }
+        specsFiles.push({ name: f.name, type: 'application/pdf', data: fr.result });
+        drawSpecs();
+      };
+      fr.readAsDataURL(f);
+    } else if(f.type && f.type.indexOf('image/') === 0){
+      /* same squeeze as the photo strip — a phone shot of a plan doesn't need 12MP */
+      const img = new Image();
+      img.onload = () => {
+        const sc = Math.min(1, 1400 / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * sc); cv.height = Math.round(img.height * sc);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        specsFiles.push({ name: f.name, type: 'image/jpeg', data: cv.toDataURL('image/jpeg', .72) });
+        drawSpecs();
+      };
+      img.src = URL.createObjectURL(f);
+    }
+  });
+  e.target.value = '';               /* so picking the same file twice still fires */
+};
+
+/* The whole product is a text-back loop, so this one field decides whether it
+   works. Normalise first (+61 / 61 / spaces / brackets all become 0412345678),
+   then decide what we've got:
+     mobile   — texts will land
+     landline — the request is fine, but nobody can text them. Flagged on the
+                record so the office rings instead of wondering why it's quiet.
+     neither  — can't be a real number. Blocked: a request nobody can reach is
+                worse than no request, because the customer thinks it's handled. */
+function normalisePhone(raw){
+  let d = String(raw || '').replace(/[^\d+]/g, '');
+  if(d.startsWith('+61'))                      d = '0' + d.slice(3);
+  else if(d.startsWith('61') && d.length > 10) d = '0' + d.slice(2);
+  d = d.replace(/\D/g, '');
+  while(d.startsWith('00')) d = d.slice(1);
+  if(/^(\d)\1+$/.test(d)) return { ok:false };          /* 0000000000, 1111111111 */
+  if(/^04\d{8}$/.test(d))         return { ok:true, national:d, kind:'mobile' };
+  if(/^0[2378]\d{8}$/.test(d))    return { ok:true, national:d, kind:'landline' };
+  if(/^1(300|800)\d{6}$/.test(d)) return { ok:true, national:d, kind:'landline' };
+  if(/^13\d{4}$/.test(d))         return { ok:true, national:d, kind:'landline' };
+  return { ok:false };
+}
+/* 0412345678 -> 0412 345 678, 0294810000 -> (02) 9481 0000 */
+function prettyPhone(d){
+  if(/^04\d{8}$/.test(d)) return d.slice(0,4) + ' ' + d.slice(4,7) + ' ' + d.slice(7);
+  if(/^0[2378]\d{8}$/.test(d)) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + ' ' + d.slice(6);
+  return d;
+}
+
+/* no words — red marks everything still needed, the button shakes, that's it */
+function shakeSend(){
+  const btn = document.getElementById('sendBtn');
+  btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
+}
+
+/* forgot something — tacks a note onto the request they just sent */
+let sentReq = null;
+document.getElementById('moreLink').onclick = () => {
+  document.getElementById('moreLink').style.display = 'none';
+  document.getElementById('moreDone').style.display = 'none';
+  document.getElementById('moreBox').style.display = 'block';
+  document.getElementById('moreText').focus();
+};
+document.getElementById('moreSend').onclick = async () => {
+  const t = document.getElementById('moreText').value.trim();
+  if(!t || !sentReq) return;
+  const btn = document.getElementById('moreSend');
+  btn.disabled = true; btn.textContent = 'Adding…';
+  try {
+    await Store.addCustomerNote(sentReq.id, t);
+    document.getElementById('moreText').value = '';
+    document.getElementById('moreBox').style.display = 'none';
+    document.getElementById('moreDone').style.display = 'block';
+    document.getElementById('moreLink').style.display = '';
+    document.getElementById('moreLink').textContent = 'Add something else?';
+  } catch(e){ /* keep the box open so nothing they typed is lost */ }
+  btn.disabled = false; btn.textContent = 'Add it';
+};
+
+/* send */
+let errHide = null;   /* armed hide-on-next-touch listener, cleared each attempt */
+document.getElementById('sendBtn').onclick = async () => {
+  if(errHide){
+    const fv = document.getElementById('formView');
+    fv.removeEventListener('input', errHide);
+    fv.removeEventListener('click', errHide);
+    errHide = null;
+  }
+  const name = document.getElementById('fName').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  if(!reqType){ document.getElementById('typeList').classList.add('missing'); shakeSend(); window.scrollTo({top:0, behavior:'smooth'}); return; }
+  if(!tileLabel){ shakeSend(); window.scrollTo({top:0, behavior:'smooth'}); return; }
+  const typedSite = document.getElementById('siteInput').value.trim();
+  const problems = [];
+
+  /* unanswered yes/no questions (the AFSS date row isn't a question — skip it,
+     or its presence shifts the answer indexes) */
+  let unanswered = false;
+  document.querySelectorAll('#qWrap .qrow:not(.daterow)').forEach((r, ix) => {
+    if(qAnswers[ix] == null){ r.classList.add('missing'); unanswered = true; }
+  });
+  if(unanswered) problems.push('questions');
+
+  /* on a quote the specs question is the only question — it can't go unanswered */
+  if(reqType === 'quote' && !specsHave){
+    document.getElementById('specsRow').classList.add('missing');
+    problems.push('specs');
+  }
+
+  /* the note is the only description on a request with no questions */
+  const noteVal = document.getElementById('noteInput').value.trim();
+  if(noteRequired() && !noteVal){
+    const nw = document.getElementById('noteWrap');
+    nw.classList.add('missing');
+    document.getElementById('noteInput').addEventListener('input',
+      () => nw.classList.remove('missing'), { once:true });
+    problems.push('note');
+  }
+
+  /* no day locked in (only when the job needs a visit — urgent jobs skip days entirely) */
+  const urgentNow = isUrgentNow();
+  const lockedDays = sortedKeys().filter(k => picked.get(k).pref);
+  if(visitRequired() && !urgentNow && !lockedDays.length){ document.querySelector('.cal').classList.add('missing'); problems.push('day'); }
+
+  /* the call-out cost has to be accepted — that's the whole point of showing it */
+  if(feeApplies() && !sccAccepted){ document.getElementById('feeCard').classList.add('missing'); problems.push('fee'); }
+
+  /* contact rows */
+  const fields = [];
+  if(!building && !typedSite){ fields.push(document.getElementById('siteInput')); problems.push('site'); }
+  if(!name){ fields.push(document.getElementById('fName')); problems.push('name'); }
+  if(!requesterRole){ document.getElementById('roleRow').classList.add('missing'); problems.push('role'); }
+  let ph = { ok:false };
+  if(!phone){ fields.push(document.getElementById('fPhone')); problems.push('phone'); }
+  else {
+    ph = normalisePhone(phone);
+    if(!ph.ok){ fields.push(document.getElementById('fPhone')); problems.push('phonebad'); }
+  }
+  /* email: required where the office will email something back, checked whenever filled */
+  const emailVal = document.getElementById('fEmail').value.trim();
+  if(emailRequired() && !emailVal){ fields.push(document.getElementById('fEmail')); problems.push('email'); }
+  else if(emailVal && !emailLooksRight(emailVal)){ fields.push(document.getElementById('fEmail')); problems.push('emailbad'); }
+  fields.forEach((el, i) => {
+    const row = el.closest('.grow') || el;
+    row.classList.add('missing');
+    el.addEventListener('input', () => row.classList.remove('missing'), { once: true });
+    if(i === 0 && problems.length === 1) el.focus();
+  });
+
+  /* one thing missed → say which; a few → say that instead */
+  const errBox = document.getElementById('formErr');
+  errBox.style.display = 'none';
+  if(problems.length){
+    const MSG = {
+      questions: "One of the questions above still needs an answer.",
+      day:       "Pick a day that suits and you're done.",
+      site:      "Which building or address is it?",
+      name:      "Just need your name.",
+      phone:     "Just need a mobile number for updates.",
+      phonebad:  "That number doesn't look right — can you check it?",
+      fee:       "Tap Accept on the call-out cost and it's on its way.",
+      note:      "Tell us a bit about it — one line is enough.",
+      specs:     "Do you have plans or drawings? Yes or no is all we need.",
+      role:      "Pick your role from the list and it's done.",
+      email:     reqType === 'quote' ? "Just need an email to send the quote to." : "Just need an email to send it to.",
+      emailbad:  "That email doesn't look right — can you check it?"
+    };
+    errBox.textContent = problems.length === 1 ? MSG[problems[0]] : "A few things still need filling in.";
+    errBox.style.display = 'block';
+    setTimeout(() => {
+      const fv = document.getElementById('formView');
+      errHide = () => {
+        errBox.style.display = 'none';
+        fv.removeEventListener('input', errHide);
+        fv.removeEventListener('click', errHide);
+        errHide = null;
+      };
+      fv.addEventListener('input', errHide);
+      fv.addEventListener('click', errHide);
+    }, 0);
+    shakeSend(); return;
+  }
+  const btn = document.getElementById('sendBtn'); const sendHTML = btn.innerHTML; btn.disabled = true; btn.textContent = 'Sending…';
+
+  /* per-day availability: [{day:'Thu 6 Aug', pref:'AM'|'PM'|'Anytime'|'10am–2pm'}]
+     only days locked in with a time count — a tapped-but-unanswered day is dropped */
+  const availDays = (needsVisit() && !urgentNow)
+    ? sortedKeys().filter(k => picked.get(k).pref).map(k => ({ day: dayLabel(k), pref: picked.get(k).pref }))
+    : [];
+
+  const set = currentQs();
+  const answers = set.map((item, ix) => ({ q: item.q, a: qAnswers[ix], urg: !!(item.urg && qAnswers[ix] === item.urg) })).filter(x => x.a);
+
+  try {
+    const req = await Store.createRequest({
+      building_code: building ? bcode : 'general',
+      building_name: building ? building.name : typedSite,
+      category: tileLabel,
+      req_type: reqType,
+      /* urgent: the figure frozen at Accept. Service: no figure yet — the card
+         rides in rate_card and the office's booked time writes scc_amount +
+         rate_type later (Dad's rule 2026-08-26: the rate follows attendance). */
+      scc_amount: feeApplies() && reqType === 'urgent' && acceptedRate ? acceptedRate.amount : null,
+      rate_card: feeApplies() && reqType === 'service' ? rateCardSnap() : null,
+      hourly_amount: feeApplies() ? acceptedHourly : null,
+      scc_accepted: feeApplies(),
+      rate_type: feeApplies() && reqType === 'urgent' && acceptedRate ? acceptedRate.name : null,
+      answers: answers,
+      urgent: answers.some(x => x.urg) || reqType === 'urgent',
+      note: document.getElementById('noteInput').value.trim(),
+      avail_days: availDays,
+      time_pref: 'per day',
+      customer_name: name,
+      requester_role: requesterRole,   /* who's asking — changes authority and who pays */
+      customer_phone: ph.national,     /* normalised, never as typed */
+      phone_kind: ph.kind,             /* 'landline' tells the office to ring, not text */
+      customer_email: emailVal || null, /* where quotes and paperwork get sent (2026-08-28) */
+      afss_due: dueDate || null,       /* the certification deadline, when they gave one */
+      photo: photos[0] || null,      /* kept so anything reading the old field still works */
+      photos: photos,
+      docs: docs,                    /* PDFs attached alongside the photos */
+      specs_have: reqType === 'quote' ? specsHave : null,
+      specs_files: reqType === 'quote' ? specsFiles : []
+    });
+    const first = name.split(' ')[0];
+    document.getElementById('rcptTitle').textContent = "Got it, " + first.charAt(0).toUpperCase() + first.slice(1) + ".";
+    /* urgent: no sitting on our silence — if we go quiet or it gets worse, they ring.
+       Nobody's accepted the job yet, so the receipt must not read like a guarantee. */
+    if(reqType === 'urgent' && C.COMPANY_PHONE){
+      document.getElementById('rcptSub').innerHTML =
+        "You'll hear from us shortly. If you don't, or it's getting worse, ring us on <a href='tel:"
+        + C.COMPANY_PHONE.replace(/[^\d+]/g, '') + "' style='color:var(--blue);text-decoration:none;font-weight:600;white-space:nowrap'>"
+        + C.COMPANY_PHONE + "</a>.";
+    } else {
+      /* a landline can't be texted — say what will actually happen instead.
+         Reworded 2026-08-25 (Noah: the old lines read weird) — one plain sentence. */
+      document.getElementById('rcptSub').textContent = (ph.kind === 'landline')
+        ? "We'll call you on " + prettyPhone(ph.national) + "."
+        : (reqType === 'other'
+            ? "We'll text you back on "
+            : "We'll text ") + prettyPhone(ph.national) + (reqType === 'other' ? "." : " the moment it's booked in.");
+    }
+    document.getElementById('rcptRef').textContent = 'Ref ' + req.ref;
+    /* fee chip dropped from the receipt (Noah 2026-08-25). The acceptance still
+       exists on the record: the company detail shows "✓ Call-out accepted · $x"
+       and it sits timestamped in the timeline. */
+    sentReq = req;
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('receiptView').style.display = 'flex';
+    window.scrollTo(0, 0);
+  } catch(e){
+    btn.disabled = false; btn.innerHTML = sendHTML;   /* put "Send" and its arrow back */
+    const err = document.getElementById('formErr');
+    if (C.COMPANY_PHONE) {
+      err.innerHTML = "That didn't send — give it another go, or ring us on <a href='tel:" + C.COMPANY_PHONE.replace(/[^\d+]/g, '') + "' style='color:inherit'>" + C.COMPANY_PHONE + "</a>.";
+    } else {
+      err.textContent = "That didn't send — give it another go, or ring us.";
+    }
+    err.style.display = 'block';
+    shakeSend();
+  }
+};
+</script>
+</body>
+</html>

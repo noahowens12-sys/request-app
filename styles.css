@@ -1,0 +1,675 @@
+/* Request app V1 — design lifted from demo v31 (the demo is the design file) */
+:root{
+  --bg:#f2f2f7; --card:#ffffff; --ink:#000000; --sub:#8e8e93; --sub2:#c7c7cc;
+  --red:#fa233b; --red-soft:#feecee; --green:#34c759; --green-soft:#e9f9ee;
+  --blue:#007aff; --blue-soft:#eaf3ff; --orange:#ff9500; --orange-soft:#fff3e0;
+  --purple:#af52de; --purple-soft:#f6ecfc; --line:rgba(60,60,67,.12);
+  --font:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--ink);
+  -webkit-font-smoothing:antialiased;font-size:16px}
+.wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:40px}
+.pagepad{padding:16px 20px 28px}
+.navhead{padding:26px 20px 0}
+.largetitle{font-size:33px;font-weight:800;letter-spacing:-.6px;line-height:1.08;transition:font-size .28s cubic-bezier(.22,1,.36,1)}
+.navhead.answered .largetitle{font-size:21px;letter-spacing:-.3px}
+.lede{color:var(--sub);font-size:15px;margin-top:6px;line-height:1.45;font-weight:500}
+.brandrow{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.logodot{width:28px;height:28px;border-radius:8px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.logodot.haslogo{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.logodot.haslogo svg{width:20px;height:20px;display:block}
+.brandname{font-size:14px;font-weight:600;color:var(--sub)}
+.card{background:var(--card);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.seclabel{font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;margin:22px 0 10px}
+
+/* tiles — same card language as the request-type tiles above */
+/* grid-auto-rows 1fr: every tile the same height even when a label wraps to two
+   lines, content centred in the extra room — no more odd-shaped tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;grid-auto-rows:1fr;gap:10px;margin-top:18px;padding:0}
+.tile{background:var(--card);border:none;border-radius:18px;padding:13px 6px;cursor:pointer;font-family:var(--font);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;transition:all .15s;
+  box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.13), 0 1px 2px rgba(0,0,0,.04)}
+.tile .ic{display:flex;align-items:center;justify-content:center;transition:all .15s}
+.tile .ic svg{width:31px;height:31px;stroke:var(--ink);color:var(--ink);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .15s}
+.tile .tlb{font-size:13px;font-weight:600;color:var(--ink);text-align:center;line-height:1.15;transition:color .15s}
+.tile.on{background:var(--red-soft);box-shadow:inset 0 0 0 2.5px var(--red)}
+.tile.on .ic svg{stroke:var(--red);color:var(--red)}
+.tile.on .tlb{color:var(--red)}
+/* the picked what's-wrong tile takes the request type's colour */
+.tiles.scheme-blue .tile.on{background:var(--blue-soft);box-shadow:inset 0 0 0 2.5px var(--blue)}
+.tiles.scheme-blue .tile.on .ic svg{stroke:var(--blue);color:var(--blue)}
+.tiles.scheme-blue .tile.on .tlb{color:var(--blue)}
+.tiles.scheme-purple .tile.on{background:var(--purple-soft);box-shadow:inset 0 0 0 2.5px var(--purple)}
+.tiles.scheme-purple .tile.on .ic svg{stroke:var(--purple);color:var(--purple)}
+.tiles.scheme-purple .tile.on .tlb{color:var(--purple)}
+.tiles.scheme-red .tile.on{background:var(--red-soft);box-shadow:inset 0 0 0 2.5px var(--red)}
+.tiles.scheme-red .tile.on .ic svg{stroke:var(--red);color:var(--red)}
+.tiles.scheme-red .tile.on .tlb{color:var(--red)}
+.tile.on .tlb{color:var(--red)}
+.tiles.scheme-ink .tile.on{background:var(--card);box-shadow:inset 0 0 0 2.5px var(--ink)}
+.tiles.scheme-ink .tile.on .ic svg{stroke:var(--ink);color:var(--ink)}
+.tiles.scheme-ink .tile.on .tlb{color:var(--ink)}
+.tile:active{transform:scale(.96)}
+
+/* yes/no question rows */
+.qrow{background:var(--card);border-radius:14px;padding:13px 15px;margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+@keyframes qin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.qtext{font-size:15px;font-weight:600;line-height:1.3;flex:1}
+.ynrow{display:flex;gap:7px;flex:0 0 auto}
+.ynbtn{border:none;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:600;
+  padding:8px 15px;border-radius:20px;background:var(--bg);color:var(--ink);transition:all .12s}
+.ynbtn.on{background:var(--ink);color:#fff}
+
+/* inputs */
+/* the label's gone on most flows, so the box carries its own gap from the
+   question rows above; on Other the label's negative bottom margin eats most
+   of that gap so the pair still sits tight */
+.notelabel{font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;margin:22px 0 -10px}
+.notelabel .opt{text-transform:none;letter-spacing:0;font-weight:500;opacity:.75}
+.notewrap{display:flex;gap:8px;align-items:center;margin-top:20px}
+.notewrap.missing input{background:var(--red-soft)}
+/* thumbnails sit under the box you added them from, not above it */
+.shots{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.shot{position:relative;width:76px;height:76px;border-radius:12px;overflow:hidden;background:var(--card)}
+.shot img{width:100%;height:100%;object-fit:cover;display:block}
+.shotx{position:absolute;top:3px;right:3px;width:22px;height:22px;border:none;border-radius:50%;
+  background:rgba(0,0,0,.58);color:#fff;font-size:11px;font-weight:700;cursor:pointer;line-height:1;
+  display:flex;align-items:center;justify-content:center}
+.camerabtn.full{opacity:.35}
+/* quote specs attach — same family as the photo strip, but takes PDFs (plans are PDFs) */
+.specattach{margin-top:12px}
+.specbtn{display:flex;align-items:center;gap:9px;border:none;cursor:pointer;font-family:var(--font);
+  font-size:14.5px;font-weight:600;color:var(--ink);background:var(--card);border-radius:13px;padding:13px 16px}
+.specbtn svg{width:19px;height:19px;stroke:var(--sub);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.specbtn.full{opacity:.35}
+.specfiles{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.specchip{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:11px;padding:9px 12px;font-size:13.5px;font-weight:600;max-width:100%}
+.specchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.chipx{border:none;border-radius:50%;width:20px;height:20px;background:var(--bg);color:var(--sub);font-size:10px;font-weight:700;cursor:pointer;line-height:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.specerr{font-size:13px;color:var(--red);margin-top:8px;font-weight:500}
+/* company side, who row (2026-08-30): who they are on top in ink, how to reach them
+   underneath in grey. One long line used to wrap and dangle its last word. */
+.whoname{display:block;color:var(--ink);font-weight:600}
+.notewrap input{flex:1;border:none;background:var(--card);border-radius:13px;padding:14px 15px;font-family:var(--font);font-size:15.5px;outline:none}
+.camerabtn{flex:0 0 auto;width:48px;height:48px;border:none;border-radius:13px;background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.camerabtn svg{width:23px;height:23px;stroke:var(--sub);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.grouped{background:var(--card);border-radius:14px;margin-top:20px;overflow:hidden}
+.grow{display:flex;align-items:center;padding:13px 15px;border-bottom:.5px solid var(--line);gap:12px}
+.grow:last-child{border-bottom:none}
+.gl{flex:0 0 74px;font-size:15px;font-weight:600;color:var(--ink)}
+.gv{font-size:15px;color:var(--sub);flex:1;text-align:right}
+.ginput{flex:1;border:none;background:none;font-family:var(--font);font-size:15.5px;outline:none;text-align:right;color:var(--ink)}
+.ginput::placeholder{color:var(--sub2)}
+/* role dropdown — the row reads like every other card row; the real <select> is an
+   invisible cover on top, so a tap anywhere opens the phone's own picker */
+.rolerow{position:relative}
+.rolerow .gv{display:block}
+.rolerow .gv.unset{color:var(--sub2)}
+.gchev{width:14px;height:14px;stroke:var(--sub2);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;margin-left:-4px}
+.selcover{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;appearance:none;-webkit-appearance:none}
+.formnote{font-size:13px;color:var(--sub);text-align:center;margin-top:10px;font-weight:500}
+.sendbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;cursor:pointer;margin-top:14px;
+  background:var(--ink);color:#fff;font-family:var(--font);font-weight:600;font-size:17px;
+  padding:16px;border-radius:14px;transition:transform .12s,opacity .12s}
+.sendbtn .sarrow{width:19px;height:19px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sendbtn:active{transform:scale(.98);opacity:.85}
+/* on an urgent job the whole page is red — the button was the only thing that wasn't */
+.sendbtn.urgent{background:var(--red)}
+.sendbtn:disabled{opacity:.35}
+
+/* calendar */
+.whenopt{text-transform:none;letter-spacing:0;font-weight:500;font-size:12px;opacity:.75}
+.cal{background:var(--card);border-radius:16px;padding:16px}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mlabel{font-size:21px;font-weight:800;letter-spacing:-.3px;display:inline-flex;align-items:center;gap:6px}
+.mlabel .yr{color:var(--sub2);font-weight:500;font-size:14px}
+.calnav button{border:none;background:none;width:32px;height:32px;font-size:19px;cursor:pointer;color:var(--sub);margin-left:2px;font-weight:600}
+.calnav button:disabled{color:var(--sub2);opacity:.5}
+.caldow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:10.5px;font-weight:700;color:var(--sub);letter-spacing:.6px;margin-bottom:8px}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px 6px}
+/* pickable days wear the same white-tile-with-ring look as the rest of the app,
+   so they read as buttons; dead days are faded hard so there's no mistaking them */
+.calday{position:relative;border:none;font-family:var(--font);width:100%;aspect-ratio:1.02;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:16px;cursor:pointer;color:var(--ink);font-weight:700;background:var(--card);box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.18);transition:all .12s}
+.calday.blank{pointer-events:none;background:none;box-shadow:none}
+.calday.past{color:var(--sub2);opacity:.55;pointer-events:none;background:none;box-shadow:none;font-weight:500}
+/* a day the company doesn't work — shown, but not on offer */
+.calday.off{color:var(--sub2);opacity:.3;pointer-events:none;background:none;box-shadow:none;font-weight:500}
+.caldow span.offcol{opacity:.4}
+.calday.on{background:var(--ink);color:#fff;font-weight:700;box-shadow:none}
+/* day cap reached: still a working day, just not available on this request,
+   so it keeps its tile instead of vanishing like a non-working day does */
+.calday.full{color:var(--sub2);opacity:.3;pointer-events:none;font-weight:500}
+.calday.today::after{content:'';position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:currentColor}
+.calday:active{transform:scale(.94)}
+.chiprow{display:flex;gap:8px;flex-wrap:wrap}
+.selchip{border:none;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:600;
+  padding:9px 16px;border-radius:20px;background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.04);transition:all .12s}
+.selchip.on{background:var(--ink);color:#fff}
+.slotlbl{font-size:14px;font-weight:600;color:var(--sub)}
+.tsel{border:none;background:var(--bg);border-radius:11px;padding:9px 12px;font-family:var(--font);font-size:14.5px;font-weight:600;outline:none}
+/* calendly-style: tap a day → its time options under the calendar */
+.timepanel{margin-top:12px;animation:qin .25s cubic-bezier(.32,.72,.35,1) both}
+.tphead{font-size:14px;font-weight:700;margin-bottom:8px}
+.tprow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.tpopt{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 4px;font-family:var(--font);font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;text-align:center;transition:all .12s}
+.tpopt:active{transform:scale(.96);background:var(--ink);color:#fff;border-color:var(--ink)}
+.tpopt.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tplinks{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+.tplink{border:none;background:none;color:var(--blue);font-family:var(--font);font-size:13.5px;font-weight:600;cursor:pointer;padding:8px 2px}
+.tplink.quiet{color:var(--sub)}
+.tpslots{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px;margin-top:5px}
+.daycap{margin-top:10px;font-size:13px;line-height:1.45;color:var(--sub2)}
+/* picked days as quiet rows inside the calendar card, not chips under it */
+.picks{margin-top:14px;border-top:.5px solid var(--line);padding-top:6px}
+.pick{display:flex;align-items:center;justify-content:space-between;width:100%;border:none;background:none;cursor:pointer;
+  font-family:var(--font);padding:9px 2px;font-size:15px;color:var(--ink);text-align:left}
+.pick b{font-weight:700}
+.pick .pt{color:var(--sub);font-weight:500;margin-left:8px}
+.pick .x{color:var(--sub2);font-weight:700;font-size:14px;padding:2px 6px}
+.pick:active{opacity:.6}
+
+/* receipt — the view fills the page so the card of content truly centres */
+#receiptView{flex:1;flex-direction:column}
+.receipt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 36px}
+.tickwrap{position:relative;width:96px;height:96px;margin-bottom:26px}
+.bigtick{position:absolute;inset:0;background:var(--green);border-radius:50%;color:#fff;font-size:44px;display:flex;align-items:center;justify-content:center;
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+.tickring{position:absolute;inset:-10px;border:2px solid var(--green);border-radius:50%;opacity:0;animation:ring 1s ease .3s both}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes ring{0%{opacity:.6;transform:scale(.8)}100%{opacity:0;transform:scale(1.15)}}
+.receipt h2{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.receipt p{color:var(--sub);font-size:15.5px;margin-top:8px;line-height:1.45;font-weight:500}
+/* quiet plain text, not a pill — it's there if they ever need it, nothing more */
+.refchip{margin-top:16px;font-size:13px;font-weight:500;color:var(--sub2)}
+
+/* company list */
+.listtop{display:flex;align-items:center;justify-content:space-between;padding:8px 0 2px}
+.listtop h1{font-size:33px;font-weight:800;letter-spacing:-.6px}
+.lsec{display:flex;align-items:center;justify-content:space-between;margin:20px 2px 8px;font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px}
+.lsec.hot{color:var(--red)}
+.lsec.good{color:var(--green)}
+.lsec .cnt{background:var(--card);border-radius:10px;min-width:22px;text-align:center;padding:1px 7px;font-size:12px}
+.lsec .seci{display:flex;align-items:center;gap:7px}
+.lsec .seci svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lsec.hot .cnt{background:var(--red-soft);color:var(--red)}
+.req{background:var(--card);border-radius:15px;padding:14px 15px;margin-bottom:9px;cursor:pointer;transition:transform .1s;
+  animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.req:active{transform:scale(.985)}
+.req .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.req .what{font-size:16px;font-weight:700;letter-spacing:-.2px;line-height:1.3;flex:1}
+.req .what:has(.wic){padding-left:26px;text-indent:-26px}
+/* the issue's icon stands in for its name on the card title */
+.req .what .wic{display:inline-flex;vertical-align:-3.5px;margin-right:8px}
+.req .what .wic svg{width:18px;height:18px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.req.urg .what .wic svg{stroke:var(--red)}
+.req.muted .what .wic svg{stroke:var(--sub2)}
+.req .meta{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:13.5px;color:var(--sub);font-weight:500;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.dot.pulse{animation:dotpulse 1.6s ease-in-out infinite}
+@keyframes dotpulse{0%,100%{opacity:1}50%{opacity:.3}}
+.req.urg{background:var(--red-soft);animation:urgbreathe 2.4s ease-in-out infinite}
+@keyframes urgbreathe{
+  0%,100%{box-shadow:0 0 0 0 rgba(250,35,59,.28)}
+  50%{box-shadow:0 0 0 7px rgba(250,35,59,0)}
+}
+.dot.fresh{background:var(--green)}
+.dot.stale{background:var(--orange)}
+.dot.late{background:var(--red)}
+.wait.fresh{color:var(--green);font-weight:700}
+.wait.stale{color:var(--orange);font-weight:700}
+.wait.late{color:var(--red);font-weight:700}
+.ownc{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex:0 0 auto}
+.ownc.unowned{background:none;border:1.6px dashed var(--sub2);color:var(--sub2);font-weight:600}
+/* urgent + nobody on it — the ? goes red and pulses so it reads different from a routine unowned */
+.ownc.unowned.hot{border-color:var(--red);color:var(--red);animation:unownedpulse 1.6s ease-in-out infinite}
+@keyframes unownedpulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* detail header — who + the call button live in their own card (Noah's pick 2026-08-17:
+   the floating circle needed a container), fee reads as a pill, not a sentence */
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 20px 0}
+.topbar .backlink{padding:0}
+.topbar .cameline{margin-top:0}
+.whorow{background:var(--card);border-radius:15px;margin-top:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.whoA{padding:13px 16px 11px;font-size:15px}
+.whoB{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px 10px 16px;border-top:.5px solid var(--line)}
+.whonum{color:var(--sub);font-size:15px;font-weight:500}
+.whobtns{display:flex;gap:9px;flex:0 0 auto}
+.ringbtn{width:42px;height:42px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;text-decoration:none;cursor:pointer}
+.ringbtn svg{width:20px;height:20px;stroke:var(--green);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ringbtn:active{transform:scale(.94)}
+.ringbtn.mailbtn{background:var(--blue-soft)}
+.ringbtn.mailbtn svg{stroke:var(--blue)}
+.ownc.live{animation:livepulse 2.2s ease-in-out infinite}
+@keyframes livepulse{0%,100%{box-shadow:0 0 0 0 rgba(0,122,255,.25)}50%{box-shadow:0 0 0 6px rgba(0,122,255,0)}}
+.duepill{background:var(--bg);border-radius:9px;padding:3px 9px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.duepill.onwhite{background:var(--bg)}
+.req.muted{opacity:.62}
+.done-tick{color:var(--green);font-weight:800;margin-right:2px}
+.empty{padding:36px 20px;text-align:center;color:var(--sub);font-size:15px;font-weight:500;line-height:1.5}
+
+/* detail */
+.what-lg{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.15}
+/* wrapped title lines align with the first word, not under the icon (Noah 2026-08-20) */
+.what-lg:has(.wic){padding-left:33px;text-indent:-33px}
+.what-lg .wic{display:inline-flex;vertical-align:-2.5px;margin-right:9px}
+.what-lg .wic svg{width:24px;height:24px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.subline{color:var(--sub);font-size:14.5px;margin-top:6px;font-weight:500}
+.notesub{color:var(--sub);font-size:15.5px;margin-top:7px;font-weight:500;line-height:1.4}
+/* detail header breathes — each line gets its own air (Noah 2026-08-17: too cramped) */
+.wholine{margin-top:10px;font-size:15px}
+.qaline{font-size:13.5px;margin-top:6px;font-weight:600;line-height:1.5}
+.ownrow{display:flex;gap:9px}
+.urgmeta{color:var(--red);font-weight:800;font-size:12px;letter-spacing:.4px}
+.tabs{display:flex;background:rgba(118,118,128,.12);border-radius:10px;padding:2px;margin:4px 0 10px}
+.tabbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:none;background:none;
+  padding:8px 6px;border-radius:8px;font-family:var(--font);font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer}
+.tabbtn.on{background:#fff;box-shadow:0 1.5px 5px rgba(0,0,0,.12)}
+.tabbtn .tcnt{background:rgba(118,118,128,.16);border-radius:9px;min-width:20px;padding:1px 6px;font-size:12px;font-weight:700;color:var(--sub)}
+.tabbtn .tcnt.hot{background:var(--red);color:#fff}
+.catbar{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.catbar::-webkit-scrollbar{display:none}
+.catchip{display:flex;align-items:center;gap:6px;border:none;background:var(--card);border-radius:100px;padding:8px 14px;
+  font-family:var(--font);font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap;flex:0 0 auto}
+.catchip svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.catchip.on{background:var(--ink);color:#fff}
+.actbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
+  display:flex;gap:9px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));
+  background:var(--bg);box-shadow:0 -8px 22px rgba(0,0,0,.05)}
+.actbtn{flex:1;border:none;border-radius:13px;padding:15px;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer}
+.actbtn.decl{background:var(--red);color:#fff}
+.actbtn.acc{background:var(--green);color:#fff}
+.actbtn:disabled{opacity:.55;cursor:default}
+#detailView .pagepad{padding-bottom:120px}
+.bookedline{margin-top:9px}
+.bookedline span{display:inline-block;background:var(--green-soft);color:var(--green);border-radius:100px;padding:6px 13px;font-size:13.5px;font-weight:700}
+.offerlist{display:flex;flex-direction:column;gap:8px}
+.offrow{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:none;border-radius:13px;
+  padding:13px 15px;font-family:var(--font);font-size:15.5px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+.offrow .when{color:var(--sub);font-weight:600} /* windows are facts, not green promises (Noah 2026-08-20) */
+/* selected day: the tick carries the green, the rest stays calm (Noah 2026-08-20) */
+.offrow.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:inset 0 0 0 1.6px var(--line)}
+.offrow.on .when{color:var(--sub)}
+.offrow.on span:first-child::first-letter{color:var(--green)}
+.offrow.locked{opacity:.4;pointer-events:none}
+.offrow.locked .when{color:var(--sub2)} /* a gone day's "when" isn't a green promise */
+.nodays{font-size:14px;color:var(--sub);font-weight:500;margin-bottom:9px;line-height:1.45}
+.asapnote{font-size:14px;color:var(--sub);font-weight:600;text-align:center;margin-top:14px;line-height:1.45}
+.nodays a{color:var(--blue);text-decoration:none;font-weight:600}
+.offrow.setday span:first-child{color:var(--ink)}
+.offrow.setday .when{color:var(--blue)}
+.offrow.setday{position:relative}
+.offrow.setday input{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+.offrow.noday{pointer-events:none}
+.offrow.noday span:first-child{color:var(--sub);font-weight:600}
+.offsub{font-size:12.5px;color:var(--sub2);font-weight:500}
+.avhead{display:flex;align-items:center;justify-content:space-between}
+.actoggle{border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:5px;width:100%;
+  font-family:var(--font);font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;margin:22px 0 10px}
+.actoggle #tlChev{font-size:11px}
+.bookedline .avchange{margin-left:6px}
+.avchange{border:none;background:none;color:var(--blue);font-family:var(--font);font-size:13.5px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;padding:2px 0}
+.offrow:active{transform:scale(.985)}
+#availRow.nudge .offrow:not(.on), #availRow.nudge .nodays{animation:nudgepulse 1.5s ease}
+@keyframes nudgepulse{0%,100%{box-shadow:0 0 0 0 rgba(52,199,89,0)}35%{box-shadow:0 0 0 3px rgba(52,199,89,.55)}}
+.duestrip{margin-top:12px;padding:12px 15px;border-radius:13px;font-weight:800;font-size:15px;letter-spacing:-.1px}
+.duestrip.soon{background:var(--orange-soft);color:var(--orange)}
+.duestrip.now{background:var(--red-soft);color:var(--red)}
+.anscard{background:var(--card);border-radius:13px;margin-top:12px;overflow:hidden}
+.ansrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 15px;border-bottom:.5px solid var(--line)}
+.ansrow:last-child{border-bottom:none}
+.ansq{color:var(--ink);font-size:14.5px;font-weight:500}
+/* one voice: every answer reads plain ink — red lives on the strip and the clock,
+   not inside the fact sheet (Noah 2026-08-20) */
+.ansa{font-weight:700;font-size:14.5px;color:var(--ink)}
+.avstack{display:flex;flex:0 0 auto}
+.avstack .ownc{box-shadow:0 0 0 2px var(--card)}
+.avstack .ownc + .ownc{margin-left:-9px}
+.owndd{position:relative}
+.ownsel{width:100%;display:flex;align-items:center;gap:10px;background:var(--card);border:none;border-radius:13px;padding:14px 15px;
+  font-family:var(--font);font-size:15.5px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+.ownsel .seltxt{display:flex;align-items:center;gap:10px;min-width:0}
+.ownsel .ownc.sm{width:27px;height:27px;font-size:12.5px}
+.ownsel .ph{color:var(--sub);font-weight:500}
+.ownsel .chev{margin-left:auto;color:var(--sub2);font-size:13px}
+.ownmenu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--card);border-radius:14px;
+  box-shadow:0 12px 34px rgba(0,0,0,.16);padding:6px;display:none;z-index:30}
+.ownmenu.open{display:block;animation:qin .18s cubic-bezier(.32,.72,.35,1) both}
+.ownmenu .mrow{display:flex;align-items:center;gap:11px;width:100%;border:none;background:none;padding:10px;border-radius:10px;
+  font-family:var(--font);font-size:15.5px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+.ownmenu .mrow:active{background:var(--bg)}
+.ownmenu .avatar{width:30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700;flex:0 0 auto}
+.ownmenu .tick{margin-left:auto;color:var(--blue);font-weight:800;font-size:16px}
+.ownbtn{flex:1;border:none;cursor:pointer;background:var(--card);border-radius:14px;padding:13px 6px;font-family:var(--font);
+  display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .12s}
+.ownbtn .avatar{width:36px;height:36px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+.ownbtn .nm{font-size:13.5px;font-weight:600}
+.ownbtn.on{box-shadow:0 0 0 2.5px var(--ink)}
+.statusrow{display:flex;gap:8px}
+.statbtn{flex:1;border:none;cursor:pointer;font-family:var(--font);font-size:14.5px;font-weight:700;
+  padding:12px 4px;border-radius:13px;background:var(--card);color:var(--sub);transition:all .12s}
+.statbtn.on{background:var(--ink);color:#fff}
+.statbtn.doneon{background:var(--green);color:#fff}
+.declbtn{display:block;width:100%;border:none;background:none;color:var(--sub);font-family:var(--font);font-size:14px;font-weight:600;
+  margin-top:16px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.tlev{font-size:10.5px;color:var(--sub2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  text-align:center;padding:10px 2px 4px}
+.tlstamp{font-size:10.5px;color:var(--sub2);font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;margin:8px 0 5px}
+.tlsms .tlstamp{align-self:flex-end;margin-right:5px}
+.tlin .tlstamp{align-self:flex-start;margin-left:5px}
+.tlsms{display:flex;flex-direction:column;align-items:flex-end;margin:0 0 4px}
+.tlbubble{background:var(--green);color:#fff;border-radius:18px 18px 5px 18px;padding:10px 14px;
+  font-size:15px;line-height:1.45;max-width:82%;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.tlin{display:flex;flex-direction:column;align-items:flex-start;margin:0 0 4px}
+.tlinbubble{background:#e9e9eb;color:var(--ink);border-radius:18px 18px 18px 5px;padding:10px 14px;
+  font-size:15px;line-height:1.45;max-width:82%}
+
+.backlink{border:none;background:none;color:var(--blue);font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;padding:16px 20px 0;text-align:left}
+.urgflag{display:inline-block;background:var(--red);color:#fff;font-size:11.5px;font-weight:800;border-radius:7px;padding:2px 8px;letter-spacing:.5px;vertical-align:2px;margin-right:6px}
+
+/* login */
+.login{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 28px;max-width:420px;margin:0 auto;width:100%}
+.login h1{font-size:30px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.login p{color:var(--sub);font-size:15px;font-weight:500;margin-bottom:22px;line-height:1.45}
+.login input{border:none;background:var(--card);border-radius:13px;padding:15px;font-family:var(--font);font-size:16px;outline:none;width:100%}
+.login button{margin-top:12px;width:100%;border:none;cursor:pointer;background:var(--ink);color:#fff;font-family:var(--font);font-weight:600;font-size:16.5px;padding:15px;border-radius:13px}
+.loginmsg{margin-top:14px;font-size:14px;color:var(--sub);font-weight:500;text-align:center;line-height:1.5}
+
+/* misc */
+.formerr{color:var(--red);font-size:14px;font-weight:700;text-align:center;margin-top:10px;animation:qin .25s cubic-bezier(.32,.72,.35,1) both}
+.callbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;
+  background:var(--card);color:var(--ink);font-weight:600;font-size:16px;text-decoration:none;
+  padding:15px;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);transition:transform .12s}
+.callbtn:active{transform:scale(.98)}
+.callbtn svg{width:19px;height:19px;stroke:var(--ink);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.demobanner{background:var(--orange-soft);color:#8a5b00;font-size:13px;font-weight:600;text-align:center;padding:8px 14px;line-height:1.4}
+.demobanner a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.urgnote{color:var(--red);font-weight:700;font-size:14px;margin-top:12px;text-align:center;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+#rest.showit{display:block !important;animation:qin .35s cubic-bezier(.32,.72,.35,1) both}
+.grow.missing{background:var(--red-soft);transition:background .25s}
+.qrow.missing{background:var(--red-soft)}
+.qrow.missing .ynbtn{background:var(--card)}
+.cal.missing{background:var(--red-soft)}
+.cal.missing .calday{background:var(--card)}
+.cal.missing .calday.past,.cal.missing .calday.blank,.cal.missing .calday.off,.cal.missing .calday.full{background:none}
+.cal.missing .calnav button{background:none}
+
+/* picked days wear the request type's colour, same language as a picked tile —
+   soft tint, coloured ring, coloured number. No more solid black. */
+.cal.scheme-blue .calday.on{background:var(--blue-soft);box-shadow:inset 0 0 0 2.5px var(--blue);color:var(--blue)}
+.cal.scheme-purple .calday.on{background:var(--purple-soft);box-shadow:inset 0 0 0 2.5px var(--purple);color:var(--purple)}
+.cal.scheme-red .calday.on{background:var(--red-soft);box-shadow:inset 0 0 0 2.5px var(--red);color:var(--red)}
+.cal.scheme-ink .calday.on{background:var(--card);box-shadow:inset 0 0 0 2.5px var(--ink);color:var(--ink)}
+@keyframes shakex{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.sendbtn.shake{animation:shakex .3s ease 2}
+
+/* receipt — forgot something */
+.rcptmore{margin-top:26px}
+.morelink{border:none;background:none;cursor:pointer;font-family:var(--font);font-size:14.5px;font-weight:600;color:var(--blue, #007aff);padding:6px}
+#moreBox textarea{width:100%;border:none;background:var(--card);border-radius:13px;padding:14px 15px;
+  font-family:var(--font);font-size:15.5px;outline:none;resize:none;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.morebtn{display:block;width:100%;border:none;cursor:pointer;margin-top:10px;background:var(--ink);color:#fff;
+  font-family:var(--font);font-weight:600;font-size:15.5px;padding:13px;border-radius:13px}
+.moredone{font-size:14.5px;color:var(--sub);margin-top:4px}
+
+/* booked jobs: decline tucks behind this */
+.cantlink{display:block;width:100%;border:none;cursor:pointer;margin-top:14px;padding:14px;
+  background:var(--card);border-radius:16px;font-family:var(--font);font-size:15px;font-weight:600;
+  color:var(--red);text-align:center}
+.cantlink:active{background:var(--red-soft)}
+
+/* detail — sticky urgent pill, top right, stays while you scroll */
+.urgstrip{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--red);color:#fff;font-size:12.5px;font-weight:800;letter-spacing:1.2px;
+  padding:9px;border-radius:0 0 14px 14px;box-shadow:0 3px 12px rgba(250,35,59,.3)}
+.urgstrip .dot{width:7px;height:7px;border-radius:50%;background:#fff}
+.cameline{font-size:13.5px;font-weight:600;color:var(--sub);margin-top:6px} /* was sub2 — unreadable (Noah 2026-08-20) */
+/* messages row — the thread's front door, a proper card not a caps label */
+.msgrow{display:flex;align-items:center;gap:9px;width:100%;background:var(--card);border:none;cursor:pointer;
+  border-radius:14px;padding:14px 15px;margin-top:20px;font-family:var(--font);text-align:left;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.msgrow svg{width:19px;height:19px;flex:0 0 auto;stroke:var(--ink);color:var(--ink);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.msgrow b{font-size:15px;font-weight:700;color:var(--ink)}
+.msgcount{font-size:14px;color:var(--sub);font-weight:600}
+.msgchev{color:var(--sub2);font-size:13px;margin-left:auto}
+
+/* detail — site card: mini map + address, tap for directions */
+.sitecard{display:block;background:var(--card);border-radius:16px;margin-top:14px;overflow:hidden;
+  text-decoration:none;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.sitemap{height:128px;pointer-events:none;position:relative;z-index:0}
+.sitepin{filter:drop-shadow(0 3px 5px rgba(0,0,0,.3))}
+.pinwrap{position:relative;width:34px;height:42px}
+.pinbody{width:34px;height:42px;display:block}
+.pinic{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:16px;height:16px;
+  stroke:#fff;color:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sitemap .leaflet-control-attribution{font-size:9px;background:rgba(255,255,255,.6)}
+.siterow{display:flex;align-items:center;gap:11px;padding:12px 15px}
+.siterow svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--red);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sitetxt{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.sitetxt b{font-size:15px;font-weight:700}
+.sitetxt span{font-size:13px;color:var(--sub);font-weight:500}
+.sitetxt span:empty{display:none}
+.sitego{font-size:13.5px;color:var(--blue);font-weight:600;flex:0 0 auto}
+
+/* crew card: second line carries the booked state */
+.selcol{display:flex;flex-direction:column;gap:1px;min-width:0}
+.whenline{font-size:12.5px;color:var(--green);font-weight:700}
+
+/* who card — crew and messages share one container, hairline between */
+.whocard{background:var(--card);border-radius:16px;margin-top:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.whocard .ownsel{background:none;border-radius:16px 16px 0 0;box-shadow:none;border-bottom:.5px solid var(--line)}
+.whocard .msgrow{background:none;border-radius:0 0 16px 16px;box-shadow:none;margin-top:0}
+
+/* urgent start-day row — same shape as a day row, but it's a promise not a pick */
+.offrow.urgrow{pointer-events:none}
+.offrow.urgrow .urgsub{font-size:12.5px;color:var(--sub2);font-weight:500}
+
+/* crew menu extras */
+.avatar.addav{background:none;border:1.6px dashed var(--sub2);color:var(--sub)}
+.mrow .nm.quiet{color:var(--sub)}
+.subbierow{display:flex;gap:8px;padding:8px 10px;align-items:center}
+.subbierow input{flex:1;border:none;background:var(--bg);border-radius:10px;padding:10px 12px;font-family:var(--font);font-size:15px;outline:none}
+.subbierow button{border:none;background:var(--ink);color:#fff;border-radius:10px;padding:10px 16px;font-family:var(--font);font-weight:600;font-size:14px;cursor:pointer}
+
+/* boss-side set-a-day calendar */
+.bosscal{margin-top:9px}
+
+/* no-days state: one card, hairline between ring and set-day */
+.daycard{background:var(--card);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);gap:0}
+.daycard .offrow{background:none;box-shadow:none;border-radius:0;border-bottom:.5px solid var(--line)}
+.daycard .offrow:last-child,.daycard .bosscal + .offrow{border-bottom:none}
+.daycard > :last-child{border-bottom:none}
+/* selection is the tick — no pill-in-a-card (Noah 2026-08-20) */
+.daycard .offrow.on{background:none;box-shadow:none;border-radius:0}
+.daycard .menudone{width:calc(100% - 20px);margin:6px 10px 10px}
+.daycard .offrow.noday{margin-bottom:0;border-bottom:.5px solid var(--line);border-radius:16px 16px 0 0}
+.daycard .offrow.setday{border-radius:0 0 16px 16px}
+.daycard .bosscal{margin-top:0;padding-top:4px}
+
+/* the tap-again-to-unpick, made visible */
+.offrow .unpick{color:var(--ink);font-weight:700;font-size:14px;margin-left:10px}
+
+/* request type — the money question comes first (Dad's SCC).
+   Big square cards so the first screen owns the page. */
+/* the type picker is four full-width rows, like a menu — Noah's call 2026-08-17.
+   The 2x2 colour-coded tiles read tacky as a first impression, and the type colours
+   (blue service, purple quote) were our own coding leaking onto a customer who
+   doesn't care. Colour discipline now: everything ink on grey, red = Urgent only. */
+.typetiles{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+.ttile{background:var(--card);border:none;border-radius:15px;padding:13px 15px;cursor:pointer;font-family:var(--font);
+  display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:13px;row-gap:1px;
+  align-items:center;text-align:left;
+  box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.13), 0 1px 2px rgba(0,0,0,.04);
+  transition:all .15s;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.ttile .ic{grid-row:1/3;width:44px;height:44px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ttile .ic svg{width:24px;height:24px;stroke:var(--ink);color:var(--ink);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all .15s}
+.ttile .tlb{grid-column:2;grid-row:1;align-self:end;font-size:15.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.ttile .tsub{grid-column:2;grid-row:2;align-self:start;font-size:12.5px;color:var(--sub);font-weight:500}
+.ttile::after{content:'›';grid-column:3;grid-row:1/3;font-size:20px;font-weight:600;color:var(--sub2)}
+.ttile.hot .tlb{color:var(--red)}
+.ttile.c-red .ic{background:var(--red-soft)}
+.ttile.c-red .ic svg{stroke:var(--red);color:var(--red)}
+.ttile.c-red::after{color:var(--red)}
+/* each type's colour sits as a faint ring around the card, not inside it */
+.ttile.c-red{box-shadow:inset 0 0 0 1.5px rgba(250,35,59,.4), 0 1px 2px rgba(0,0,0,.04)}
+
+/* picked + closed: one compact chip, the other three tucked away behind Change */
+.typetiles.collapsed{display:flex}
+.typesel{display:flex;width:100%;align-items:center;gap:9px;background:var(--card);border:none;border-radius:18px;
+  padding:14px 16px;font-family:var(--font);cursor:pointer;text-align:left;animation:qin .25s cubic-bezier(.32,.72,.35,1) both}
+.typesel .ic{display:flex;flex:0 0 auto}
+.typesel .ic svg{width:22px;height:22px;stroke:var(--ink);color:var(--ink);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.typesel .tlb{font-size:15.5px;font-weight:700;color:var(--ink)}
+.typesel .tchange{margin-left:auto;font-size:13.5px;font-weight:600;color:var(--sub)}
+/* the collapsed capsule follows the same colour discipline: ink, unless it's Urgent */
+.typesel{box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.15), 0 1px 2px rgba(0,0,0,.04)}
+.typesel.c-red{background:var(--red-soft);box-shadow:inset 0 0 0 1.5px rgba(250,35,59,.32)}
+.typesel.c-red .tlb{color:var(--red)}
+.typesel.c-red .ic svg{stroke:var(--red);color:var(--red)}
+.typesel:active{transform:scale(.985)}
+.ttile:active{transform:scale(.97)}
+.typetiles.missing .ttile{background:var(--red-soft)}
+
+/* customer form header — everything left, small logo beside the name (Noah's call 2026-08-13) */
+#formView .navhead{text-align:left}
+#formView .largetitle{font-size:28px}
+#formView .navhead.answered .largetitle{font-size:20px}
+
+/* call-out cost — seen up front, accepted before send */
+.feecard{background:var(--card);border-radius:15px;padding:15px;margin-top:16px;transition:background .25s;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.feecard.missing{background:var(--red-soft)}
+.feerow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.feecol{display:flex;flex-direction:column;gap:3px;min-width:0}
+.feecol b{font-size:15.5px;font-weight:700}
+.feesub{font-size:13px;color:var(--sub);font-weight:500;line-height:1.4}
+.feeamt{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.feeamt small{font-size:11px;font-weight:600;color:var(--sub);letter-spacing:0;margin-top:4px}
+/* the service rate card — both figures listed, the booked time picks between them */
+.feerates{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.raterow{display:flex;align-items:baseline;gap:10px}
+.rateamt{flex:0 0 auto;min-width:52px;font-size:17px;font-weight:800;letter-spacing:-.3px}
+.rateamt small{font-size:10.5px;font-weight:600;color:var(--sub);letter-spacing:0;margin-left:3px}
+.ratetxt{font-size:13.5px;color:var(--sub);font-weight:500;line-height:1.35}
+.feebtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:14px;
+  padding:13px 2px 3px;border:none;border-top:1px solid var(--line);border-radius:0;background:none;cursor:pointer;
+  color:var(--ink);font-family:var(--font);font-weight:600;font-size:15px;transition:color .15s}
+.feering{flex:0 0 auto;width:25px;height:25px;border-radius:50%;border:1.7px solid var(--sub2);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;
+  transition:background .15s,border-color .15s}
+.feebtn.on{color:var(--green)}
+.feeterms{margin-top:12px;border-top:1px solid var(--line);padding-top:2px}
+.termslink{display:flex;align-items:center;gap:5px;width:100%;background:none;border:none;padding:9px 2px 7px;
+  font:inherit;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer}
+.termslink .tchev{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round;transition:transform .2s}
+.feeterms.open .tchev{transform:rotate(180deg)}
+.termslist{margin:0;padding:0 2px 8px 20px;animation:qin .25s cubic-bezier(.32,.72,.35,1) both}
+.termslist li{font-size:13px;color:var(--sub);font-weight:500;line-height:1.45;margin-top:5px}
+.feebtn.on .feering{background:var(--green);border-color:var(--green)}
+.feechip{margin-top:8px;color:var(--green);background:var(--green-soft)}
+
+/* company side — accepted line on the detail
+   (the type chips that used to sit on cards went 2026-08-17 — the chip row and
+   section headers say the type now) */
+
+/* ---- accept confirmation sheet — one breath before the promise goes out ---- */
+.sheetwrap{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px}
+.sheetdim{position:absolute;inset:0;background:rgba(20,20,30,.55)}
+.sheet{position:relative;width:100%;max-width:420px;background:var(--card);border-radius:22px;
+  padding:22px 20px;animation:sheetup .16s ease-out;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+@keyframes sheetup{from{transform:scale(.94);opacity:.4}to{transform:none;opacity:1}}
+/* the urgent tag rides the top edge, dead centre — Noah's design 2026-08-20 */
+.sheeturg{position:absolute;top:-13px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;
+  background:var(--red);color:#fff;font-size:12px;font-weight:800;letter-spacing:.09em;padding:6px 16px;
+  border-radius:999px;box-shadow:0 0 0 4px var(--card)}
+.sheet b{display:block;font-size:18.5px;letter-spacing:-.02em;text-align:center;margin-top:6px}
+.sheet p{margin:8px 0 10px;font-size:14.5px;color:var(--sub);line-height:1.5}
+.okbubble{background:var(--green);color:#fff;font-size:14.5px;line-height:1.45;font-weight:500;
+  padding:11px 14px;border-radius:17px;border-bottom-left-radius:6px;margin:0 18px 18px 0}
+.sheetbtns{display:flex;gap:10px}
+.actbtn.ghost{background:var(--bg);color:var(--ink)}
+
+/* the picker's Done row — closes the menu, teaches that you can tick a whole crew */
+.menudone{display:block;width:100%;margin-top:6px;padding:12px;border:none;border-radius:11px;
+  background:var(--green);color:#fff;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer}
+.menudone:active{opacity:.85}
+
+#okReason{width:100%;border:none;background:var(--bg);border-radius:12px;padding:12px 14px;margin:2px 0 12px;
+  font-family:var(--font);font-size:15px;color:var(--ink);resize:none;outline:none}
+#okReason::placeholder{color:var(--sub)}
+
+/* page freeze while a confirm box is up */
+body.modallock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+
+/* the reason slot inside the preview bubble — italic ghost until typed, bold once real */
+.okbubble .okrsn{font-weight:700}
+.okbubble .okrsn.ph{font-weight:500;font-style:italic;opacity:.7}
+
+/* collapsible section header (Completed works) — same look as a section label, but a button */
+button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-family:var(--font);padding:0}
+.lsectoggle .secchev{font-size:11px;color:var(--sub);margin-left:2px}
+
+/* the no-days block: the fact in ink, the move underneath */
+.ndcol{display:flex;flex-direction:column;gap:3px}
+.ndcol b{font-size:16px;font-weight:700;color:var(--ink)}
+.ndsub{font-size:13px;color:var(--sub);font-weight:500}
+
+/* type headers on the detail — same strip, each type's colour */
+.urgstrip.service{background:var(--blue);box-shadow:0 3px 12px rgba(0,122,255,.28)}
+.urgstrip.quote{background:var(--purple);box-shadow:0 3px 12px rgba(175,82,222,.28)}
+.urgstrip.other{background:var(--ink);box-shadow:0 3px 12px rgba(0,0,0,.22)}
+
+/* header-side nudge for offered days */
+/* rides right beside the label, in brackets (Noah 2026-08-20) */
+.avhint{margin-right:auto;margin-left:2px;font-size:12px;font-weight:600;color:var(--sub);text-transform:none;letter-spacing:.2px}
+.avhead{display:flex;align-items:center;gap:8px}
+
+/* 2026-08-28 review additions */
+/* the trust line under Send — quiet, one sentence, what the details are for */
+.privline{text-align:center;font-size:12.5px;font-weight:500;color:var(--sub2);margin-top:12px}
+/* the AFSS deadline date — a qrow whose answer is a date, styled like the other inputs */
+.daterow .datein{border:none;background:none;font-family:var(--font);font-size:15px;font-weight:600;color:var(--ink);outline:none;text-align:right;padding:0}
+.daterow .datein::-webkit-calendar-picker-indicator{opacity:.45}
+/* the customer's email on the office detail — its own quiet line under the who row */
+
+/* landline with no thread: the Texts row is hidden, so the assign row is the whole
+   card — it takes the full rounding and drops its divider (2026-08-30) */
+.whocard.solo .ownsel{border-radius:16px;border-bottom:none}
+
+/* the confirm sheet on a landline job: these words get SAID on the phone, not sent —
+   so they must not wear a message shape at all (Noah 2026-08-30). A script block:
+   flush left, ruled edge, no bubble, no tail. */
+.okbubble.saythis{background:none;color:var(--ink);border:none;border-left:3px solid var(--sub2);
+  border-radius:0;padding:1px 0 1px 13px;margin:0 18px 18px 2px;font-size:15px;font-weight:500}
+
+/* a landline update in the thread: what the office says when they ring. Same script
+   block as the confirm sheet — never a bubble, because nothing was sent (2026-08-30) */
+.tlsay{display:flex;flex-direction:column;align-items:flex-start;margin:0 0 10px}
+.tlsay .tlstamp{align-self:flex-start;margin-left:13px}
+.tlsaybody{border-left:3px solid var(--sub2);padding:1px 0 1px 13px;color:var(--ink);
+  font-size:15px;line-height:1.45;font-weight:500;max-width:92%}
+
+/* landline job: instruction, words and number read as ONE card, so the sheet is two
+   things (what to do / confirm it) instead of four stacked blocks. Accept stays the only
+   green — a second green button fought it for the eye (Noah 2026-08-30). */
+#okCard.ringcard{margin:0 0 16px}
+/* the landline line is a separate fact from the title, not a continuation of it —
+   it needs room to read that way (Noah 2026-08-30) */
+#okCard.ringcard #okBody{margin:14px 0 16px;text-align:center}
+.okcall{display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--bg);border-radius:13px;margin:0;padding:14px 16px;
+  font-family:var(--font);font-size:15.5px;font-weight:700;color:#1e8e3e;text-decoration:none}
+.okcall svg{width:17px;height:17px;stroke:#1e8e3e;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* the reason box when it sits inside the ring card — an input, not loose text */
+#okCard.ringcard #okReason{background:var(--card);border:1px solid var(--line);border-radius:11px;
+  padding:11px 12px;margin:0 0 12px;width:100%;box-sizing:border-box}
+
+/* the urgent ping's switch — a bell in the list header, off until it's tapped (2026-08-31) */
+.alertbtn{background:var(--card);border:none;border-radius:11px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.alertbtn svg{width:19px;height:19px;stroke:var(--sub);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.alertbtn.on{background:var(--red-soft)}
+.alertbtn.on svg{stroke:var(--red)}
