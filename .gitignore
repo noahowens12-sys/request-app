@@ -1,0 +1,4 @@
+# only app files go to GitHub — notes, docs and anything private stay home
+*.md
+*.docx
+.DS_Store
