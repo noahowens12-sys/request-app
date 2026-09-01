@@ -673,3 +673,12 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
 .alertbtn svg{width:19px;height:19px;stroke:var(--sub);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .alertbtn.on{background:var(--red-soft)}
 .alertbtn.on svg{stroke:var(--red)}
+
+/* Autofill (2026-09-01, Noah's nitpick): Safari/Chrome paint fields they filled
+   yellow. Repaint them our own card colour so autofilled fields look like typed ones. */
+.ginput:-webkit-autofill, .ginput:-webkit-autofill:hover, .ginput:-webkit-autofill:focus,
+.notewrap input:-webkit-autofill, .login input:-webkit-autofill, .subbierow input:-webkit-autofill{
+  -webkit-box-shadow: 0 0 0 1000px var(--card) inset;
+  -webkit-text-fill-color: var(--ink);
+  transition: background-color 99999s ease-out 0s;
+}
