@@ -87,8 +87,8 @@ window.APP_CONFIG = {
   ON_CALL: { name: 'Noah', phone: '0400 000 000' },
   URGENT_PING: { repeatMins: 5 },
 
-  SUPABASE_URL: '',                    // e.g. https://abcdefgh.supabase.co
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://lemepuchjumwjbqbjbkw.supabase.co',                    // e.g. https://abcdefgh.supabase.co
+  SUPABASE_ANON_KEY: 'sb_publishable_0_ewcS-gzck0o9jtSZIkMA_Gy08HIkB',
 
   /* Team shown on "Who's on it?" — name + avatar colour */
   TEAM: [
