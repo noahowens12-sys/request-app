@@ -191,9 +191,11 @@ const LiveStore = {
     return data;
   },
   async createRequest(req){
-    /* No ref set here on purpose — the database assigns it from a sequence, so
-       two requests can never come out with the same number. */
-    const { data, error } = await this.client().from('requests').insert(req).select().single();
+    /* Goes through a database function (2026-09-01 fix): a plain insert worked,
+       but reading the row back for the receipt needs read access the customer
+       rightly doesn't have. The function inserts and returns the row (with the
+       sequence-assigned ref) in one privileged step. */
+    const { data, error } = await this.client().rpc('create_request', { req });
     if(error) throw error;
     /* 'received' events are added by a database trigger */
     return data;
