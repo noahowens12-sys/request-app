@@ -93,9 +93,22 @@ const DemoStore = {
   _read(){ try { return JSON.parse(localStorage.getItem('reqapp') || '{"requests":[],"events":{}}'); } catch(e){ return {requests:[],events:{}}; } },
   _write(d){ localStorage.setItem('reqapp', JSON.stringify(d)); },
 
+  /* buildings: the ones in config plus any added from the Buildings tab (saved in this browser) */
+  _buildings(){ const d = this._read(); return (window.APP_CONFIG.BUILDINGS || []).concat(d.buildings || []); },
   async getBuilding(code){
-    const b = (window.APP_CONFIG.BUILDINGS || []).find(x => x.code === code);
+    const b = this._buildings().find(x => x.code === code);
     return b || null;
+  },
+  async listBuildings(){
+    return this._buildings().slice().sort((a, b) => a.name.localeCompare(b.name));
+  },
+  async addBuilding(b){
+    if(this._buildings().some(x => x.code === b.code)) throw new Error('code taken');
+    const d = this._read();
+    d.buildings = d.buildings || [];
+    d.buildings.push({ code: b.code, name: b.name, address: b.address || '' });
+    this._write(d);
+    return b;
   },
   async createRequest(req){
     const d = this._read();
@@ -189,6 +202,15 @@ const LiveStore = {
   async getBuilding(code){
     const { data } = await this.client().from('buildings').select('code,name,address').eq('code', code).maybeSingle();
     return data;
+  },
+  async listBuildings(){
+    const { data } = await this.client().from('buildings').select('code,name,address').order('name');
+    return data || [];
+  },
+  async addBuilding(b){
+    const { error } = await this.client().from('buildings').insert({ code: b.code, name: b.name, address: b.address || '' });
+    if(error) throw new Error(/duplicate|unique/i.test(error.message) ? 'code taken' : error.message);
+    return b;
   },
   async createRequest(req){
     /* Goes through a database function (2026-09-01 fix): a plain insert worked,

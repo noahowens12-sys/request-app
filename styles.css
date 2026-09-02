@@ -682,3 +682,33 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
   -webkit-text-fill-color: var(--ink);
   transition: background-color 99999s ease-out 0s;
 }
+
+/* buildings tab + QR sticker (2026-09-02) */
+.bldform{background:var(--card);border-radius:15px;padding:14px 15px;margin:4px 0 16px}
+.bldform-h{font-size:16px;font-weight:700;margin-bottom:10px}
+.bldform input{border:none;background:var(--bg);border-radius:11px;padding:12px 13px;font-family:var(--font);font-size:15.5px;outline:none;width:100%;margin-bottom:8px}
+.bldcode{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bldcode span{font-size:13.5px;color:var(--sub);font-weight:600;white-space:nowrap}
+.bldcode input{margin:0;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.bldform button{width:100%;border:none;cursor:pointer;background:var(--ink);color:#fff;font-family:var(--font);font-weight:600;font-size:16px;padding:13px;border-radius:12px}
+.bldmsg{margin-top:8px;font-size:13.5px;color:var(--red);font-weight:500;min-height:0}
+.req.bld{cursor:default}
+.req.bld:active{transform:none}
+.bldlink{margin-top:8px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--sub);word-break:break-all}
+.bldbtns{display:flex;gap:8px;margin-top:10px}
+.bldbtn{flex:1;border:none;border-radius:11px;padding:11px;font-family:var(--font);font-size:14.5px;font-weight:600;cursor:pointer;background:var(--bg);color:var(--ink)}
+.bldbtn.qr{background:var(--blue-soft);color:var(--blue)}
+.stickerprint{border:none;background:var(--ink);color:#fff;font-family:var(--font);font-weight:600;font-size:15px;padding:9px 16px;border-radius:10px;cursor:pointer}
+.sticker{background:#fff;border:2px solid #000;border-radius:14px;margin:12px 20px;padding:26px 22px;text-align:center;max-width:420px;margin-left:auto;margin-right:auto}
+.stk-co{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.stk-lede{font-size:17px;font-weight:600;line-height:1.35;margin:10px 0 18px}
+.stk-qr{width:min(260px,70vw);margin:0 auto}
+.stk-qr svg{width:100%;height:auto;display:block}
+.stk-site{font-size:16px;font-weight:700;margin-top:18px;line-height:1.35}
+.stk-phone{font-size:14px;color:#333;font-weight:500;margin-top:6px}
+.stk-help{margin:14px 20px;font-size:13.5px;color:var(--sub);line-height:1.5;word-break:break-all}
+@media print{
+  body{background:#fff}
+  .noprint,.demobanner{display:none !important}
+  .sticker{border-width:2px;margin:0 auto;box-shadow:none}
+}

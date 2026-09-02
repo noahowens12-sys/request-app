@@ -155,6 +155,11 @@ $$;
 -- buildings: anyone can look one up (the form needs the name); only company changes them
 drop policy if exists bld_read on buildings;
 create policy bld_read on buildings for select using (true);
+-- the office adds and edits buildings from the Buildings tab (2026-09-02)
+drop policy if exists bld_insert on buildings;
+create policy bld_insert on buildings for insert with check (is_company());
+drop policy if exists bld_update on buildings;
+create policy bld_update on buildings for update using (is_company());
 
 -- requests: anyone can CREATE one (that's the product) — but only as a fresh 'new'
 -- request with nobody on it; reading and changing is company-only.

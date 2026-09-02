@@ -33,10 +33,27 @@
       <div class="tabs">
         <button class="tabbtn on" id="tabReq" type="button">Requests<span class="tcnt" id="cntReq" style="display:none"></span></button>
         <button class="tabbtn" id="tabAcc" type="button">Accepted<span class="tcnt" id="cntAcc" style="display:none"></span></button>
+        <button class="tabbtn" id="tabBld" type="button">Buildings</button>
       </div>
       <div class="catbar" id="catBar"></div>
       <div id="reqList"></div>
     </div>
+  </div>
+
+  <!-- QR STICKER (print this, stick it by the fire panel / in the office) -->
+  <div id="stickerView" style="display:none">
+    <div class="topbar noprint">
+      <button class="backlink" id="stickerBack" type="button">‹ Buildings</button>
+      <button class="stickerprint" id="stickerPrint" type="button">Print</button>
+    </div>
+    <div class="sticker" id="sticker">
+      <div class="stk-co" id="stkCo">—</div>
+      <div class="stk-lede">Something wrong with the fire gear?<br>Scan to tell us.</div>
+      <div class="stk-qr" id="stkQr"></div>
+      <div class="stk-site" id="stkSite">—</div>
+      <div class="stk-phone" id="stkPhone"></div>
+    </div>
+    <div class="stk-help noprint">A5 or A6 works. Stick it by the fire panel and in the building manager's office. The link under the code: <span id="stkLink"></span></div>
   </div>
 
   <!-- DETAIL -->
@@ -128,6 +145,7 @@
 <script src="vendor/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
+<script src="vendor/qrcode.min.js"></script>
 <script src="store.js"></script>
 <script>
 const C = window.APP_CONFIG;
@@ -137,7 +155,7 @@ if(window.IS_DEMO){
   document.getElementById('demoWipe').onclick = (e) => { e.preventDefault(); localStorage.removeItem('reqapp'); location.reload(); };
 }
 
-const views = ['loginView','listView','detailView'];
+const views = ['loginView','listView','detailView','stickerView'];
 function showView(v){ views.forEach(x => document.getElementById(x).style.display = (x === v ? 'block' : 'none')); window.scrollTo(0,0); }
 function firstName(r){ return (r.customer_name || 'Customer').split(' ')[0]; }
 function esc(s){ const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
@@ -239,6 +257,7 @@ let activeTab = 'req';
 let typeFilter = 'all';
 document.getElementById('tabReq').onclick = () => { activeTab = 'req'; refreshList(); };
 document.getElementById('tabAcc').onclick = () => { activeTab = 'acc'; refreshList(); };
+document.getElementById('tabBld').onclick = () => { activeTab = 'bld'; refreshList(); };
 /* type filter chips — the four the customer picked from, All up front and on by default */
 (function buildTypeBar(){
   const bar = document.getElementById('catBar');
@@ -281,11 +300,15 @@ async function refreshList(){
   /* tab chrome */
   document.getElementById('tabReq').className = 'tabbtn' + (activeTab === 'req' ? ' on' : '');
   document.getElementById('tabAcc').className = 'tabbtn' + (activeTab === 'acc' ? ' on' : '');
+  document.getElementById('tabBld').className = 'tabbtn' + (activeTab === 'bld' ? ' on' : '');
+  document.getElementById('catBar').style.display = activeTab === 'bld' ? 'none' : '';
   const cR = document.getElementById('cntReq'), cA = document.getElementById('cntAcc');
   cR.style.display = untouched.length ? '' : 'none'; cR.textContent = untouched.length;
   cR.classList.toggle('hot', urgent.length > 0);
   cA.style.display = inProg.length ? '' : 'none'; cA.textContent = inProg.length;
   pingCheck(urgent);
+
+  if(activeTab === 'bld'){ await renderBuildings(wrap); return; }
 
   if(!requests.length){
     wrap.innerHTML = '<div class="empty">No requests yet.<br>Send someone the link and this is where they land.</div>';
@@ -1676,15 +1699,88 @@ document.getElementById('alertBtn').onclick = async () => {
 };
 renderAlertBtn();
 
+/* ---------- buildings + QR stickers (2026-09-02) ----------
+   Every building gets its own link (request.html?b=<code>) and a sticker with a
+   QR of that link. Adding one used to mean a database row by hand; now it's a form. */
+function slugify(name){
+  return (name || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+}
+function requestLink(code){
+  /* same folder as this page, whatever it's hosted on */
+  const base = location.href.replace(/[^/]*$/, '');
+  return base + 'request.html?b=' + encodeURIComponent(code);
+}
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; } catch(e){ return false; }
+}
+async function renderBuildings(wrap){
+  const list = await Store.listBuildings();
+  const form = document.createElement('div');
+  form.className = 'bldform';
+  form.innerHTML = `
+    <div class="bldform-h">Add a building</div>
+    <input id="bName" type="text" placeholder="Building name (e.g. Harbourview Apartments)" autocomplete="off">
+    <input id="bAddr" type="text" placeholder="Address" autocomplete="off">
+    <div class="bldcode"><span>Link code</span><input id="bCode" type="text" placeholder="harbourview" autocomplete="off" spellcheck="false"></div>
+    <button id="bAdd" type="button">Add building</button>
+    <div class="bldmsg" id="bMsg"></div>`;
+  wrap.appendChild(form);
+  const nameEl = form.querySelector('#bName'), codeEl = form.querySelector('#bCode'), addrEl = form.querySelector('#bAddr'), msg = form.querySelector('#bMsg');
+  let codeTouched = false;
+  nameEl.oninput = () => { if(!codeTouched) codeEl.value = slugify(nameEl.value); };
+  codeEl.oninput = () => { codeTouched = codeEl.value.length > 0; codeEl.value = slugify(codeEl.value); };
+  form.querySelector('#bAdd').onclick = async () => {
+    const name = nameEl.value.trim(), code = slugify(codeEl.value || nameEl.value), address = addrEl.value.trim();
+    if(!name){ msg.textContent = 'Needs a name.'; return; }
+    if(!code){ msg.textContent = 'Needs a link code.'; return; }
+    try {
+      await Store.addBuilding({ code, name, address });
+      msg.textContent = '';
+      await refreshList();
+      showSticker({ code, name, address });
+    } catch(e){
+      msg.textContent = e.message === 'code taken' ? 'That link code is already used. Change it.' : 'That didn\'t save. Try again.';
+    }
+  };
+
+  if(!list.length){
+    const e = document.createElement('div'); e.className = 'empty'; e.textContent = 'No buildings yet.'; wrap.appendChild(e); return;
+  }
+  const h = document.createElement('div'); h.className = 'lsec'; h.innerHTML = `<span class="seci"><span>Buildings</span></span><span class="cnt">${list.length}</span>`; wrap.appendChild(h);
+  list.forEach(b => {
+    const d = document.createElement('div'); d.className = 'req bld';
+    d.innerHTML = `<div class="top"><div class="what">${esc(b.name)}</div></div>
+      <div class="meta"><span>${esc(b.address || 'No address')}</span></div>
+      <div class="bldlink">${esc(requestLink(b.code))}</div>
+      <div class="bldbtns"><button type="button" class="bldbtn copy">Copy link</button><button type="button" class="bldbtn qr">QR sticker</button></div>`;
+    d.querySelector('.copy').onclick = async (ev) => { ev.stopPropagation(); const ok = await copyText(requestLink(b.code)); ev.target.textContent = ok ? 'Copied' : 'Copy failed'; setTimeout(() => ev.target.textContent = 'Copy link', 1500); };
+    d.querySelector('.qr').onclick = (ev) => { ev.stopPropagation(); showSticker(b); };
+    wrap.appendChild(d);
+  });
+}
+function showSticker(b){
+  const link = requestLink(b.code);
+  document.getElementById('stkCo').textContent = C.COMPANY_NAME || '';
+  document.getElementById('stkSite').textContent = b.name + (b.address ? ' · ' + b.address : '');
+  document.getElementById('stkPhone').textContent = C.COMPANY_PHONE ? 'Or ring ' + C.COMPANY_PHONE : '';
+  document.getElementById('stkLink').textContent = link;
+  const q = qrcode(0, 'M'); q.addData(link); q.make();
+  document.getElementById('stkQr').innerHTML = q.createSvgTag({ cellSize: 6, margin: 0, scalable: true });
+  showView('stickerView');
+}
+document.getElementById('stickerBack').onclick = () => { activeTab = 'bld'; showView('listView'); refreshList(); };
+document.getElementById('stickerPrint').onclick = () => window.print();
+
 /* ---------- auth + boot ---------- */
 async function boot(){
   const user = await Store.getUser();
   if(!user){ showView('loginView'); return; }
   showView('listView');
   await refreshList();
-  Store.onChange(() => { refreshList(); });
+  /* the Buildings tab holds a form — don't wipe what's being typed on a background refresh */
+  Store.onChange(() => { if(activeTab !== 'bld') refreshList(); });
   /* keep the aging labels fresh */
-  setInterval(refreshList, 60000);
+  setInterval(() => { if(activeTab !== 'bld') refreshList(); }, 60000);
 }
 document.getElementById('loginBtn').onclick = async () => {
   const email = document.getElementById('loginEmail').value.trim();
