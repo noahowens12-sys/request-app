@@ -8,7 +8,9 @@
 /* ?test on the end of the address forces demo mode even with live keys set
    (2026-09-02, Noah: "how do i actually get to test mode"). Data stays in this
    browser, the real database is never touched. */
-const TEST_FLAG = /(?:^|[?&])test(?:=|&|$)/.test(location.search);
+/* A file opened straight off the Mac (file://) is always the preview copy — a
+   sign-in link can't come back to a local file anyway — so it's test mode too. */
+const TEST_FLAG = /(?:^|[?&])test(?:=|&|$)/.test(location.search) || location.protocol === 'file:';
 const DEMO = TEST_FLAG || !window.APP_CONFIG || !window.APP_CONFIG.SUPABASE_URL;
 window.TEST_FLAG = TEST_FLAG;
 
