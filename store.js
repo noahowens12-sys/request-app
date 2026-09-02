@@ -5,7 +5,12 @@
    - LIVE MODE (keys set in config.js): data lives in Supabase, list updates in
      realtime, company side requires magic-link login. */
 
-const DEMO = !window.APP_CONFIG || !window.APP_CONFIG.SUPABASE_URL;
+/* ?test on the end of the address forces demo mode even with live keys set
+   (2026-09-02, Noah: "how do i actually get to test mode"). Data stays in this
+   browser, the real database is never touched. */
+const TEST_FLAG = /(?:^|[?&])test(?:=|&|$)/.test(location.search);
+const DEMO = TEST_FLAG || !window.APP_CONFIG || !window.APP_CONFIG.SUPABASE_URL;
+window.TEST_FLAG = TEST_FLAG;
 
 /* ---------------- shared helpers ---------------- */
 function uid(){ return 'r' + Math.random().toString(36).slice(2, 10); }

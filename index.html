@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div id="demoBanner" class="demobanner" style="display:none">Test mode — data stays on this device. <a href="#" id="demoSeed">Load samples</a> · <a href="#" id="demoWipe">Start fresh</a></div>
+  <div id="demoBanner" class="demobanner" style="display:none">Test mode — data stays on this device, the real site isn't touched. <a href="#" id="demoSeed">Load samples</a> · <a href="#" id="demoWipe">Start fresh</a></div>
 
   <!-- LOGIN -->
   <div id="loginView" style="display:none">
@@ -1708,7 +1708,7 @@ function slugify(name){
 function requestLink(code){
   /* same folder as this page, whatever it's hosted on */
   const base = location.href.replace(/[^/]*$/, '');
-  return base + 'request.html?b=' + encodeURIComponent(code);
+  return base + 'request.html?b=' + encodeURIComponent(code) + (window.TEST_FLAG ? '&test' : '');
 }
 async function copyText(t){
   try { await navigator.clipboard.writeText(t); return true; } catch(e){ return false; }
