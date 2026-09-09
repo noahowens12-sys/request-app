@@ -538,8 +538,13 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 /* head centre: 24-unit path drawn at 34x42 (meet) = scale 1.417, 4px vertical offset, centre y = 4 + 10.3 x 1.417 = 18.6px */
 .pinic{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:15px;height:15px;
   stroke:#fff;color:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* map credit: the data is free on the condition it's credited, so it stays, but folded to the little i (tap to read). Noah 9 Sep. */
 .sitemap .maplibregl-ctrl-bottom-right{font-size:9px}
-.sitemap .maplibregl-ctrl-attrib{background:rgba(255,255,255,.6);padding:0 4px}
+.sitemap .maplibregl-ctrl-attrib.maplibregl-compact{min-height:20px;background:rgba(255,255,255,.7)}
+.sitemap .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) .maplibregl-ctrl-attrib-inner{display:none}
+.sitemap .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show){padding:2px 20px 2px 2px}
+.sitemap .maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner{display:block;padding-right:18px}
+.sitemap .maplibregl-ctrl-attrib-button{width:20px;height:20px;opacity:.7}
 .sitemap .maplibregl-marker{cursor:default}
 .siterow{display:flex;align-items:center;gap:11px;padding:12px 15px}
 .siterow svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--red);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
