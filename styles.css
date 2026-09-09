@@ -538,7 +538,9 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 /* head centre: 24-unit path drawn at 34x42 (meet) = scale 1.417, 4px vertical offset, centre y = 4 + 10.3 x 1.417 = 18.6px */
 .pinic{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:15px;height:15px;
   stroke:#fff;color:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.sitemap .leaflet-control-attribution{font-size:9px;background:rgba(255,255,255,.6)}
+.sitemap .maplibregl-ctrl-bottom-right{font-size:9px}
+.sitemap .maplibregl-ctrl-attrib{background:rgba(255,255,255,.6);padding:0 4px}
+.sitemap .maplibregl-marker{cursor:default}
 .siterow{display:flex;align-items:center;gap:11px;padding:12px 15px}
 .siterow svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--red);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .sitetxt{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
@@ -777,8 +779,6 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
   -webkit-box-shadow: inset 0 0 0 1.5px rgba(60,60,67,.3), 0 0 0 1000px var(--card) inset;
 }
 .qtextin:-webkit-autofill:focus{ -webkit-box-shadow: inset 0 0 0 2px var(--ink), 0 0 0 1000px var(--card) inset; }
-/* Light-grey map look (Noah's call, the CARTO positron style) done with a filter on plain OSM tiles, since CARTO now wants a key */
-.sitemap .leaflet-tile-pane{filter:grayscale(1) brightness(1.06) contrast(.88)}
 
 /* buildings tab + QR sticker (2026-09-02) */
 .bldform{background:var(--card);border-radius:15px;padding:14px 15px;margin:4px 0 16px}

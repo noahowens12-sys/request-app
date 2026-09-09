@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Requests</title>
-<link rel="stylesheet" href="styles.css?v=20260909">
+<link rel="stylesheet" href="styles.css?v=20260909b">
 </head>
 <body>
 <div class="wrap">
@@ -166,8 +166,9 @@
   </div>
 </div>
 
-<link rel="stylesheet" href="vendor/leaflet.min.css">
-<script src="vendor/leaflet.min.js"></script>
+<!-- MapLibre + OpenFreeMap positron (Noah picked it 9 Sep 2026 on map-test.html: free, no key, no limits). Leaflet retired. -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="vendor/qrcode.min.js"></script>
@@ -536,31 +537,27 @@ async function renderSiteMap(bld){
   const hero = document.getElementById('dHero');
   const openedId = cur && cur.id;
   if(!(bld && bld.lat && bld.lng) && cur && cur.site_lat && cur.site_lng) bld = Object.assign({}, bld || {}, { lat: cur.site_lat, lng: cur.site_lng }); /* picked on the form, no lookup needed */
-  if(!(bld && bld.lat && bld.lng) && window.L){
+  if(!(bld && bld.lat && bld.lng) && window.maplibregl){
     const addr = bld ? (bld.address || bld.name) : (cur && cur.building_name);
     const hit = await geocode(addr);
     if(!cur || cur.id !== openedId) return; /* they've moved on while we were looking it up */
     if(hit) bld = Object.assign({}, bld || {}, hit);
   }
-  if(!(bld && bld.lat && bld.lng && window.L)){ el.style.display = 'none'; hero.classList.remove('hasmap'); return; }
+  if(!(bld && bld.lat && bld.lng && window.maplibregl)){ el.style.display = 'none'; hero.classList.remove('hasmap'); return; }
   el.style.display = 'block'; hero.classList.add('hasmap');
   if(siteMap){ siteMap.remove(); siteMap = null; }
-  /* zoom 14, not 15 — enough suburb context to recognise where you're going (Noah 2026-08-17) */
-  siteMap = L.map(el, { zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false,
-    boxZoom:false, keyboard:false, touchZoom:false }).setView([bld.lat, bld.lng], 14);
-  siteMap.attributionControl.setPrefix(false);
-  /* CARTO's free light tiles started demanding an API key on the live site (9 Sep 2026: "API KEY REQUIRED" baked into the tiles).
-     Plain OpenStreetMap tiles instead: free, no key, fine for a small office app. */
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(siteMap);
+  /* zoom 13.4 here ≈ the old Leaflet 14 — enough suburb context to recognise where you're going (Noah 2026-08-17) */
+  siteMap = new maplibregl.Map({ container: el, style: 'https://tiles.openfreemap.org/styles/positron',
+    center: [bld.lng, bld.lat], zoom: 13.4, interactive: false, attributionControl: { compact: true } });
   /* the pin carries the category icon — an alarm job pins a bell, a leak pins a drop */
   const catIc = (CATS.find(c => c.cat === cur.category) || {}).ic || '';
   const icInner = catIc.replace(/<\/?svg[^>]*>/g, '');
   /* pin colour follows the request type (same colours as the chips): urgent red, service blue, quote purple, other ink */
-  L.marker([bld.lat, bld.lng], { icon: L.divIcon({ className: 'sitepin ' + reqType(cur), iconSize: [34, 42], iconAnchor: [17, 40],
-    html: `<div class="pinwrap"><svg class="pinbody" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="currentColor" stroke="#fff" stroke-width="1.4"/></svg><svg class="pinic" viewBox="0 0 24 24">${icInner}</svg></div>` }) }).addTo(siteMap);
-  /* the hero is still sizing when the map is made, so tiles only covered the first third (live, 9 Sep). Re-measure a few times as it settles. */
-  [60, 250, 600].forEach(ms => setTimeout(() => siteMap && siteMap.invalidateSize(), ms));
+  const pinEl = document.createElement('div'); pinEl.className = 'sitepin ' + reqType(cur);
+  pinEl.innerHTML = `<div class="pinwrap"><svg class="pinbody" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="currentColor" stroke="#fff" stroke-width="1.4"/></svg><svg class="pinic" viewBox="0 0 24 24">${icInner}</svg></div>`;
+  new maplibregl.Marker({ element: pinEl, anchor: 'bottom' }).setLngLat([bld.lng, bld.lat]).addTo(siteMap);
+  /* the hero is still sizing when the map is made (live, 9 Sep). Re-measure a few times as it settles. */
+  [60, 250, 600].forEach(ms => setTimeout(() => siteMap && siteMap.resize(), ms));
   /* centre the glyph on its drawn shape, not its box — lopsided icons (exit arrow, subbies)
      sat off-centre in the pin head (Noah 2026-08-20) */
   setTimeout(() => {
