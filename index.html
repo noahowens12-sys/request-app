@@ -558,6 +558,9 @@ async function renderSiteMap(bld){
   new maplibregl.Marker({ element: pinEl, anchor: 'bottom' }).setLngLat([bld.lng, bld.lat]).addTo(siteMap);
   /* the hero is still sizing when the map is made (live, 9 Sep). Re-measure a few times as it settles. */
   [60, 250, 600].forEach(ms => setTimeout(() => siteMap && siteMap.resize(), ms));
+  /* MapLibre opens the credit box on load and only folds it after a drag; this map can't be dragged, so fold it ourselves (Noah 9 Sep) */
+  const foldCredit = () => el.querySelectorAll('.maplibregl-ctrl-attrib.maplibregl-compact-show').forEach(a => a.classList.remove('maplibregl-compact-show'));
+  siteMap.on('load', foldCredit); [100, 400, 900].forEach(ms => setTimeout(foldCredit, ms));
   /* centre the glyph on its drawn shape, not its box — lopsided icons (exit arrow, subbies)
      sat off-centre in the pin head (Noah 2026-08-20) */
   setTimeout(() => {
