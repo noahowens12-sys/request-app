@@ -72,6 +72,8 @@
     <!-- 2026-09-07 research: priority is a property of the record, not an alert. The full-width strip is retired;
          the type/urgency reads as a chip on the meta line (dTypeChip). Element kept hidden so nothing else breaks. -->
     <div class="urgstrip" id="dUrgPill" style="display:none"><span class="dot late pulse"></span>URGENT</div>
+    <!-- call button pinned top right, floats over the map and stays while you scroll (Noah 9 Sep). The contact card became one grey line. -->
+    <div class="ringstick"><a class="ringfloat" id="dRingTop" aria-label="Call"><svg viewBox="0 0 24 24"><path d="M6.8 3.8h2.6l1.5 4-2 1.5a13.6 13.6 0 0 0 5.8 5.8l1.5-2 4 1.5v2.6c0 1.3-1 2.3-2.3 2.2C10.6 18.8 5.2 13.4 4.6 6.1c-.1-1.3.9-2.3 2.2-2.3z"/></svg></a></div>
     <!-- the came-in age lives top right, out of the way — it's context, not content -->
     <!-- hero map, edge to edge, controls floating in white pills, no fade (Noah 7–8 Sep).
          No coordinates = no map, the bar just sits at the top as before. -->
@@ -83,23 +85,14 @@
     </div>
     <div class="navhead" style="padding-top:14px">
       <!-- site leads (same identifier as the list row), the job type + their words sit under it (research 2026-09-07) -->
-      <div class="what-lg" id="dWhat">—</div>
+      <!-- age sits top right on the title row, under the map (Noah 9 Sep) -->
+      <div class="titlerow"><div class="what-lg" id="dWhat">—</div><div class="cameline" id="dCameIn"><span id="dCameTxt">—</span></div></div>
       <!-- type + job-type chip share one line (both are "what"); ref + age under it. Chip came off the map: chip inside a pill read as odd (Noah 8 Sep). -->
-      <div class="typeline" id="dType"></div>
-      <div class="cameline" id="dCameIn"><span id="dCameTxt">—</span></div>
+      <!-- their words come second, dark and readable: the problem is the point of the screen (Noah 9 Sep: "the actual info feels bland and hard to get to") -->
       <div class="notesub" id="dNote" style="display:none"></div>
-      <!-- where, before who: trades apps put the address straight under the title (research 2026-09-07) -->
-      <a class="sitecard" id="dSiteCard" target="_blank" rel="noopener">
-        <div class="siterow">
-          <div class="sitetxt"><b id="dSiteName">—</b><span id="dSiteAddr"></span></div>
-          <span class="sitego">Directions ›</span>
-        </div>
-      </a>
-      <div class="duestrip" id="dDue" style="display:none"></div>
-      <!-- who they are on top, how to reach them below — number reads once, the round
-           buttons are the one way to call or email (Noah 2026-08-31) -->
+      <div class="typeline" id="dType"></div>
       <div class="whorow">
-        <div class="whoA" id="dWho">—</div>
+        <span class="wic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span><div class="whoA" id="dWho">—</div>
         <div class="whoB">
           <span class="whonum" id="dNum">—</span>
           <span class="whobtns">
@@ -112,6 +105,16 @@
           </span>
         </div>
       </div>
+      <!-- where, before who: trades apps put the address straight under the title (research 2026-09-07) -->
+      <a class="sitecard" id="dSiteCard" target="_blank" rel="noopener">
+        <div class="siterow">
+          <div class="sitetxt"><b id="dSiteName">—</b><span id="dSiteAddr"></span></div>
+          <span class="sitego">Directions ›</span>
+        </div>
+      </a>
+      <div class="duestrip" id="dDue" style="display:none"></div>
+      <!-- who they are on top, how to reach them below — number reads once, the round
+           buttons are the one way to call or email (Noah 2026-08-31) -->
       <div class="qaline" id="dQa"></div>
     </div>
     <div class="pagepad" style="padding-top:0">
@@ -161,6 +164,21 @@
       <div class="sheetbtns">
         <button class="actbtn ghost" id="okNo" type="button">Go back</button>
         <button class="actbtn acc" id="okYes" type="button">Accept</button>
+      </div>
+    </div>
+  </div>
+  <!-- Save a new site as a building, in a popup (Noah 9 Sep: "should be a popup like this instead") -->
+  <div class="sheetwrap" id="bsWrap" style="display:none">
+    <div class="sheetdim" id="bsDim"></div>
+    <div class="sheet bldsheet">
+      <b>Save as a building</b>
+      <p id="bsAddr"></p>
+      <input id="bsName" type="text" placeholder="Building name (e.g. Marina Plaza)" autocomplete="off">
+      <input id="bsCode" type="hidden"><div class="bldlink bldprev" id="bsLink"></div>
+      <div class="bldmsg" id="bsMsg"></div>
+      <div class="sheetbtns">
+        <button class="actbtn ghost" id="bsNo" type="button">Go back</button>
+        <button class="actbtn acc" id="bsYes" type="button">Save</button>
       </div>
     </div>
   </div>
@@ -411,7 +429,7 @@ async function refreshList(){
       trail = `<span class="age">${esc(r.booked_label)}</span>`;
     }
     const shots = (Array.isArray(r.photos) && r.photos.length) ? r.photos : (r.photo ? [r.photo] : []);
-    const thumb = shots.length ? `<img class="cthumb" src="${shots[0]}" alt="">` : '';
+    const thumb = ''; /* thumbnail off the list row (Noah 9 Sep: cramped; the 2 Sep 'thumbnail first' line was an unverified guess). Photos stay on the detail screen. */
     card(r, `<div class="top"><div class="what">${esc(r.building_name)}</div>${trail}</div>
       <div class="row2"><div class="cnote">${esc(issueLine(r, inCatSection))}</div>${flags.join('')}${thumb}${avatarStack(r, r.status !== 'new')}</div>`);
   };
@@ -631,7 +649,8 @@ async function openDetail(id){
   /* ref + relative age; the exact time is one tap away (Cloudscape: relative by default, absolute on demand) */
   const cameTxt = document.getElementById('dCameTxt');
   let exactShown = false;
-  const paintCame = () => { cameTxt.textContent = (cur.ref ? cur.ref + ' · ' : '') + (exactShown ? whenExact(cur.created_at) : ago(cur.created_at)); };
+  /* ref dropped from the header (Noah 9 Sep), it's on the receipt and in the timeline; exact time still one tap away */
+  const paintCame = () => { cameTxt.textContent = exactShown ? whenExact(cur.created_at) : ago(cur.created_at); };
   paintCame();
   cameTxt.onclick = () => { exactShown = !exactShown; paintCame(); };
   cameTxt.title = whenExact(cur.created_at);
@@ -651,11 +670,12 @@ async function openDetail(id){
        how to reach   — number · landline, then the email, in grey
      The number reads once, plain — the round button beside it is the one way to call
      (Noah 2026-08-17: name + number + a ring card was the same thing three times) */
-  document.getElementById('dWho').innerHTML =
-    '<span class="whoname">' + esc(firstName(cur))
-      + (cur.requester_role ? ' · ' + esc(cur.requester_role.toLowerCase()) : '') + '</span>';
-  document.getElementById('dNum').textContent = prettyPhone(cur.customer_phone) + (isLandline ? ' · landline' : '');
+  /* one grey meta line, same shape as the type line above it (Noah 9 Sep): icon · name · role · number */
+  document.getElementById('dWho').innerHTML = '<span class="whoname">' + esc(firstName(cur)) + '</span>'
+      + (cur.requester_role ? ' · ' + esc(cur.requester_role.toLowerCase()) : '');
+  document.getElementById('dNum').textContent = '· ' + prettyPhone(cur.customer_phone) + (isLandline ? ' · landline' : '');
   document.getElementById('dRing').href = 'tel:' + String(cur.customer_phone).replace(/[^\d+]/g, '');
+  document.getElementById('dRingTop').href = 'tel:' + String(cur.customer_phone).replace(/[^\d+]/g, '');
   /* their email, when they gave one — the envelope writes to them; no address text,
      same one-way-to-do-it rule as the number (Noah 2026-08-31). Quote and paperwork go here (2026-08-28). */
   const mailBtn = document.getElementById('dMail');
@@ -690,7 +710,11 @@ async function openDetail(id){
   const lvl = (cur.answers || []).find(a => a.q === 'Where in the building?' || a.q === 'Level / unit / room');
   const whereBtn = (cur.answers || []).find(a => a.q === 'Where is it?');
   const whereBits = [lvl && lvl.a, whereBtn && whereBtn.a].filter(Boolean);
-  document.getElementById('dSiteAddr').textContent = whereBits.join(', ');
+  /* "Function room · Common area": first letter up, a dot between, so it reads as a line not two answers glued (Noah 9 Sep: "looks a bit weird") */
+  const tidy = t => t ? t.trim().charAt(0).toUpperCase() + t.trim().slice(1) : '';
+  const whereTxt = whereBits.map(tidy).join(', ');
+  document.getElementById('dSiteAddr').textContent = ''; /* address card is for getting there; the inside bit moved to the answers (Noah 9 Sep) */
+  const insideTxt = whereTxt;
   const q = encodeURIComponent(cur.building_name + (bld && bld.address ? ' ' + bld.address : ''));
   document.getElementById('dSiteCard').href = /iPhone|iPad|Mac/.test(navigator.userAgent)
     ? 'https://maps.apple.com/?q=' + q : 'https://www.google.com/maps/search/?api=1&query=' + q;
@@ -724,11 +748,15 @@ async function openDetail(id){
   const kept = answers.filter(x => !SITE_Q.has(x.q));
   const isYN = x => /^(yes|no)$/i.test(String(x.a).trim());
   const checks = kept.filter(isYN), details = kept.filter(x => !isYN(x));
-  const ansRows = [];
-  if(checks.length && details.length){
-    ansRows.push('<div class="ansgrp">Checks</div>'); checks.forEach(x => ansRows.push(row(x)));
-    ansRows.push('<div class="ansgrp">Details</div>'); details.forEach(x => ansRows.push(row(x)));
-  } else kept.forEach(x => ansRows.push(row(x)));
+  /* two proper cards with the label above each, same as Start day (Noah 9 Sep: the grey labels inside one card read as chopped up) */
+  let ansHtml = '';
+  /* "Inside" leads the answers: where in the building, once you're there (Noah 9 Sep, out of the address card) */
+  const insideRow = insideTxt ? `<div class="ansrow"><span class="ansq">Where</span><span class="ansa">${esc(insideTxt)}</span></div>` : '';
+  /* few answers = one card, no labels (Noah 9 Sep: two labelled cards for three rows felt disjointed). Labels only when there's a lot to scan. */
+  if(checks.length && details.length && kept.length >= 5){
+    ansHtml = `<div class="seclabel ansgrp">Checks</div><div class="anscard">${checks.map(row).join('')}</div>`
+            + `<div class="seclabel ansgrp">Details</div><div class="anscard">${insideRow}${details.map(row).join('')}</div>`;
+  } else if(kept.length || insideRow) ansHtml = `<div class="anscard">${insideRow}${checks.concat(details).map(row).join('')}</div>`;
   /* the certification deadline moved up to its own countdown strip under the contact
      card (Noah 2026-08-31) — it used to be a Due date row here */
   /* the accepted call-out is a fact of the request, so it sits with the other facts —
@@ -746,9 +774,10 @@ async function openDetail(id){
   /* the specs answer rides with the other facts; the files themselves sit below with the photos */
   if(cur.req_type === 'quote' && cur.specs_have){
     const nsf = Array.isArray(cur.specs_files) ? cur.specs_files.length : 0;
-    ansRows.push(`<div class="ansrow"><span class="ansq">Plans / drawings</span><span class="ansa">${esc(cur.specs_have)}${nsf ? ' · ' + nsf + (nsf === 1 ? ' file' : ' files') : ''}</span></div>`);
+    const specRow = `<div class="ansrow"><span class="ansq">Plans / drawings</span><span class="ansa">${esc(cur.specs_have)}${nsf ? ' · ' + nsf + (nsf === 1 ? ' file' : ' files') : ''}</span></div>`;
+    ansHtml = ansHtml ? ansHtml.replace(/<\/div>\s*$/, specRow + '</div>') : `<div class="anscard">${specRow}</div>`; /* joins the last card */
   }
-  qa.innerHTML = ansRows.length ? `<div class="anscard">` + ansRows.join('') + `</div>` : '';
+  qa.innerHTML = ansHtml;
 
   /* customer's photos — an array now, but old requests only have the single field */
   const pw = document.getElementById('dPhotos');
@@ -880,7 +909,8 @@ function wholeTeam(names){ return C.TEAM.length > 1 && names.length === C.TEAM.l
 function gotItPhrase(names){
   /* says the job's accepted, keeps the personal bit — "Locked in, Kerry — Noah's on it"
      (one name is personal, two or more is "the team"; Kerry doesn't know Jake from Tom anyway) */
-  const who = names.length === 1 ? names[0] + "'s on it" : "the team's on it";
+  /* no crew yet (assign after accept, Fergus/Jobber pattern, Noah 9 Sep): "we're on it" */
+  const who = !names.length ? "we're on it" : names.length === 1 ? names[0] + "'s on it" : "the team's on it";
   return 'Locked in, ' + firstName(cur) + '. ' + who.charAt(0).toUpperCase() + who.slice(1);
 }
 /* 0294810000 -> (02) 9481 0000. Top level so the confirm sheet can use it too. */
@@ -899,7 +929,7 @@ function saidOrSent(textWords, sayWords){
 }
 /* who's coming, in phone words: "Noah's on his way" / "the team's on the way" */
 function crewComing(names){
-  return names.length === 1 ? names[0] + "'s on his way" : "the team's on the way";
+  return !names.length ? "we're on the way" : names.length === 1 ? names[0] + "'s on his way" : "the team's on the way";
 }
 function isPaperwork(){ return cur.category === 'Certificate / paperwork needed'; }
 function hasOfferedDays(){ return !!(cur.avail_days && cur.avail_days.length); }
@@ -989,6 +1019,9 @@ async function refreshTimeline(){
   const bare = !rows.length && cur.phone_kind === 'landline';
   document.getElementById('tlToggle').style.display = bare ? 'none' : '';
   document.querySelector('.whocard').classList.toggle('solo', bare);
+  /* assign only shows once the job's accepted (Fergus/Jobber order; Noah 9 Sep: "why is assign still here?") */
+  document.querySelector('.whocard .owndd').style.display = cur.status === 'new' ? 'none' : '';
+  document.querySelector('.whocard').classList.toggle('noassign', cur.status === 'new');
   if(bare){ document.getElementById('tl').innerHTML = ''; document.getElementById('tl').style.display = 'none'; return; }
   document.getElementById('tl').innerHTML = rows.join('') || '<div class="tlev">No texts yet</div>';
 }
@@ -1273,12 +1306,7 @@ function pickDay(label, confirmed){
   renderAvail(); refreshActBar();
 }
 async function bookOffer(o){
-  if(!curCrew().length){
-    /* no words — take them to the assign menu, same as Accept does */
-    document.querySelector('.owndd').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    document.getElementById('ownMenu').classList.add('open');
-    return;
-  }
+  /* crew no longer required first: assign after accept (Noah 9 Sep) */
   const label = offerLabel(o);
   if(cur.status === 'booked'){
     if(cur.booked_label === label){
@@ -1317,7 +1345,7 @@ async function bookOffer(o){
   const bnames = curCrew();
   cur = await Store.updateRequest(cur.id,
     { status: 'booked', booked_label: label, assignees: bnames, ...(rl ? { scc_amount: rl.amount, rate_type: rl.name } : {}) },
-    'accepted · on it: ' + crewNames(bnames) + ' · booked ' + label + (rl ? ' · $' + rl.amount + ' call-out locked' : ''),
+    'accepted' + (bnames.length ? ' · on it: ' + crewNames(bnames) : ' · nobody assigned yet') + ' · booked ' + label + (rl ? ' · $' + rl.amount + ' call-out locked' : ''),
     'custom', saidOrSent(gotItPhrase(bnames) + ". We'll be there " + whenWords(label) + '.' + rateSentence(rl) + ' See you then.', bookSay));
   activeTab = 'acc'; refreshList(); showView('listView');
 }
@@ -1426,7 +1454,7 @@ document.getElementById('okDim').onclick = () => okDone(false);
 /* day jobs: name + day both picked, Accept commits — books, records, texts, jumps */
 async function acceptWithDay(){
   const names = curCrew();
-  if(!names.length || !pendingDay) return;
+  if(!pendingDay) return; /* crew optional: assign after accept (Noah 9 Sep) */
   /* the booked time locks the rate on rate-card jobs — the text says both */
   const rl = cardRate() ? rateForBooking(pendingDay) : null;
   const dayText = gotItPhrase(names) + ". We'll be there " + whenWords(pendingDay) + '.' + rateSentence(rl) + ' See you then.';
@@ -1438,15 +1466,14 @@ async function acceptWithDay(){
   if(!ok) return;
   cur = await Store.updateRequest(cur.id,
     { status: 'booked', booked_label: pendingDay, assignees: names, ...(rl ? { scc_amount: rl.amount, rate_type: rl.name } : {}) },
-    'accepted · on it: ' + crewNames(names) + ' · booked ' + pendingDay + (rl ? ' · $' + rl.amount + ' call-out locked' : ''),
+    'accepted' + (names.length ? ' · on it: ' + crewNames(names) : ' · nobody assigned yet') + ' · booked ' + pendingDay + (rl ? ' · $' + rl.amount + ' call-out locked' : ''),
     'custom', saidOrSent(dayText, daySay));
   pendingDay = null;
   activeTab = 'acc'; refreshList(); showView('listView');
 }
 /* urgent + paperwork jobs: crew's picked, Accept commits — books, records, texts */
 async function acceptNow(){
-  const names = curCrew();
-  if(!names.length) return;
+  const names = curCrew(); /* may be empty: assign after accept (Noah 9 Sep) */
   /* a service call gone urgent through its answers still carries a rate card —
      ASAP means attending now, so now's rate is the one that locks */
   const rl = cur.urgent && cardRate() ? rateForBooking('ASAP') : null;
@@ -1467,11 +1494,11 @@ async function acceptNow(){
   if(cur.urgent){
     cur = await Store.updateRequest(cur.id,
       { status: 'booked', booked_label: 'ASAP', assignees: names, ...(rl ? { scc_amount: rl.amount, rate_type: rl.name } : {}) },
-      'accepted · on it: ' + crewNames(names) + ' — ASAP' + (rl ? ' · $' + rl.amount + ' call-out locked' : ''), 'custom',
+      'accepted' + (names.length ? ' · on it: ' + crewNames(names) : ' · nobody assigned yet') + ' — ASAP' + (rl ? ' · $' + rl.amount + ' call-out locked' : ''), 'custom',
       saidOrSent(urgText, urgSay));
   } else {
     cur = await Store.updateRequest(cur.id, { status: 'booked', assignees: names },
-      'accepted · on it: ' + crewNames(names), 'custom',
+      'accepted' + (names.length ? ' · on it: ' + crewNames(names) : ' · nobody assigned yet'), 'custom',
       saidOrSent(papText, papSay));
   }
   activeTab = 'acc'; refreshList(); showView('listView');
@@ -1490,7 +1517,7 @@ function refreshActBar(){
   cant.textContent = 'Cancel this job?';
   const g = document.getElementById('abAccept');
   if(cur.status === 'new'){
-    if(curCrew().length){
+    { /* crew no longer gates Accept (research 7 Sep: Fergus and Jobber assign after accepting; Noah 9 Sep) */
       if(cur.urgent || isPaperwork()){
         /* no day to pick on these — Accept is the commit */
         g.textContent = 'Accept';
@@ -1503,13 +1530,6 @@ function refreshActBar(){
         g.textContent = 'Pick a start day';
         g.onclick = nudgeDays;
       }
-    } else {
-      g.textContent = 'Accept';
-      g.onclick = (e) => {
-        e.stopPropagation(); /* keep the outside-click closer from shutting the menu we just opened */
-        document.querySelector('.owndd').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('ownMenu').classList.add('open');
-      };
     }
   } else {
     g.textContent = 'Done';
@@ -1627,6 +1647,22 @@ async function seedDemo(){
     answers:[{q:'Still leaking right now?',a:'Yes',urg:true},{q:'Flooding or damage?',a:'Yes',urg:true},{q:'Near any electrical gear?',a:'No',urg:false},{q:"Where's it coming from?",a:'Pipework',urg:false},{q:'Where in the building?',a:'basement level 1',urg:false},{q:'Where is it?',a:'Car park',urg:false}],
     note:'sprinkler pipe burst', avail_days:[], time_pref:'per day', phone_kind:'landline',
     requester_role:'Facilities manager', customer_name:'Bruce Hale', customer_phone:'(02) 9330 4177' }, 1.1);
+  /* Three new-site samples for the address question (Noah 9 Sep): picked from the list (pin saved, map always),
+     typed by hand but real (no pin saved, office looks it up, map usually), and misspelt (nothing finds it, no map). */
+  await mk({ building_code:'general', building_name:'27 Renown Street, Wamberal NSW', category:'Smoke alarm issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    site_lat:-33.4326, site_lng:151.4432, /* looked up 9 Sep (street level) */
+    answers:[{q:'Beeping or chirping right now?',a:'Yes',urg:false},{q:'Non-stop or now and then?',a:'Now and then',urg:false},{q:'More than one alarm?',a:'No',urg:false},{q:'Where in the building?',a:'upstairs hallway',urg:false},{q:'Where is it?',a:'Unit',urg:false}],
+    note:'picked from the list on the form', avail_days:[fut(2,'PM')], time_pref:'per day',
+    requester_role:'Owner', customer_name:'Noah Owens', customer_phone:'0477 151 342' }, 0.6);
+  await mk({ building_code:'general', building_name:'14 Ocean View Drive, Wamberal', category:'Extinguisher issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    site_lat:-33.4231, site_lng:151.4400, /* typed, not picked: the form looked it up at Send and saved the pin */
+    answers:[{q:'Been used or set off?',a:'No',urg:false},{q:'Damaged, leaking or missing?',a:'Yes',urg:false},{q:'How many?',a:'Two',urg:false},{q:'Where in the building?',a:'back office',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
+    note:'typed by hand, not picked, pin found at send', avail_days:[], time_pref:'per day',
+    requester_role:'Tenant', customer_name:'Priya Nair', customer_phone:'0412 880 314' }, 2.4);
+  await mk({ building_code:'general', building_name:'12 Renwon Strret, Wambral', category:'Exit light or door issue', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Where in the building?',a:'stairwell',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
+    note:'misspelt on purpose, nothing can find it', avail_days:[], time_pref:'per day',
+    requester_role:'Tenant', customer_name:'Dean Foley', customer_phone:'0401 552 909' }, 4.2);
   /* SERVICE, green clock — leak with two photos and offered days incl. a window */
   await mk({ ...RSL, category:'Sprinkler / pump / leak', req_type:'service', scc_accepted:true, rate_card:RC(),
     answers:[{q:'Still leaking right now?',a:'No',urg:false},{q:'Flooding or damage?',a:'No',urg:false},{q:'Near any electrical gear?',a:'Yes',urg:false},{q:"Where's it coming from?",a:'Sprinkler head',urg:false},{q:'Where in the building?',a:'ground floor, kitchen',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
@@ -1865,6 +1901,36 @@ function requestLink(code){
 async function copyText(t){
   try { await navigator.clipboard.writeText(t); return true; } catch(e){ return false; }
 }
+/* save a building and re-link every new-site request from that address to it (no more "New site" on them) */
+async function saveBuilding({ code, name, address, matchAddress }){
+  await Store.addBuilding({ code, name, address });
+  const k = (matchAddress || address || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if(k){ for(const r of (requests || [])){ if(r.building_code === 'general' && (r.building_name || '').toLowerCase().replace(/\s+/g, ' ').trim() === k){
+    try { await Store.updateRequest(r.id, { building_code: code, building_name: name }, 'Linked to saved building ' + name); } catch(e){} } } }
+}
+/* popup for "Save as building": the address is fixed (it's what the customer typed), the office gives it a name (Google never hands over the business name from a street) */
+function openSaveSheet(address){
+  const wrap = document.getElementById('bsWrap'), nameEl = document.getElementById('bsName'), codeEl = document.getElementById('bsCode'), msg = document.getElementById('bsMsg');
+  document.getElementById('bsAddr').textContent = address;
+  nameEl.value = ''; codeEl.value = ''; msg.textContent = ''; let touched = false;
+  /* link code is made from the name, never shown as a box (Noah 9 Sep: people wouldn't know what it is); the finished link shows in grey */
+  const linkEl = document.getElementById('bsLink');
+  const uniq = base => { let c = base, n = 2; const taken = new Set((window._bldCodes || [])); while(taken.has(c)) c = base + '-' + (n++); return c; };
+  nameEl.oninput = () => { codeEl.value = nameEl.value.trim() ? uniq(slugify(nameEl.value)) : ''; linkEl.textContent = codeEl.value ? requestLink(codeEl.value) : ''; };
+  linkEl.textContent = '';
+  const close = () => { wrap.style.display = 'none'; };
+  document.getElementById('bsNo').onclick = close; document.getElementById('bsDim').onclick = close;
+  document.getElementById('bsYes').onclick = async () => {
+    const name = nameEl.value.trim(), code = slugify(codeEl.value || nameEl.value);
+    if(!name){ msg.textContent = 'Needs a name.'; return; }
+    /* "Marina Plaza, 7 Quay Rd" saved as Marina Plaza keeps just "7 Quay Rd" as the address (no repeat on the card) */
+    let addr = address; const re = new RegExp('^' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*[,\\-–]\\s*', 'i');
+    if(re.test(addr) && addr.replace(re, '').trim()) addr = addr.replace(re, '').trim();
+    try { await saveBuilding({ code, name, address: addr, matchAddress: address }); close(); await refreshList(); showSticker({ code, name, address }); }
+    catch(e){ msg.textContent = e.message === 'code taken' ? 'That link code is already used. Change it.' : 'That didn\'t save. Try again.'; }
+  };
+  wrap.style.display = ''; setTimeout(() => nameEl.focus(), 50);
+}
 async function renderBuildings(wrap){
   const list = await Store.listBuildings();
   const form = document.createElement('div');
@@ -1873,20 +1939,20 @@ async function renderBuildings(wrap){
     <div class="bldform-h">Add a building</div>
     <input id="bName" type="text" placeholder="Building name (e.g. Harbourview Apartments)" autocomplete="off">
     <input id="bAddr" type="text" placeholder="Address" autocomplete="off">
-    <div class="bldcode"><span>Link code</span><input id="bCode" type="text" placeholder="harbourview" autocomplete="off" spellcheck="false"></div>
+    <input id="bCode" type="hidden"><div class="bldlink bldprev" id="bLink"></div>
     <button id="bAdd" type="button">Add building</button>
     <div class="bldmsg" id="bMsg"></div>`;
   wrap.appendChild(form);
   const nameEl = form.querySelector('#bName'), codeEl = form.querySelector('#bCode'), addrEl = form.querySelector('#bAddr'), msg = form.querySelector('#bMsg');
-  let codeTouched = false;
-  nameEl.oninput = () => { if(!codeTouched) codeEl.value = slugify(nameEl.value); };
-  codeEl.oninput = () => { codeTouched = codeEl.value.length > 0; codeEl.value = slugify(codeEl.value); };
+  window._bldCodes = list.map(b => b.code); /* so a second 'Marina Plaza' becomes marina-plaza-2 instead of failing */
+  const linkEl0 = form.querySelector('#bLink');
+  const uniq0 = base => { let c = base, n = 2; const taken = new Set(window._bldCodes); while(taken.has(c)) c = base + '-' + (n++); return c; };
+  nameEl.oninput = () => { codeEl.value = nameEl.value.trim() ? uniq0(slugify(nameEl.value)) : ''; linkEl0.textContent = codeEl.value ? requestLink(codeEl.value) : ''; };
   form.querySelector('#bAdd').onclick = async () => {
     const name = nameEl.value.trim(), code = slugify(codeEl.value || nameEl.value), address = addrEl.value.trim();
     if(!name){ msg.textContent = 'Needs a name.'; return; }
-    if(!code){ msg.textContent = 'Needs a link code.'; return; }
     try {
-      await Store.addBuilding({ code, name, address });
+      await saveBuilding({ code, name, address });
       msg.textContent = '';
       await refreshList();
       showSticker({ code, name, address });
@@ -1894,6 +1960,29 @@ async function renderBuildings(wrap){
       msg.textContent = e.message === 'code taken' ? 'That link code is already used. Change it.' : 'That didn\'t save. Try again.';
     }
   };
+
+  /* New sites: addresses customers typed on the general form that aren't saved buildings yet (Noah 9 Sep: "shouldn't it come up here").
+     One row per distinct address, count of requests, and a button that fills the form above so saving is one tap. */
+  const savedAddr = new Set(list.map(b => (b.address || '').toLowerCase().replace(/\s+/g, ' ').trim()).filter(Boolean));
+  const savedName = new Set(list.map(b => (b.name || '').toLowerCase().trim()));
+  const fresh = {};
+  (requests || []).filter(r => r.building_code === 'general' && r.building_name && r.status !== 'declined').forEach(r => { /* declined jobs don't make a site (Noah 9 Sep) */
+    const k = r.building_name.toLowerCase().replace(/\s+/g, ' ').trim();
+    if(savedAddr.has(k) || savedName.has(k)) return;
+    fresh[k] = fresh[k] || { name: r.building_name, n: 0, lat: r.site_lat, lng: r.site_lng };
+    fresh[k].n++;
+  });
+  const freshList = Object.values(fresh);
+  if(freshList.length){
+    const h0 = document.createElement('div'); h0.className = 'lsec'; h0.innerHTML = `<span class="seci"><span>New sites, not saved</span></span><span class="cnt">${freshList.length}</span>`; wrap.appendChild(h0);
+    freshList.forEach(f => {
+      const d = document.createElement('div'); d.className = 'req bld';
+      d.innerHTML = `<div class="top"><div class="what">${esc(f.name)}</div></div>
+        <div class="bldbtns"><button type="button" class="bldbtn save">Save as building</button></div>`;
+      d.querySelector('.save').onclick = (ev) => { ev.stopPropagation(); openSaveSheet(f.name); };
+      wrap.appendChild(d);
+    });
+  }
 
   if(!list.length){
     const e = document.createElement('div'); e.className = 'empty'; e.textContent = 'No buildings yet.'; wrap.appendChild(e); return;
@@ -1903,7 +1992,6 @@ async function renderBuildings(wrap){
     const d = document.createElement('div'); d.className = 'req bld';
     d.innerHTML = `<div class="top"><div class="what">${esc(b.name)}</div></div>
       <div class="meta"><span>${esc(b.address || 'No address')}</span></div>
-      <div class="bldlink">${esc(requestLink(b.code))}</div>
       <div class="bldbtns"><button type="button" class="bldbtn copy">Copy link</button><button type="button" class="bldbtn qr">QR sticker</button></div>`;
     d.querySelector('.copy').onclick = async (ev) => { ev.stopPropagation(); const ok = await copyText(requestLink(b.code)); ev.target.textContent = ok ? 'Copied' : 'Copy failed'; setTimeout(() => ev.target.textContent = 'Copy link', 1500); };
     d.querySelector('.qr').onclick = (ev) => { ev.stopPropagation(); showSticker(b); };

@@ -235,8 +235,8 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .req .age{display:flex;align-items:center;gap:5px;flex:0 0 auto;font-size:12.5px;font-weight:500;color:var(--sub);white-space:nowrap;padding-top:2px}
 .req .age .dot{width:7px;height:7px}
 /* grey until it's over the clock (research: red is a threshold, not a default) */
-.req .age.stale{color:var(--orange);font-weight:700}
-.req .age.late{color:var(--red);font-weight:700}
+/* age text stays plain grey, the dot carries the colour (Noah 9 Sep, GOV.UK/HMRC: colour alone reads badly) */
+.req .age.stale,.req .age.late{color:var(--sub);font-weight:500}
 .req .row2{display:flex;align-items:center;gap:8px;margin-top:3px}
 .req .cnote{flex:1;min-width:0;font-size:13.5px;color:var(--sub);font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .req .flag{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--sub)}
@@ -274,10 +274,28 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 20px 0}
 .topbar .backlink{padding:0}
 .topbar .cameline{margin-top:0}
-.whorow{background:var(--card);border-radius:15px;margin-top:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.whoA{padding:13px 16px 11px;font-size:15px}
-.whoB{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:10px 14px 10px 16px;border-top:.5px solid var(--line)}
+/* contact: one grey line, no card (Noah 9 Sep). The call button floats top right instead. */
+.whorow{display:block;margin:6px 0 0;font-size:14.5px;font-weight:600;color:var(--sub);line-height:1.5} /* one flowing line, wraps like text, not in chunks (glitch Noah 9 Sep) */
+.whorow .whoA,.whorow .whoB,.whorow .whonum{display:inline}
+.whorow .whobtns{display:inline-flex;vertical-align:middle;margin-left:4px}
+.whorow .wic{display:inline-flex;vertical-align:-3px;margin-right:6px}
+.whorow .wic svg{width:17px;height:17px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.whoA{padding:0;font-size:14.5px}
+.whoA .whoname{display:inline;color:var(--sub);font-weight:600}
+.whonum{color:var(--sub);font-size:14.5px;font-weight:600}
+.whorow .ringbtn{display:none}
+.whorow .mailbtn{display:inline-flex;width:30px;height:30px}
+.whorow .mailbtn svg{width:15px;height:15px}
+/* sticky wrapper: sits below the test banner at the top, then pins to the top edge as you scroll (Noah 9 Sep: it sat on the banner) */
+.ringstick{position:sticky;top:0;height:0;z-index:70}
+.ringfloat{position:absolute;top:14px;right:20px;width:44px;height:44px;border-radius:50%;background:var(--green-soft);box-shadow:0 2px 8px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center}
+.ringfloat svg{width:21px;height:21px;stroke:var(--green);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ringfloat:active{transform:scale(.94)}
+/* no map: the button sits up on the '‹ Requests' row, the title keeps its full width (Noah 9 Sep) */
+#detailView:has(.hero:not(.hasmap)) .ringfloat{top:4px;width:38px;height:38px}
+#detailView:has(.hero:not(.hasmap)) .ringfloat svg{width:18px;height:18px}
+.hero:not(.hasmap)+.navhead{padding-top:10px!important}
+.whoB{padding:0;border-top:none}
 .whonum{color:var(--sub);font-size:15px;font-weight:500}
 .whobtns{display:flex;gap:9px;flex:0 0 auto}
 .ringbtn{width:42px;height:42px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;
@@ -301,11 +319,11 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .what-lg .wic{display:inline-flex;vertical-align:-2.5px;margin-right:9px}
 .what-lg .wic svg{width:24px;height:24px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .subline{color:var(--sub);font-size:14.5px;margin-top:6px;font-weight:500}
-.notesub{color:var(--sub);font-size:15.5px;margin-top:7px;font-weight:500;line-height:1.4}
-.typeline{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:17px;font-weight:700;color:var(--ink)}
+.notesub{color:var(--ink);font-size:17px;margin-top:6px;font-weight:500;line-height:1.35} /* their words, dark and second (Noah 9 Sep) */
+.typeline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:14.5px;font-weight:600;color:var(--sub)}
 .typeline .typechip{margin-left:2px}
 .typeline .wic{display:inline-flex}
-.typeline .wic svg{width:20px;height:20px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.typeline .wic svg{width:17px;height:17px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .typeline .flag{font-size:13px;font-weight:600;color:var(--sub)}
 /* type/urgency as a chip on the meta line, not a banner (NN/g: priority is an indicator, banners are for change) */
 .typechip{display:inline-flex;align-items:center;gap:5px;border-radius:100px;padding:3px 9px;font-size:12px;font-weight:700;line-height:1.2;background:var(--bg);color:var(--sub)}
@@ -318,7 +336,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .typechip.closed{background:var(--bg);color:var(--sub)}
 .typechip .dot{width:6px;height:6px;border-radius:50%}
 .cameline #dCameTxt{cursor:pointer}
-.ansgrp{padding:9px 15px 3px;font-size:11.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;background:var(--bg)}
+.seclabel.ansgrp{margin:16px 0 8px} /* label above its card, like Start day (Noah 9 Sep) */
 /* detail header breathes — each line gets its own air (Noah 2026-08-17: too cramped) */
 .wholine{margin-top:10px;font-size:15px}
 .qaline{font-size:13.5px;margin-top:6px;font-weight:600;line-height:1.5}
@@ -394,13 +412,14 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .duestrip{margin-top:12px;padding:12px 15px;border-radius:13px;font-weight:800;font-size:15px;letter-spacing:-.1px}
 .duestrip.soon{background:var(--orange-soft);color:var(--orange)}
 .duestrip.now{background:var(--red-soft);color:var(--red)}
-.anscard{background:var(--card);border-radius:13px;margin-top:12px;overflow:hidden}
+.anscard{background:var(--card);border-radius:16px;margin-top:12px;overflow:hidden}
+.seclabel.ansgrp + .anscard{margin-top:0}
 .ansrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 15px;border-bottom:.5px solid var(--line)}
 .ansrow:last-child{border-bottom:none}
 .ansq{color:var(--ink);font-size:14.5px;font-weight:500}
 /* one voice: every answer reads plain ink — red lives on the strip and the clock,
    not inside the fact sheet (Noah 2026-08-20) */
-.ansa{font-weight:700;font-size:14.5px;color:var(--ink)}
+.ansa{font-weight:700;font-size:14.5px;color:var(--ink);text-align:right;max-width:60%}
 .avstack{display:flex;flex:0 0 auto}
 .avstack .ownc{box-shadow:0 0 0 2px var(--card)}
 .avstack .ownc + .ownc{margin-left:-9px}
@@ -504,7 +523,8 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
   background:var(--red);color:#fff;font-size:12.5px;font-weight:800;letter-spacing:1.2px;
   padding:9px;border-radius:0 0 14px 14px;box-shadow:0 3px 12px rgba(250,35,59,.3)}
 .urgstrip .dot{width:7px;height:7px;border-radius:50%;background:#fff}
-.cameline{font-size:13.5px;font-weight:600;color:var(--sub);margin-top:6px} /* was sub2 — unreadable (Noah 2026-08-20) */
+.cameline{font-size:13px;font-weight:500;color:var(--sub);margin-top:6px;white-space:nowrap;flex:0 0 auto}
+.titlerow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px} /* was sub2 — unreadable (Noah 2026-08-20) */
 /* messages row — the thread's front door, a proper card not a caps label */
 .msgrow{display:flex;align-items:center;gap:9px;width:100%;background:var(--card);border:none;cursor:pointer;
   border-radius:14px;padding:14px 15px;margin-top:20px;font-family:var(--font);text-align:left;
@@ -689,6 +709,10 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .okbubble{background:var(--green);color:#fff;font-size:14.5px;line-height:1.45;font-weight:500;
   padding:11px 14px;border-radius:17px;border-bottom-left-radius:6px;margin:0 18px 18px 0}
 .sheetbtns{display:flex;gap:10px}
+/* save-as-building popup: same box as Accept, with the two inputs from the Buildings form */
+.bldsheet p{text-align:center;font-weight:600;color:var(--ink)}
+.bldsheet input{border:none;background:var(--bg);border-radius:11px;padding:12px 13px;font-family:var(--font);font-size:15.5px;outline:none;width:100%;margin-bottom:8px}
+.bldprev{min-height:16px;margin:-2px 0 10px}
 .actbtn.ghost{background:var(--bg);color:var(--ink)}
 
 /* the picker's Done row — closes the menu, teaches that you can tick a whole crew */
@@ -737,6 +761,7 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
 /* landline with no thread: the Texts row is hidden, so the assign row is the whole
    card — it takes the full rounding and drops its divider (2026-08-30) */
 .whocard.solo .ownsel{border-radius:16px;border-bottom:none}
+.whocard.noassign .msgrow{border-radius:16px} /* Texts row alone on new jobs */
 
 /* the confirm sheet on a landline job: these words get SAID on the phone, not sent —
    so they must not wear a message shape at all (Noah 2026-08-30). A script block:
@@ -979,3 +1004,4 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
 .suggrow span{font-size:13px;color:var(--sub)}
 .suggrow:active{background:var(--bg)}
 .suggwait{padding:10px 15px;font-size:13px;color:var(--sub)}
+.suggrow.hl{background:var(--bg)}

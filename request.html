@@ -1529,12 +1529,44 @@ document.getElementById('sendBtn').onclick = async () => {
   const set = currentQs();
   const answers = set.map((item, ix) => (item.hint || item.kind === 'photo') ? null : ({ q: item.q, a: qAnswers[ix], urg: !!(item.urg && qAnswers[ix] === item.urg) })).filter(x => x && x.a);
 
+  /* Typed address that matches a saved building joins that building instead of landing as a new site forever
+     (Noah 9 Sep, the 2 Sep crack: "3 Frenchs Rd" should be Seaforth RSL). Matches on number + street, or on the name. */
+  let matched = null;
+  if(!building && typedSite){
+    try {
+      const norm = t => (t || '').toLowerCase().replace(/\b(street|st\.?)\b/g, 'st').replace(/\b(road|rd\.?)\b/g, 'rd').replace(/\b(avenue|ave\.?)\b/g, 'ave')
+        .replace(/\b(drive|dr\.?)\b/g, 'dr').replace(/\b(place|pl\.?)\b/g, 'pl').replace(/\b(parade|pde\.?)\b/g, 'pde').replace(/\b(highway|hwy\.?)\b/g, 'hwy')
+        .replace(/[^a-z0-9, ]/g, ' ').replace(/\s+/g, ' ').trim();
+      const firstBit = t => norm(t).split(',')[0].trim();
+      const typedN = norm(typedSite), typedFirst = firstBit(typedSite);
+      const all = await Store.listBuildings();
+      matched = all.find(b => (b.address && firstBit(b.address) && firstBit(b.address) === typedFirst) || (b.name && norm(b.name) === typedN)) || null;
+    } catch(e){ matched = null; }
+  }
+  /* Typed but not picked: look the address up now, on the customer's phone, so the office map is instant (Noah 9 Sep:
+     "cant it just be instantly a map like the other"). Only takes the top result when its number + street match what they typed. */
+  let sendPin = (pickedSite && pickedSite.label === typedSite && pickedSite.lat) ? { lat: pickedSite.lat, lng: pickedSite.lng } : null;
+  if(!building && !matched && typedSite && !sendPin){
+    try {
+      const norm2 = t => (t || '').toLowerCase().replace(/\b(street|st\.?)\b/g, 'st').replace(/\b(road|rd\.?)\b/g, 'rd').replace(/\b(avenue|ave\.?)\b/g, 'ave').replace(/\b(drive|dr\.?)\b/g, 'dr').replace(/[^a-z0-9, ]/g, ' ').replace(/\s+/g, ' ').trim().split(',')[0].trim();
+      const list = await Promise.race([fetchSugg(typedSite), new Promise(res => setTimeout(() => res([]), 2500))]);
+      const top = list && list[0];
+      if(top){
+        const l = labelFor(top);
+        const a = norm2(l.line1), b = norm2(typedSite);
+        if(a && b && (a === b || b.startsWith(a + ' ') || a.startsWith(b + ' '))){ /* "27 renown st wamberal" vs "27 Renown St" */
+          if(top.placeId) sendPin = await Promise.race([googlePin(top.placeId), new Promise(res => setTimeout(() => res(null), 2500))]);
+          else if(top.geometry) sendPin = { lat: top.geometry.coordinates[1], lng: top.geometry.coordinates[0] };
+        }
+      }
+    } catch(e){ sendPin = null; }
+  }
   try {
     const req = await Store.createRequest({
-      building_code: building ? bcode : 'general',
-      building_name: building ? building.name : typedSite,
-      site_lat: (!building && pickedSite && pickedSite.label === typedSite) ? pickedSite.lat : null,
-      site_lng: (!building && pickedSite && pickedSite.label === typedSite) ? pickedSite.lng : null,
+      building_code: building ? bcode : (matched ? matched.code : 'general'),
+      building_name: building ? building.name : (matched ? matched.name : typedSite),
+      site_lat: (!building && sendPin) ? sendPin.lat : null,
+      site_lng: (!building && sendPin) ? sendPin.lng : null,
       category: tileLabel,
       req_type: reqType,
       /* urgent: the figure frozen at Accept. Service: no figure yet — the card
@@ -1603,7 +1635,7 @@ document.getElementById('sendBtn').onclick = async () => {
 
 /* ---- address suggestions for a new site (Photon, OpenStreetMap data, free, no key) ---- */
 let pickedSite = null;
-let suggTimer = null, suggAbort = null;
+let suggWaitTimer = null; let suggTimer = null, suggAbort = null;
 const suggBox = document.getElementById('siteSugg');
 function hideSugg(){ suggBox.style.display = 'none'; suggBox.innerHTML = ''; }
 function labelFor(f){
@@ -1685,13 +1717,30 @@ function showSugg(list){
     if(pickedSite && pickedSite.label !== q) pickedSite = null;
     clearTimeout(suggTimer);
     if(q.length < 3 || (pickedSite && pickedSite.label === q)){ hideSugg(); return; }
-    /* show something straight away so it's obvious the box is looking (Noah 7 Sep: it looked like nothing happened until Enter) */
-    if(!suggBox.querySelector('.suggrow')){ suggBox.innerHTML = '<div class="suggwait">Looking up addresses…</div>'; suggBox.style.display = ''; }
-    suggTimer = setTimeout(async () => { const list = await fetchSugg(q); if(si.value.trim() === q) showSugg(list); }, 200);
+    /* "Looking up…" only if nothing is back after 500ms (200 debounce + 300). Google usually answers well inside that, and a
+       loading line that flashes for a third of a second reads as slow (NN/g, Algolia — research 9 Sep). Old results stay up meanwhile.
+       Still covers Noah's 7 Sep case (typed, nothing happened) because a genuinely slow lookup does show it. */
+    clearTimeout(suggWaitTimer);
+    suggWaitTimer = setTimeout(() => { if(!suggBox.querySelector('.suggrow') && si.value.trim() === q){ suggBox.innerHTML = '<div class="suggwait">Looking up addresses…</div>'; suggBox.style.display = ''; } }, 500);
+    suggTimer = setTimeout(async () => { const list = await fetchSugg(q); clearTimeout(suggWaitTimer); if(si.value.trim() === q) showSugg(list); }, 200);
   };
   si.addEventListener('input', onType);
-  si.addEventListener('keyup', onType);
-  si.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); const first = suggBox.querySelector('.suggrow'); if(first) first.click(); } });
+  si.addEventListener('keyup', e => { if(!['ArrowDown','ArrowUp','Enter'].includes(e.key)) onType(); });
+  /* Enter only picks a row the customer has moved to with the arrow keys; plain Enter keeps what they typed (research 9 Sep:
+     the top result is often wrong for new builds and units, and the phone's Go key gets hit reflexively). Tapping a row still picks it. */
+  si.addEventListener('keydown', e => {
+    const rows = [...suggBox.querySelectorAll('.suggrow')];
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      if(!rows.length) return; e.preventDefault();
+      let i = rows.findIndex(r => r.classList.contains('hl'));
+      i = e.key === 'ArrowDown' ? Math.min(i + 1, rows.length - 1) : Math.max(i - 1, 0);
+      rows.forEach((r, k) => r.classList.toggle('hl', k === i));
+    } else if(e.key === 'Enter'){
+      e.preventDefault();
+      const hl = rows.find(r => r.classList.contains('hl'));
+      if(hl) hl.click(); else { hideSugg(); si.blur(); }
+    }
+  });
   si.addEventListener('blur', () => setTimeout(hideSugg, 150));
 })();
 </script>

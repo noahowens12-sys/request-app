@@ -104,7 +104,7 @@ window.APP_CONFIG = {
 
   /* Demo-mode buildings (in live mode these come from the database) */
   BUILDINGS: [
-    { code: 'harbourview', name: 'Harbourview Apartments', address: '12 Harbour St', lat: -33.8523, lng: 151.2108 },
-    { code: 'seaforth-rsl', name: 'Seaforth RSL', address: '3 Frenchs Rd', lat: -33.7994, lng: 151.2464 }
+    { code: 'harbourview', name: 'Harbourview Apartments', address: '12 Harbour St, Sydney', lat: -33.8523, lng: 151.2108 },
+    { code: 'seaforth-rsl', name: 'Seaforth RSL', address: '3 Frenchs Rd, Seaforth', lat: -33.7994, lng: 151.2464 }
   ]
 };
