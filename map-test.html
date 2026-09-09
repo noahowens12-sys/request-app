@@ -61,8 +61,8 @@ window.initG = function(){
     { featureType:'water', elementType:'geometry', stylers:[{color:'#c9d6df'}] },
     { featureType:'landscape.natural', elementType:'geometry', stylers:[{color:'#eeeeee'}] }
   ];
-  const map = new google.maps.Map(document.getElementById('m2'), { center:{lat:LAT, lng:LNG}, zoom:14, disableDefaultUI:true, gestureHandling:'none', styles });
-  new google.maps.Marker({ position:{lat:LAT, lng:LNG}, map, icon:{ url:'data:image/svg+xml;utf8,' + encodeURIComponent(PIN.replace('class="pin" ','')), scaledSize:new google.maps.Size(32,40), anchor:new google.maps.Point(16,40) } });
+  const map = new google.maps.Map(document.getElementById('m2'), { center:{lat:LAT, lng:LNG}, zoom:13, disableDefaultUI:true, gestureHandling:'none', styles });
+  new google.maps.Marker({ position:{lat:LAT, lng:LNG}, map });
 };
 const s = document.createElement('script');
 s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(window.APP_CONFIG.GOOGLE_MAPS_KEY) + '&callback=initG&loading=async';
