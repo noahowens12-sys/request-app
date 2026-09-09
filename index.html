@@ -559,8 +559,14 @@ async function renderSiteMap(bld){
   /* the hero is still sizing when the map is made (live, 9 Sep). Re-measure a few times as it settles. */
   [60, 250, 600].forEach(ms => setTimeout(() => siteMap && siteMap.resize(), ms));
   /* MapLibre opens the credit box on load and only folds it after a drag; this map can't be dragged, so fold it ourselves (Noah 9 Sep) */
-  const foldCredit = () => el.querySelectorAll('details.maplibregl-ctrl-attrib').forEach(a => { a.removeAttribute('open'); a.classList.remove('maplibregl-compact-show'); });
-  siteMap.on('load', foldCredit); [100, 400, 900].forEach(ms => setTimeout(foldCredit, ms));
+  const foldCredit = () => el.querySelectorAll('details.maplibregl-ctrl-attrib').forEach(a => {
+    if(a.dataset.userOpened) return;
+    if(a.hasAttribute('open')) a.removeAttribute('open'); a.classList.remove('maplibregl-compact-show');
+    if(!a.dataset.watched){ a.dataset.watched = '1';
+      a.querySelector('summary').addEventListener('click', () => { a.dataset.userOpened = '1'; }, { once: true });
+      new MutationObserver(foldCredit).observe(a, { attributes: true, attributeFilter: ['open', 'class'] }); }
+  });
+  siteMap.on('load', foldCredit); siteMap.on('idle', foldCredit); [100, 400, 900].forEach(ms => setTimeout(foldCredit, ms));
   /* centre the glyph on its drawn shape, not its box — lopsided icons (exit arrow, subbies)
      sat off-centre in the pin head (Noah 2026-08-20) */
   setTimeout(() => {
