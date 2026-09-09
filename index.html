@@ -559,7 +559,8 @@ async function renderSiteMap(bld){
   /* pin colour follows the request type (same colours as the chips): urgent red, service blue, quote purple, other ink */
   L.marker([bld.lat, bld.lng], { icon: L.divIcon({ className: 'sitepin ' + reqType(cur), iconSize: [34, 42], iconAnchor: [17, 40],
     html: `<div class="pinwrap"><svg class="pinbody" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="currentColor" stroke="#fff" stroke-width="1.4"/></svg><svg class="pinic" viewBox="0 0 24 24">${icInner}</svg></div>` }) }).addTo(siteMap);
-  setTimeout(() => siteMap && siteMap.invalidateSize(), 60);
+  /* the hero is still sizing when the map is made, so tiles only covered the first third (live, 9 Sep). Re-measure a few times as it settles. */
+  [60, 250, 600].forEach(ms => setTimeout(() => siteMap && siteMap.invalidateSize(), ms));
   /* centre the glyph on its drawn shape, not its box — lopsided icons (exit arrow, subbies)
      sat off-centre in the pin head (Noah 2026-08-20) */
   setTimeout(() => {

@@ -772,6 +772,13 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
   -webkit-text-fill-color: var(--ink);
   transition: background-color 99999s ease-out 0s;
 }
+/* Boxed fields (contact card) keep their ring when autofilled — the repaint above was wiping it (Noah, 9 Sep) */
+.qtextin:-webkit-autofill, .qtextin:-webkit-autofill:hover, .qtextin:-webkit-autofill:focus{
+  -webkit-box-shadow: inset 0 0 0 1.5px rgba(60,60,67,.3), 0 0 0 1000px var(--card) inset;
+}
+.qtextin:-webkit-autofill:focus{ -webkit-box-shadow: inset 0 0 0 2px var(--ink), 0 0 0 1000px var(--card) inset; }
+/* Light-grey map look (Noah's call, the CARTO positron style) done with a filter on plain OSM tiles, since CARTO now wants a key */
+.sitemap .leaflet-tile-pane{filter:grayscale(1) brightness(1.06) contrast(.88)}
 
 /* buildings tab + QR sticker (2026-09-02) */
 .bldform{background:var(--card);border-radius:15px;padding:14px 15px;margin:4px 0 16px}
