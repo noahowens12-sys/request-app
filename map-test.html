@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map test — which one?</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+  body{margin:0;font-family:-apple-system,"Segoe UI",sans-serif;background:#f2f2f7;color:#1c1c1e}
+  .wrap{max-width:900px;margin:0 auto;padding:20px}
+  h1{font-size:20px;margin:0 0 4px}
+  p{margin:0 0 16px;color:#6b6a63;font-size:14px}
+  .card{background:#fff;border-radius:16px;overflow:hidden;margin-bottom:22px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .map{height:240px;width:100%}
+  .cap{padding:12px 16px;font-size:15px;font-weight:600}
+  .cap span{display:block;font-weight:400;color:#6b6a63;font-size:13px;margin-top:2px}
+  .maplibregl-ctrl-bottom-right,.maplibregl-ctrl-bottom-left{font-size:10px}
+  .pin{width:32px;height:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Map test</h1>
+  <p>Same spot on both. Pick the one you like.</p>
+
+  <div class="card">
+    <div class="map" id="m1"></div>
+    <div class="cap">Option 1 — OpenFreeMap Positron<span>Free, no key, no limits. The grey look you had before.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="map" id="m2"></div>
+    <div class="cap">Option 2 — Google Maps (grey style)<span>Uses your Google key. Free up to 10K loads a month.</span></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+const LAT = -33.4197, LNG = 151.4487; // 27 Renown St, Wamberal (roughly)
+const PIN = '<svg class="pin" viewBox="0 0 24 24"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="#e5484d" stroke="#fff" stroke-width="1.4"/><circle cx="12" cy="10.3" r="3" fill="#fff"/></svg>';
+
+/* Option 1: OpenFreeMap positron via MapLibre */
+const m1 = new maplibregl.Map({ container:'m1', style:'https://tiles.openfreemap.org/styles/positron', center:[LNG, LAT], zoom:13.4, interactive:false, attributionControl:{compact:true} });
+const el1 = document.createElement('div'); el1.innerHTML = PIN;
+new maplibregl.Marker({ element: el1, anchor:'bottom' }).setLngLat([LNG, LAT]).addTo(m1);
+
+/* Option 2: Google Maps JS, light grey style */
+window.initG = function(){
+  const styles = [
+    { elementType:'geometry', stylers:[{color:'#f5f5f5'}] },
+    { elementType:'labels.icon', stylers:[{visibility:'off'}] },
+    { elementType:'labels.text.fill', stylers:[{color:'#616161'}] },
+    { elementType:'labels.text.stroke', stylers:[{color:'#f5f5f5'}] },
+    { featureType:'administrative.land_parcel', stylers:[{visibility:'off'}] },
+    { featureType:'poi', stylers:[{visibility:'off'}] },
+    { featureType:'road', elementType:'geometry', stylers:[{color:'#ffffff'}] },
+    { featureType:'road.arterial', elementType:'labels.text.fill', stylers:[{color:'#757575'}] },
+    { featureType:'road.highway', elementType:'geometry', stylers:[{color:'#dadada'}] },
+    { featureType:'transit', stylers:[{visibility:'off'}] },
+    { featureType:'water', elementType:'geometry', stylers:[{color:'#c9d6df'}] },
+    { featureType:'landscape.natural', elementType:'geometry', stylers:[{color:'#eeeeee'}] }
+  ];
+  const map = new google.maps.Map(document.getElementById('m2'), { center:{lat:LAT, lng:LNG}, zoom:14, disableDefaultUI:true, gestureHandling:'none', styles });
+  new google.maps.Marker({ position:{lat:LAT, lng:LNG}, map, icon:{ url:'data:image/svg+xml;utf8,' + encodeURIComponent(PIN.replace('class="pin" ','')), scaledSize:new google.maps.Size(32,40), anchor:new google.maps.Point(16,40) } });
+};
+const s = document.createElement('script');
+s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(window.APP_CONFIG.GOOGLE_MAPS_KEY) + '&callback=initG&loading=async';
+s.async = true; document.head.appendChild(s);
+</script>
+</body>
+</html>
