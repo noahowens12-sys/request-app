@@ -794,7 +794,7 @@ function buildQs(){
          example lives as hint text under the label, not a placeholder (NN/g, GOV.UK) */
       if(item.optional){ const o = document.createElement('span'); o.className = 'qopt'; o.textContent = 'optional'; t.appendChild(o); }
       if(item.ph){ const hint = document.createElement('div'); hint.className = 'qhinttxt'; hint.textContent = item.ph; t.appendChild(hint); }
-      const inp = document.createElement('input'); inp.type = 'text'; inp.className = 'qtextin'; inp.autocomplete = item.where ? 'address-line2' : 'off';
+      const inp = document.createElement('input'); inp.type = 'text'; inp.className = 'qtextin'; inp.autocomplete = 'off'; /* was address-line2 on the Where field; Chrome then offered the customer's home address there (Noah, 9 Sep) */
       inp.setAttribute('autocapitalize', 'off'); inp.setAttribute('inputmode', 'text');
       inp.oninput = () => { qAnswers[ix] = inp.value.trim() || null; r.classList.remove('missing'); };
       r.appendChild(inp); wrap.appendChild(r);

@@ -549,9 +549,10 @@ async function renderSiteMap(bld){
   siteMap = L.map(el, { zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false,
     boxZoom:false, keyboard:false, touchZoom:false }).setView([bld.lat, bld.lng], 14);
   siteMap.attributionControl.setPrefix(false);
-  /* positron — the minimal light-grey look (same one Uptick uses), free, retina via {r} */
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(siteMap);
+  /* CARTO's free light tiles started demanding an API key on the live site (9 Sep 2026: "API KEY REQUIRED" baked into the tiles).
+     Plain OpenStreetMap tiles instead: free, no key, fine for a small office app. */
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(siteMap);
   /* the pin carries the category icon — an alarm job pins a bell, a leak pins a drop */
   const catIc = (CATS.find(c => c.cat === cur.category) || {}).ic || '';
   const icInner = catIc.replace(/<\/?svg[^>]*>/g, '');
