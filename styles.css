@@ -542,9 +542,11 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .sitemap .maplibregl-ctrl-bottom-right{font-size:9px}
 .sitemap .maplibregl-ctrl-attrib.maplibregl-compact{min-height:20px;background:rgba(255,255,255,.7)}
 .sitemap details.maplibregl-ctrl-attrib:not([open]) .maplibregl-ctrl-attrib-inner{display:none}
-.sitemap details.maplibregl-ctrl-attrib:not([open]){padding:2px 20px 2px 2px;background:transparent}
+.sitemap details.maplibregl-ctrl-attrib:not([open]){padding:0;margin:0 8px 8px 0;background:transparent;box-shadow:none;border:none;min-height:0;width:22px;height:22px}
 .sitemap details.maplibregl-ctrl-attrib[open] .maplibregl-ctrl-attrib-inner{display:block;padding-right:18px}
-.sitemap .maplibregl-ctrl-attrib-button{width:20px;height:20px;opacity:.7}
+.sitemap .maplibregl-ctrl-attrib-button{width:22px;height:22px;opacity:.55;background-color:transparent;border-radius:50%}
+.sitemap .maplibregl-ctrl.maplibregl-ctrl-attrib{box-shadow:none}
+.sitemap details.maplibregl-ctrl-attrib:not([open]) .maplibregl-ctrl-attrib-button{position:static;display:block}
 .sitemap .maplibregl-marker{cursor:default}
 .siterow{display:flex;align-items:center;gap:11px;padding:12px 15px}
 .siterow svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--red);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
