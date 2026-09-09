@@ -1618,7 +1618,7 @@ async function fetchSuggGoogle(q){
   const r = await fetch('https://places.googleapis.com/v1/places:autocomplete', { method:'POST', signal: suggAbort.signal,
     headers: { 'Content-Type':'application/json', 'X-Goog-Api-Key': C.GOOGLE_MAPS_KEY },
     body: JSON.stringify({ input: q, includedRegionCodes: ['au'], languageCode: 'en-AU',
-      locationBias: { circle: { center: { latitude: -33.0, longitude: 151.5 }, radius: 150000 } } }) });
+      locationBias: { circle: { center: { latitude: -33.0, longitude: 151.5 }, radius: 50000 } } }) }); /* Google's max is 50 km; 150 km was rejected with a 400 (found 9 Sep) */
   const j = await r.json();
   return (j.suggestions || []).map(sg => sg.placePrediction).filter(Boolean).map(pp => {
     const main = (pp.structuredFormat && pp.structuredFormat.mainText && pp.structuredFormat.mainText.text) || pp.text.text;
