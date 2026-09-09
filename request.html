@@ -12,57 +12,65 @@
 
   <!-- FORM -->
   <div id="formView">
+    <!-- header band (Noah 2026-09-02: "try header band") — brand colour strip, white logo + name, phone on the right -->
+    <div class="brandband" id="brandBand">
+      <div class="brandrow"><div class="logodot" id="brandDot">N</div><div class="brandname" id="brandName">—</div>
+        <!-- phone top right (Noah 2026-09-02; research: a visible number is the strongest trust cue after the logo, and some people who scanned just want to ring) -->
+        <a class="phonebtn" id="phoneTop" href="#" style="display:none" aria-label="Call us"><svg viewBox="0 0 24 24"><path d="M6.8 3.8h2.6l1.5 4-2 1.5a13.6 13.6 0 0 0 5.8 5.8l1.5-2 4 1.5v2.6c0 1.3-1 2.3-2.3 2.2C10.6 18.8 5.2 13.4 4.6 6.1c-.1-1.3.9-2.3 2.2-2.3z"/></svg></a></div>
+    </div>
     <div class="navhead">
-      <div class="brandrow"><div class="logodot" id="brandDot">N</div><div class="brandname" id="brandName">—</div></div>
-      <div class="largetitle" id="pageTitle">What can we do for you?</div>
-      <div class="lede" id="siteLede">—</div>
+      <div class="largetitle" id="pageTitle">What's going on?</div>
+      <!-- building = "you're in the right place" (Stanford/NHS start-page cues); next-step line before they commit (NHS: stating what happens next lifts completions) -->
+      <div class="siteline" id="siteLine" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.4-6.5-11a6.5 6.5 0 0 1 13 0c0 5.6-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="siteLede">—</span><button type="button" class="nothere" id="notHere" aria-label="Change building"><svg viewBox="0 0 24 24"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 8.5l2 2"/></svg></button></div>
+      <div class="lede" id="nextLine">Send it and we'll text you back.</div>
     </div>
     <div class="pagepad" style="padding-top:4px">
       <div class="typetiles" id="typeList"></div>
-      <div class="urgnote" id="urgNoteTop" style="display:none">If anyone's in danger, call <b>000</b> first.</div>
+      <!-- 000 lines gone: home screen 2026-09-02, the urgent-path ones 2026-09-04. Noah: "people arent dumb if its really bad they will be calling 000 themselves". -->
       <div class="seclabel" id="whatLabel" style="display:none">What's wrong?</div>
+      <!-- picked tile folds the grid into this row, same as the type row (Baymard: completed step = readable summary + Change) -->
+      <button type="button" class="typesel tilesel" id="tileSel" style="display:none"><span class="ic" id="tileSelIc"></span><span class="tlb" id="tileSelLb"></span><span class="tchange">Change</span></button>
       <div class="tiles" id="tiles" style="display:none">
         <button class="tile" data-req="Alarm going off / beeping"><span class="ic">
           <svg viewBox="0 0 24 24"><path d="M12 3.5a5.8 5.8 0 0 0-5.8 5.8v3c0 .7-.2 1.3-.6 1.9L4.3 16h15.4l-1.3-1.8a3.3 3.3 0 0 1-.6-1.9v-3A5.8 5.8 0 0 0 12 3.5z"/><path d="M9.9 19a2.2 2.2 0 0 0 4.2 0"/></svg>
         </span><span class="tlb">Alarm</span></button>
+        <button class="tile" data-req="Smoke alarm issue"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="6" rx="1.6"/><path d="M6 9.5l1.6 3.5h8.8L18 9.5"/><path d="M9 16.2c-.7.8-.7 1.6 0 2.4s.7 1.6 0 2.4"/><path d="M12 16.2c-.7.8-.7 1.6 0 2.4s.7 1.6 0 2.4"/><path d="M15 16.2c-.7.8-.7 1.6 0 2.4s.7 1.6 0 2.4"/></svg>
+        </span><span class="tlb">Smoke alarm</span></button>
+        <button class="tile" data-req="Sprinkler / pump / leak"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="4.5" y="7" width="15" height="5" rx=".6"/><rect x="2" y="6" width="2.5" height="7" rx=".6"/><rect x="19.5" y="6" width="2.5" height="7" rx=".6"/><path d="M10.6 12l.9-1 .9 1"/><path d="M12 14.2c-1.3 1.6-1.9 2.6-1.9 3.5a1.9 1.9 0 0 0 3.8 0c0-.9-.6-1.9-1.9-3.5z"/></svg>
+        </span><span class="tlb">Leak</span></button>
         <button class="tile" data-req="Extinguisher issue"><span class="ic">
           <svg viewBox="0 0 24 24"><rect x="9" y="8" width="6.4" height="12" rx="2.8"/><path d="M12.2 8V5.8"/><path d="M10 4.5h4.4"/><path d="M9.2 9.5C7 9.3 5.8 8 5.6 6"/><path d="M14.4 4.5l3.2-1v2l-3.2-1z"/></svg>
         </span><span class="tlb">Extinguisher</span></button>
-        <button class="tile" data-req="Exit light or door issue"><span class="ic">
-          <svg viewBox="0 0 24 24"><rect x="2.5" y="5.8" width="14" height="12.4" rx="1.3"/><circle cx="10.76" cy="9.02" r="0.95" fill="currentColor" stroke="none"/><path d="M10.44 10.38l-.72 2.48"/><path d="M10.32 10.82l1.84.84"/><path d="M10.32 10.82l-1.68.44"/><path d="M9.72 12.86l1.84 1.08-.48 2"/><path d="M9.72 12.86l-1.36 1.6-1.52.48"/><path d="M18.4 12h3.1"/><path d="M20.1 10.45l1.55 1.55-1.55 1.55"/></svg>
-        </span><span class="tlb">Exit/emergency light</span></button>
-        <button class="tile" data-req="Sprinkler / pump / leak"><span class="ic">
-          <svg viewBox="0 0 24 24"><path d="M12 3.8S6.8 10 6.8 13.9a5.2 5.2 0 0 0 10.4 0C17.2 10 12 3.8 12 3.8z"/><path d="M9.5 14.2a2.6 2.6 0 0 0 2.3 2.6"/></svg>
-        </span><span class="tlb">Leak</span></button>
         <button class="tile" data-req="Hydrant / hose reel issue"><span class="ic">
-          <svg viewBox="0 0 24 24"><path d="M12 2.8v1"/><path d="M8 8a4 4 0 0 1 8 0"/><path d="M6.6 8h10.8"/><rect x="8.8" y="8" width="6.4" height="9.6"/><circle cx="7.3" cy="12.4" r="1.2"/><circle cx="16.7" cy="12.4" r="1.2"/><path d="M7 19.6h10"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M9 6.5a3 3 0 0 1 6 0"/><path d="M7.5 6.5h9"/><path d="M9 6.5v13"/><path d="M15 6.5v13"/><path d="M9 9.3h-2.2c-.8 0-1.3.5-1.3 1.2v1c0 .7.5 1.2 1.3 1.2H9"/><path d="M15 9.3h2.2c.8 0 1.3.5 1.3 1.2v1c0 .7-.5 1.2-1.3 1.2H15"/><path d="M7 19.5h10"/><path d="M6 21.5h12"/></svg>
         </span><span class="tlb">Hydrant</span></button>
         <button class="tile" data-req="Fire door / passive fire"><span class="ic">
-          <svg viewBox="0 0 24 24"><rect x="4.5" y="4" width="9.5" height="16" rx="1.2"/><path d="M9.3 8.9c.15 1.1-.4 1.85-1 2.5-.25-.35-.45-.75-.55-1.2-.8.75-1.35 1.6-1.35 2.55a2.9 2.9 0 0 0 5.8 0c0-2.05-1.75-3.3-2.9-3.85z"/><path d="M16 12h4.5"/><path d="M18.5 9.8l2.2 2.2-2.2 2.2"/></svg>
+          <svg viewBox="0 0 24 24"><rect x="5.5" y="2.5" width="13" height="19" rx="1.4"/><g transform="translate(5.9 6.3) scale(0.51)"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" stroke-width="3"/></g></svg>
         </span><span class="tlb">Fire door</span></button>
-        <button class="tile" data-req="Smoke alarm issue"><span class="ic">
-          <svg viewBox="0 0 24 24"><path d="M4.2 9.6h15.6"/><path d="M6.6 9.6a5.4 5.4 0 0 0 10.8 0"/><circle cx="12" cy="12.4" r="1" fill="currentColor" stroke="none"/></svg>
-        </span><span class="tlb">Smoke alarm</span></button>
-        <!-- quote-only tiles (Dad 2026-08-25: "quotes are usually bigger jobs") — job-sized
-             things people price, not faults. syncCats hides them on every other type. -->
+        <button class="tile" data-req="Exit light or door issue"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="1.5" y="4" width="21" height="16" rx="1.8"/><circle cx="11.2" cy="7.6" r="1.3" fill="currentColor" stroke="none"/><g stroke-width="1.8"><path d="M10.6 9.3l-1.6 3.4"/><path d="M10.4 10l2.9.6"/><path d="M10.4 10h-3"/><path d="M9 12.7l2.7 1.1v2.6"/><path d="M9 12.7l-1.9 1.9-1.8-.9"/></g><path d="M15.6 12.2h3.2"/><path d="M17.6 10.9l1.3 1.3-1.3 1.3"/></svg>
+        </span><span class="tlb">Exit/emergency light</span></button>
+        <!-- quote-only tiles (Dad 2026-08-25: "quotes are usually bigger jobs") — syncCats hides them on every other type. -->
         <button class="tile" data-req="New system / install"><span class="ic">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8.2v7.6"/><path d="M8.2 12h7.6"/></svg>
         </span><span class="tlb">New install</span></button>
         <button class="tile" data-req="Upgrade or replace what's there"><span class="ic">
           <svg viewBox="0 0 24 24"><path d="M6 12a6 6 0 0 1 10.2-4.2"/><path d="M16.6 4.6v3.4h-3.4"/><path d="M18 12a6 6 0 0 1-10.2 4.2"/><path d="M7.4 19.4V16h3.4"/></svg>
         </span><span class="tlb">Upgrade / replace</span></button>
-        <button class="tile" data-req="Defect / repair from a report"><span class="ic">
-          <svg viewBox="0 0 24 24"><rect x="5.5" y="4.4" width="13" height="16" rx="2"/><rect x="9.6" y="2.9" width="4.8" height="3" rx="1"/><path d="M12 9.8v4"/><circle cx="12" cy="16.9" r=".95" fill="currentColor" stroke="none"/></svg>
-        </span><span class="tlb">Defects</span></button>
         <button class="tile" data-req="Regular testing and maintenance"><span class="ic">
           <svg viewBox="0 0 24 24"><rect x="4.5" y="5.5" width="15" height="14.5" rx="2"/><path d="M8 3.5v3"/><path d="M16 3.5v3"/><path d="M4.5 9.5h15"/><path d="M9.3 14.7l2 2 3.4-3.6"/></svg>
         </span><span class="tlb">Testing / maintenance</span></button>
-        <button class="tile" data-req="Evacuation diagrams / training"><span class="ic">
-          <svg viewBox="0 0 24 24"><path d="M4.5 6.3 9.5 4l5 2.3 5-2.3v13.4l-5 2.3-5-2.3-5 2.3V6.3z"/><path d="M9.5 4v13.4"/><path d="M14.5 6.3v13.4"/></svg>
-        </span><span class="tlb">Evac diagrams</span></button>
+        <button class="tile" data-req="Defect / repair from a report"><span class="ic">
+          <svg viewBox="0 0 24 24"><rect x="5.5" y="4.4" width="13" height="16" rx="2"/><rect x="9.6" y="2.9" width="4.8" height="3" rx="1"/><path d="M12 9.8v4"/><circle cx="12" cy="16.9" r=".95" fill="currentColor" stroke="none"/></svg>
+        </span><span class="tlb">Defects</span></button>
         <button class="tile" data-req="Certificate / paperwork needed"><span class="ic">
           <svg viewBox="0 0 24 24"><rect x="5" y="3.8" width="14" height="16.4" rx="2"/><path d="M8.5 8.5h7"/><path d="M8.5 11.8h7"/><circle cx="12" cy="16.2" r="1.7"/></svg>
         </span><span class="tlb">Certification / AFSS</span></button>
+        <button class="tile" data-req="Evacuation diagrams / training"><span class="ic">
+          <svg viewBox="0 0 24 24"><path d="M4.5 6.3 9.5 4l5 2.3 5-2.3v13.4l-5 2.3-5-2.3-5 2.3V6.3z"/><path d="M9.5 4v13.4"/><path d="M14.5 6.3v13.4"/></svg>
+        </span><span class="tlb">Evac diagrams</span></button>
         <button class="tile" data-req="Something else"><span class="ic">
           <svg viewBox="0 0 24 24"><path d="M21 11.8a8.6 8.6 0 0 1-8.6 8.6c-1.5 0-2.9-.4-4.1-1.1L4 20.2l.9-4A8.6 8.6 0 1 1 21 11.8z"/><circle cx="8.6" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12.4" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="16.2" cy="12" r=".95" fill="currentColor" stroke="none"/></svg>
         </span><span class="tlb">Other</span></button>
@@ -70,19 +78,22 @@
       <div id="qWrap"></div>
       <div id="specsWrap" style="display:none">
         <div class="qrow" id="specsRow">
-          <div class="qtext">Do you have any plans or drawings of the fire system?</div>
+          <div class="qtext">Any plans or drawings?</div>
           <div class="ynrow" id="specsYn"></div>
         </div>
         <div class="specattach" id="specsAttach" style="display:none">
-          <button class="specbtn" id="specsBtn" type="button"><svg viewBox="0 0 24 24"><path d="M21.2 11.1l-8.9 8.9a5.6 5.6 0 0 1-7.9-7.9l8.9-8.9a3.7 3.7 0 0 1 5.3 5.3l-8.9 8.9a1.9 1.9 0 0 1-2.6-2.6l8.2-8.2"/></svg>Attach them — PDF or photo</button>
+          <button class="specbtn" id="specsBtn" type="button"><svg viewBox="0 0 24 24"><path d="M21.2 11.1l-8.9 8.9a5.6 5.6 0 0 1-7.9-7.9l8.9-8.9a3.7 3.7 0 0 1 5.3 5.3l-8.9 8.9a1.9 1.9 0 0 1-2.6-2.6l8.2-8.2"/></svg>Attach them, PDF or photo</button>
           <input type="file" id="specsFile" accept="image/*,.pdf,application/pdf" multiple style="display:none">
           <div class="specfiles" id="specsFiles" style="display:none"></div>
           <div class="specerr" id="specsErr" style="display:none"></div>
         </div>
       </div>
-      <div class="urgnote" id="urgNote" style="display:none">If anyone's in danger, call <b>000</b> first.</div>
+      <div id="noteHome" style="display:none"></div>
       <div class="notelabel" id="noteLabel" style="display:none">What's going on?</div>
       <div class="notewrap" id="noteWrap" style="display:none">
+        <!-- the note is on demand when the tile already asked questions (Baymard: a visible field
+             most people don't need stalls them; open it from a link). Required paths show it open. -->
+        <button type="button" class="notelink" id="noteLink"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Add a note</button>
         <input id="noteInput" placeholder="eg. what, and where">
         <button class="camerabtn" type="button" id="camBtn"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="2.6"/><path d="M8.7 7l1.3-2.2h4l1.3 2.2"/><circle cx="12" cy="13" r="3.4"/></svg></button>
         <input type="file" id="camFile" accept="image/*,.pdf,application/pdf" multiple style="display:none">
@@ -90,8 +101,9 @@
       <div class="shots" id="photoStrip" style="display:none"></div>
       <div id="rest" style="display:none">
       <div id="calSection">
-      <div class="seclabel"><span id="whenLabel">When can we start?</span> <span class="whenopt">(choose multiple)</span></div>
       <div class="cal">
+        <!-- the question lives inside the card like every other question (research, Noah 2026-09-03) -->
+        <div class="calq"><div class="qtext" id="whenLabel">When can we start?</div><div class="qhinttxt" id="calHint">Pick up to 4 days</div></div>
         <div class="calhead">
           <span class="mlabel" id="calLabel"></span>
           <div class="calnav"><button id="calPrev" type="button">‹</button><button id="calNext" type="button">›</button></div>
@@ -101,15 +113,20 @@
         <div id="dayPrefs"></div>
       </div>
       </div><!-- /calSection -->
-      <div class="grouped">
-        <div class="grow"><span class="gl">Site</span><span class="gv" id="siteName" style="display:none">—</span><input class="ginput" id="siteInput" placeholder="Building name or address" style="display:none"></div>
-        <div class="grow"><span class="gl">Name</span><input class="ginput" id="fName" placeholder="First and last name" autocomplete="name"></div>
-        <div class="grow"><span class="gl">Mobile</span><input class="ginput" id="fPhone" placeholder="Your number" inputmode="tel" autocomplete="tel"></div>
+      <!-- contact card (research, Noah 2026-09-03): same shape as the question card — label above,
+           visible text box, example as hint, grey optional tag. Site row only when no building is known. -->
+      <div class="grouped qgroup contact">
+        <div class="grow" id="siteRow"><div class="qtext">Building address<div class="qhinttxt">Start typing, then pick it from the list</div></div><span class="gv" id="siteName" style="display:none">—</span><input class="ginput qtextin" id="siteInput" autocomplete="off" autocapitalize="words" inputmode="text"></div>
+        <!-- address suggestions as they type (Noah 7 Sep: "so theres no errors"). Free OSM geocoder (Photon), AU only.
+             Picking one stores the coordinates with the request so the office map pins it without a lookup. -->
+        <div class="sitesugg" id="siteSugg" style="display:none"></div>
+        <div class="grow"><div class="qtext">Your name</div><input class="ginput qtextin" id="fName" autocomplete="name"></div>
+        <div class="grow"><div class="qtext">Mobile</div><input class="ginput qtextin" id="fPhone" inputmode="tel" autocomplete="tel"></div>
         <!-- email (2026-08-28 review): quotes and certification paperwork go out by EMAIL
              (Dad's own answers) — without this the office rings to ask where to send the
              thing. Required on those paths, optional everywhere else. -->
-        <div class="grow"><span class="gl">Email</span><input class="ginput" id="fEmail" placeholder="Optional" type="email" inputmode="email" autocomplete="email"></div>
-        <div class="grow rolerow" id="roleRow"><span class="gl">Role</span><span class="gv unset" id="roleVal">Choose</span><svg class="gchev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg><select id="roleSel" class="selcover"></select></div>
+        <div class="grow"><div class="qtext">Email<span class="qopt" id="emailOpt">optional</span><div class="qhinttxt" id="emailHint">If you'd rather we email</div></div><input class="ginput qtextin" id="fEmail" type="email" inputmode="email" autocomplete="email"></div>
+        <div class="grow rolerow" id="roleRow"><div class="qtext">Your role<div class="qhinttxt">So we know who to talk to about approvals</div></div><div class="rolebox"><span class="gv unset" id="roleVal">Choose</span><svg class="gchev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg><select id="roleSel" class="selcover"></select></div></div>
       </div>
       <div class="feecard" id="feeCard" style="display:none">
         <div class="feerow">
@@ -159,7 +176,9 @@
     <div class="sheet">
       <b id="dayTitle">—</b>
       <div class="tprow" id="dayOpts" style="margin-top:16px"></div>
-      <div class="tplinks"><button class="tplink" id="dayXt" type="button">Exact times…</button></div>
+      <!-- "Exact times…" dropped 2026-09-03 (research: the office books windows, not times; a hard
+           constraint goes in the note). The custom-slot code stays in case it's wanted back. -->
+      <div class="tplinks" style="display:none"><button class="tplink" id="dayXt" type="button">Exact times…</button></div>
       <div class="tpslots" id="daySlots" style="display:none"></div>
       <div class="sheetbtns" style="margin-top:14px">
         <button class="actbtn ghost" id="dayNo" type="button">Go back</button>
@@ -176,15 +195,19 @@
 <script>
 const C = window.APP_CONFIG;
 /* logo if the company has one, coloured initial square if not */
+/* Logo is optional (Noah 2026-09-02: most fire companies won't have a good one, and a bad
+   one looks worse than none). Name-only by default; a logo shows only when config has one. */
 const bd = document.getElementById('brandDot');
-if(C.COMPANY_LOGO){ bd.classList.add('haslogo'); bd.innerHTML = C.COMPANY_LOGO; }
+if(C.COMPANY_LOGO){ bd.classList.add('haslogo'); bd.innerHTML = C.COMPANY_LOGO; } else { bd.style.display = 'none'; }
+if(C.BRAND_COLOR) document.getElementById('brandBand').style.background = C.BRAND_COLOR;
 else bd.textContent = C.COMPANY_INITIAL;
 document.getElementById('brandName').textContent = C.COMPANY_NAME;
 if (C.COMPANY_PHONE) {
-  const cb = document.getElementById('callBtn');
-  /* no number on show — just the icon and Call us; tapping dials */
-  cb.href = 'tel:' + C.COMPANY_PHONE.replace(/[^\d+]/g, '');
-  cb.style.display = 'flex';
+  const pt = document.getElementById('phoneTop');
+  pt.href = 'tel:' + C.COMPANY_PHONE.replace(/[^\d+]/g, ''); pt.style.display = 'flex';
+  /* the Call us button under Send is gone (Noah 2026-09-03): the phone button in the header
+     is on every screen, and a second call-to-action competed with Send. Markup kept, hidden. */
+  document.getElementById('callBtn').href = 'tel:' + C.COMPANY_PHONE.replace(/[^\d+]/g, '');
 }
 if(window.IS_DEMO) document.getElementById('demoBanner').style.display = 'block';
 
@@ -198,13 +221,23 @@ let building = null;
   building = bcode ? await Store.getBuilding(bcode) : null;
   if(building){
     document.getElementById('siteLede').textContent = building.name;
+    document.getElementById('siteLine').style.display = '';
     document.getElementById('siteName').textContent = building.name;
-    document.getElementById('siteName').style.display = '';
+    document.getElementById('siteRow').style.display = 'none';   /* the building sits at the top of the page already */
   } else {
-    document.getElementById('siteLede').textContent = '';
-    document.getElementById('siteInput').style.display = '';
+    document.getElementById('siteLine').style.display = 'none';
+    document.getElementById('siteRow').style.display = '';
   }
 })();
+/* "Not here?" (Noah 2026-09-02): a saved or forwarded building link used for a different
+   site. Drops the locked building and opens the type-it-in field, so it lands as a New site.
+   Research: prefilled data must stay editable (NN/g). */
+document.getElementById('notHere').onclick = () => {
+  building = null;
+  document.getElementById('siteLine').style.display = 'none';
+  document.getElementById('siteRow').style.display = '';
+  const si = document.getElementById('siteInput'); si.value = ''; pickedSite = null; hideSugg();
+};
 
 /* request type — Dad's SCC: the money question comes before the what's-wrong question.
    Type only changes three things: the money, the urgency, and the words. Same flow after.
@@ -274,24 +307,28 @@ const QUOTE_CATS = [
   'Something else'
 ];
 const TYPES = [
-  { key:'service', label:'Service call', sub:'Come and fix it', col:'blue', fee:true,
+  { key:'service', label:'Service call', sub:"Something's faulty, book a visit", col:'blue', fee:true,
     ask:"What's wrong?",            when:'When can we start?',        cats:ALL_CATS,
     feeTitle:'Service call cost' },
-  { key:'quote',   label:'Quote', sub:'Price it first', col:'purple', fee:false,
+  { key:'quote',   label:'Quote', sub:'Price a job before any work', col:'purple', fee:false,
     ask:'What do you need priced?', when:'When can we come and look?', cats:QUOTE_CATS },
   /* "It can't wait" describes their situation — the old "We come ASAP" promised our
      response before any human had accepted the job (Noah 2026-08-17) */
-  { key:'urgent',  label:'Urgent', sub:"It can't wait", col:'red', fee:true, hot:true,
+  { key:'urgent',  label:'Urgent', sub:'Needs someone now', col:'red', fee:true, hot:true,
     ask:"What's wrong?",            when:'When can we start?',        cats:URGENT_CATS,
     feeTitle:'Call-out cost' },
-  /* was "Other" — swapped with the tile (Noah 2026-08-28): Dad wants the last
-     what's-wrong tile called Other, and two Others meaning different things is
-     worse. The type key stays 'other' — only the words move. */
-  { key:'other',   label:'Something else', sub:"We'll text you back", col:'ink', fee:false,
+  /* "Other" again (Noah 2026-09-04): was "Something else" since the 28 Aug swap to avoid
+     two Others; Noah wants both Other so they group as one thing on the office side.
+     The type key stays 'other' — only the word moves. */
+  { key:'other',   label:'Other', sub:"Ask us anything, we'll text back", col:'ink', fee:false,
     ask:"What's it about?",         when:'When suits you?',           cats:ALL_CATS }
 ];
 let reqType = null, typeOpen = true, sccAccepted = false, acceptedRate = null, acceptedHourly = null;
 function feeApplies(){ return !!(RATES && (reqType === 'service' || reqType === 'urgent')); }
+window.addEventListener('popstate', () => {
+  if(tileLabel && !tilesOpen){ unfoldTiles(); return; }
+  if(reqType && !typeOpen){ typeOpen = true; clearTile(); collapseBelow(); buildTypes(); window.scrollTo(0, 0); }
+});
 function buildTypes(){
   const wrap = document.getElementById('typeList'); wrap.innerHTML = '';
   /* picked + closed → the other three get out of the way; tap the row to bring them back */
@@ -302,7 +339,7 @@ function buildTypes(){
     b.className = 'typesel c-' + t.col + (t.hot ? ' hot' : '');
     /* no cost pill here — the fee gets its moment at the Accept card before send */
     b.innerHTML = `<span class="ic">${TYPE_ICONS[t.key]}</span><span class="tlb">${t.label}</span><span class="tchange">Change</span>`;
-    b.onclick = () => { typeOpen = true; collapseBelow(); buildTypes(); };
+    b.onclick = () => { typeOpen = true; clearTile(); collapseBelow(); buildTypes(); };   /* Noah 2026-09-03: reopening the types forgets the tile, every type */
     wrap.appendChild(b);
     return;
   }
@@ -332,18 +369,26 @@ function syncCats(){
     el.style.display = ok ? '' : 'none';
     if(!ok && el.classList.contains('on')){ el.classList.remove('on'); lostPick = true; }
   });
-  if(lostPick){
-    tileLabel = ''; qAnswers = [];
-    document.getElementById('qWrap').innerHTML = '';
-    document.getElementById('noteWrap').style.display = 'none';
-    document.getElementById('rest').classList.remove('showit');
-    photos = []; docs = []; drawPhotos();
-  }
+  /* the pick can be remembered without a highlight (grid reopened via Change) — if that
+     remembered tile doesn't belong to this type, it goes too (Noah 2026-09-03: a quote
+     tile turned up under Service call) */
+  if(tileLabel && tileLabel !== OTHER_CAT && !allow.includes(tileLabel)) lostPick = true;
+  if(lostPick) clearTile();
+}
+/* forget the tile and everything answered under it — the grid comes back fresh */
+function clearTile(){
+  unfoldTiles();
+  tileLabel = ''; lastCatPick = ''; qAnswers = [];
+  parkNote();
+  document.getElementById('qWrap').innerHTML = '';
+  document.getElementById('noteWrap').style.display = 'none';
+  document.getElementById('rest').classList.remove('showit');
+  photos = []; docs = []; drawPhotos();
 }
 /* Fold everything below the type picker out of sight. Nothing is destroyed —
    pick the same type again and it all comes back exactly as it was. */
 function collapseBelow(){
-  ['whatLabel','tiles','qWrap','specsWrap','noteLabel','noteWrap','photoStrip','urgNote','urgNoteTop']
+  ['whatLabel','tiles','tileSel','qWrap','specsWrap','noteLabel','noteWrap','photoStrip']
     .forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('rest').classList.remove('showit');
 }
@@ -353,6 +398,9 @@ function pickType(key){
     sccAccepted = false; acceptedRate = null; acceptedHourly = null;   /* a new type means the cost gets accepted fresh */
   }
   typeOpen = false;                             /* picking tucks the other three away */
+  /* the phone's Back button reopens the four rows instead of leaving the page
+     (Baymard's one-page-form trap, checked 2026-09-02) */
+  if(!(history.state && history.state.picked)) history.pushState({ picked: true }, '');
   const t = TYPES.find(x => x.key === key);
   /* "Other" means none of the boxes fit, so handing them the boxes next reads as a
      broken form — and on this path the tiles change nothing anyway (no yes/no
@@ -365,7 +413,11 @@ function pickType(key){
      calendar days (Noah 2026-08-25: solid black tiles felt disruptive; selected
      days now wear the same soft-tint-and-ring look as a selected tile) */
   document.getElementById('tiles').className = 'tiles scheme-' + t.col;
+  document.getElementById('qWrap').className = 'scheme-' + t.col;
+  document.getElementById('specsWrap').className = 'scheme-' + t.col;   /* picked answers wear the same tint-and-ring as a picked tile (research: one 'chosen' look per page) */
   document.querySelector('.cal').className = 'cal scheme-' + t.col;
+  document.getElementById('dayWrap').className = 'sheetwrap scheme-' + t.col;   /* the day sheet picks up the same colour */
+  document.getElementById('feeCard').className = 'feecard scheme-' + t.col;   /* and the cost card's accept pill */
   /* (the old quote-mode "Alarm → Detection" relabel is gone — quotes have their own
      job-sized tiles now, so the alarm tile never shows there) */
   document.getElementById('typeList').classList.remove('missing');
@@ -385,8 +437,11 @@ function pickType(key){
     document.querySelectorAll('.tile')
       .forEach(x => x.classList.toggle('on', !!tileLabel && x.dataset.req === tileLabel));
   }
-  if(tileLabel){
-    /* they came back to a type with a category already chosen — unfold it again */
+  if(tileLabel && !isOther){
+    /* they came back to a type with a category already chosen — fold the grid, show its questions */
+    if(document.querySelector('.tile.on')) foldTiles(); else unfoldTiles();
+  }
+  if(tileLabel && (isOther || document.querySelector('.tile.on'))){
     buildQs(); syncNote();
     document.getElementById('noteWrap').style.display = 'flex';
     document.getElementById('rest').classList.add('showit');
@@ -439,9 +494,9 @@ function syncFee(){
   const ft = (TYPES.find(x => x.key === reqType) || {}).feeTitle;
   if(ft) document.getElementById('feeTitle').textContent = ft;
   const hr = (RATES.hourly && RATES.hourly.amount != null) ? RATES.hourly.amount : null;
-  const covers = hr
-    ? 'Covers the visit and the first hour. After that it’s $' + hr + ' an hour.'
-    : 'Covers the visit. Extra work is quoted or charged on the day.';
+  /* one short line that stops the figure reading as the whole job (Noah 2026-09-03); the
+     first-hour and hourly-rate detail lives in the terms, not repeated here */
+  const covers = 'Covers the visit. Anything more is quoted first.';
   const amt = document.getElementById('feeAmt'), rl = document.getElementById('feeRates');
   if(reqType === 'service'){
     /* both rates on the card, figures from config — never hardcoded */
@@ -457,22 +512,25 @@ function syncFee(){
     [['saturday','Saturdays'], ['sunday','Sundays'], ['publicHoliday','public holidays']].forEach(([k, w]) => {
       if(RATES[k] && RATES[k].amount != null) rows.push({ a: RATES[k].amount, t: w });
     });
-    rl.innerHTML = rows.map(r => '<div class="raterow"><span class="rateamt">$' + r.a + gst + '</span><span class="ratetxt">' + r.t + '</span></div>').join('');
-    document.getElementById('feeSub').textContent =
-      covers + ' Which rate depends on when we come — we’ll text you the time and the rate when it’s booked in.';
+    /* two tidy columns (Noah 2026-09-03): when on the left, price on the right, one "ex GST" line under */
+    rl.innerHTML = rows.map(r => '<div class="raterow"><span class="ratetxt">' + r.t.replace(/^if we attend /, '') + '</span><span class="rateamt">$' + r.a + '</span></div>').join('')
+      + (RATES.label ? '<div class="ratenote">All prices ' + RATES.label + '</div>' : '');
+    /* one line (research, Noah 2026-09-03): the two rate rows already say which rate applies when */
+    document.getElementById('feeSub').textContent = covers;
   } else {
-    amt.style.display = '';
-    rl.style.display = 'none';
+    /* one rate, same two-column row as the service card (consistency, 2026-09-03);
+       outside normal hours the row says so — no surprise on the invoice */
+    amt.style.display = 'none';
+    rl.style.display = '';
     const rate = acceptedRate || currentRate();
-    amt.innerHTML = '$' + rate.amount + '<small>' + (RATES.label || '') + '</small>';
-    /* outside normal hours the card says so — no surprise on the invoice */
-    document.getElementById('feeSub').textContent = (rate === RATES.normal)
-      ? covers
-      : 'That’s the ' + rate.name + ' rate. ' + covers;
+    const when = (rate === RATES.normal) ? 'Right now, ' + rate.name : 'Right now, ' + rate.name + ' rate';
+    rl.innerHTML = '<div class="raterow"><span class="ratetxt">' + when + '</span><span class="rateamt">$' + rate.amount + '</span></div>'
+      + (RATES.label ? '<div class="ratenote">All prices ' + RATES.label + '</div>' : '');
+    document.getElementById('feeSub').textContent = covers;
   }
   const btn = document.getElementById('feeAccept');
   btn.className = 'feebtn' + (sccAccepted ? ' on' : '');
-  document.getElementById('feeLbl').textContent = sccAccepted ? 'Accepted'
+  document.getElementById('feeLbl').textContent = sccAccepted ? 'Accepted ✓'
     : (reqType === 'service' ? 'Accept the call-out rates' : 'Accept the call-out cost');
   document.getElementById('feeRing').textContent = sccAccepted ? '✓' : '';
 }
@@ -500,33 +558,78 @@ document.getElementById('feeAccept').onclick = () => {
   syncFee();
 };
 
-/* yes/no question sets — the app asks, never instructs */
+/* question sets — the app asks, never instructs.
+   Rebuilt 2026-09-02 from the managers' review (Request app — managers' answers plan):
+   their questions, Noah's trimmed wording, buttons wherever there's a real third
+   answer, four questions allowed. Item kinds:
+     {q, o:[...]}              buttons (urg: the answer that flags urgent;
+                               dateWhen/dateQ: that answer opens a date row)
+     {q, kind:'text', ph}      one free line (required unless optional:true)
+     {q, kind:'date'}          a date on its own (optional)
+     {q, kind:'photo', sub}    a row with a camera pill — opens the same picker as the
+                               camera button; optional (photos ride in the photos list) */
 const QSETS = {
   "Alarm going off / beeping":[
-    {q:"Is it going off right now?",o:["Yes","No"],urg:"Yes"},
-    {q:"Is it the whole building?",o:["Yes","No"]},
-    {q:"Has the fire brigade shown up?",o:["Yes","No"],urg:"Yes"}],
+    {q:"Sounding or flashing right now?",o:["Yes","No"],urg:"Yes"},
+    {q:"Whole building or part?",o:["Whole","Part","Not sure"]},
+    {q:"Any message on the panel?",kind:"text",ph:"eg. FAULT ZONE 3",optional:true},
+    {q:"Add a photo of the panel",kind:"photo",sub:"Helps a lot"}],
   "Extinguisher issue":[
-    {q:"Been used or discharged?",o:["Yes","No"]},
-    {q:"Damaged or leaking?",o:["Yes","No"]},
-    {q:"More than one affected?",o:["Yes","No"]}],
+    {q:"Been used or set off?",o:["Yes","No"]},
+    {q:"Damaged, leaking or missing?",o:["Yes","No"]},
+    {q:"How many?",o:["One","More than one","Not sure"]},
+    {q:"Add a photo of the label",kind:"photo",sub:"So we bring the right one"}],
   "Exit light or door issue":[
-    {q:"Is the light completely out?",o:["Yes","No"]},
-    {q:"More than one light?",o:["Yes","No"]},
-    {q:"Area used at night?",o:["Yes","No"]}],
+    {q:"Exit sign or emergency light?",o:["Exit sign","Emergency light","Both","Not sure"]},
+    {q:"Completely out?",o:["Yes","No"]},
+    {q:"More than one?",o:["Yes","No"]},
+    {q:"Area used after dark?",o:["Yes","No"]}],
   "Sprinkler / pump / leak":[
     {q:"Still leaking right now?",o:["Yes","No"],urg:"Yes"},
-    {q:"Causing flooding or damage?",o:["Yes","No"],urg:"Yes"},
-    {q:"Near any electrical gear?",o:["Yes","No"]}],
+    {q:"Flooding or damage?",o:["Yes","No"],urg:"Yes"},
+    {q:"Near any electrical gear?",o:["Yes","No"],urg:"Yes"},
+    {q:"Where's it coming from?",o:["Sprinkler head","Pipework","Fire pump","Fire cupboard","Not sure"]}],
+  "Hydrant / hose reel issue":[
+    {q:"Hydrant or hose reel?",o:["Hydrant","Hose reel","Not sure"]},
+    {q:"Leaking right now?",o:["Yes","No"],urg:"Yes"},
+    {q:"Inside or outside?",o:["Inside","Outside"]},
+    {q:"Damaged or been hit?",o:["Yes","No"]}],
+  "Fire door / passive fire":[
+    {q:"Closes fully on its own?",o:["Yes","No"]},
+    {q:"Stuck open or won't open?",o:["Stuck open","Won't open","Neither"]},
+    {q:"Damaged, loose or off its hinges?",o:["Yes","No"]},
+    {q:"More than one door?",o:["Yes","No"]}],
+  "Smoke alarm issue":[
+    {q:"Smoke or fire right now?",o:["Yes","No"],urg:"Yes"},
+    {q:"Beeping or chirping right now?",o:["Yes","No"]},
+    {q:"Non-stop or now and then?",o:["Non-stop","Now and then","Not sure"]},
+    {q:"More than one alarm?",o:["Yes","No"]}],
+  "Defect / repair from a report":[
+    {q:"Got the defect report?",o:["Yes","No"],attachWhen:"Yes"},
+    {q:"Deadline or AFSS due?",o:["Yes","No"],dateWhen:"Yes",dateQ:"When?"},
+    {q:"Did we do the inspection?",o:["Yes","No","Not sure"]}],
+  "Evacuation diagrams / training":[
+    {q:"What do you need?",o:["Diagrams","Training","Both"]},
+    {q:"New site or an update?",o:["New","Update"]},
+    {q:"Need it by a date?",o:["Yes","No"],dateWhen:"Yes",dateQ:"When?"},
+    {q:"Roughly how many?",kind:"text",ph:"people for training, floors for diagrams",optional:true}],
   "Certificate / paperwork needed":[
-    /* dateWhen (2026-08-28 review): a Yes opens a date field. "Deadline coming up — Yes"
-       tells the office there IS a deadline; the AFSS game runs on WHEN (assessment
-       within 90 days before issue, late fines escalate weekly) — the date is the story. */
-    {q:"Deadline coming up?",o:["Yes","No"],dateWhen:"Yes",dateQ:"When's it due?"},
-    {q:"Is it for your AFSS?",o:["Yes","No"]},
-    {q:"Is someone chasing you for it?",o:["Yes","No"]}],
+    {q:"AFSS or something else?",o:["AFSS","Fire certification","Other","Not sure"]},
+    {q:"Who's asking for it?",o:["Council","Building manager","Other","No one"]},
+    {q:"Got last year's paperwork?",o:["Yes","No"],attachWhen:"Yes"},
+    {q:"When's it due?",kind:"date"}],
   "Something else":[]
 };
+/* "Where is it?" on every tile — the managers' strongest ask ("could potentially
+   save the office more phone calls than almost any other question"). Noah's
+   bigger point: the building gives the street, not the floor. So the level line
+   is the field that matters and the buttons are the helper. Required on service
+   and urgent, optional on quotes and "something else" (2026-09-02). */
+const WHERE_QS = [
+  {q:"Where in the building?",kind:"text",ph:"eg. level 3, unit 12",where:true,optional:true}
+  /* the "Where is it?" button row came out 2026-09-02: two fields asking one thing
+     (Baymard/GOV.UK: don't). Add it back here if it ever earns its place. */
+];
 let tileLabel = "", qAnswers = [], dueDate = '';
 /* The category the office files an "Other" request under. Customer never sees the
    string — the company side already labels this bucket "Other" and gives it the
@@ -539,9 +642,20 @@ let lastCatPick = '';     /* their real tile choice, kept so switching back rest
    actually wrong. On a quote nothing is broken yet, and on "other" it isn't a job.
    Asking "has the fire brigade shown up?" on a quote reads as a broken form. */
 function currentQs(){
-  if(reqType === 'quote' || reqType === 'other') return [];
-  return QSETS[tileLabel] || [];
+  if(!tileLabel) return [];
+  /* quotes used to ask nothing — the managers' sets for Defects, Evac and
+     Certification only make sense if quotes ask too (2026-09-02) */
+  /* order inside a set (Noah 2026-09-02): Yes/No first, then multi-choice, then text/date,
+     photo and attach last. Stable, so the managers' order holds within each kind. Lines up
+     with risk-first (every danger question is a Yes/No). */
+  const rank = x => x.hint ? 9 : x.kind === 'photo' ? 8 : x.kind === 'date' ? 6 : x.kind === 'text' ? 5 : (x.o && x.o.length === 2 && x.o[0] === 'Yes') ? 1 : 3;
+  const loose = (reqType === 'quote' || reqType === 'other');
+  const where = WHERE_QS.map(w => Object.assign({}, w, { optional: w.optional || loose }));
+  const all = ((reqType === 'other') ? [] : (QSETS[tileLabel] || [])).concat(where);
+  return all.map((x, i) => [x, i]).sort((a, b) => (rank(a[0]) - rank(b[0])) || (a[1] - b[1])).map(p => p[0]);
 }
+/* a required item is one the customer has to answer before sending */
+function qRequired(item){ return !item.hint && !item.optional && item.kind !== 'date' && item.kind !== 'photo'; }
 /* paperwork doesn't need a site visit — no calendar for it.
    "Something else" shows the calendar but doesn't require it (might not be a visit job). */
 const NO_VISIT = ["Certificate / paperwork needed"];
@@ -556,19 +670,35 @@ function needsVisit(){
 /* With no yes/no questions there is nothing else describing the job — a quote
    that says only "Alarm" is useless to the office. So the note stops being a
    nice-to-have exactly when it becomes the only thing they've told us. */
-function noteRequired(){ return currentQs().length === 0; }
+let noteOpened = false;
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('noteLink').onclick = () => { noteOpened = true; syncNote(); document.getElementById('noteInput').focus(); };
+});
+function noteRequired(){ return currentQs().filter(x => !x.where && !x.hint && x.kind !== 'photo').length === 0; }
 function syncNote(){
   /* no heading over the box — the example placeholder says what to write and how
      much without spending words on either (Noah 2026-08-25: a header there is
      clutter, the prompt in the box does the job). The one exception is Other:
      with no tiles above it, the box is the whole form, so it keeps its heading. */
-  document.getElementById('noteLabel').style.display = (reqType === 'other') ? '' : 'none';
-  document.getElementById('noteInput').placeholder = noteEg();
+  const ni = document.getElementById('noteInput');
+  const open = noteRequired() || noteOpened || ni.value.trim().length > 0;
+  /* label above, example as hint under it (research 2026-09-03: never a placeholder-only box).
+     Required note = the question itself; an opened optional note is just "Note". */
+  const lab = document.getElementById('noteLabel');
+  lab.style.display = open ? '' : 'none';
+  const q = noteRequired() ? (reqType === 'other' ? "What's going on?" : 'Tell us about the job') : 'Note';
+  lab.innerHTML = '<div class="qtext">' + q + (noteRequired() ? '' : '<span class="qopt">optional</span>') + '<div class="qhinttxt"></div></div>';
+  lab.querySelector('.qhinttxt').textContent = noteEg();
+  ni.placeholder = '';
+  ni.style.display = open ? '' : 'none';
+  document.getElementById('noteLink').style.display = open ? 'none' : '';
 }
 function noteEg(){
   /* quote tiles have their own examples now — fall back to a price-shaped prompt */
   if(reqType === 'quote') return NOTE_EGS[tileLabel] || 'eg. what you need priced';
-  if(reqType === 'other') return 'eg. detector hanging off the ceiling';
+  if(reqType === 'other') return "What's happening, and when you noticed";
+  /* managers' prompt for the free-text tile: what, where, when, photo */
+  if(tileLabel === 'Something else') return "What's happening, and when you noticed";
   return NOTE_EGS[tileLabel] || 'eg. what, and where';
 }
 function visitRequired(){
@@ -578,13 +708,13 @@ function visitRequired(){
 }
 /* the note box's example asks the right question for what they picked */
 const NOTE_EGS = {
-  "Alarm going off / beeping": "eg. level 2, near the lifts",
-  "Extinguisher issue": "eg. near the kitchen",
-  "Exit light or door issue": "eg. level 1 stairwell",
-  "Sprinkler / pump / leak": "eg. back of house",
+  "Alarm going off / beeping": "eg. started about 10 mins ago",
+  "Extinguisher issue": "eg. the one by the kitchen",
+  "Exit light or door issue": "eg. the one above the stair door",
+  "Sprinkler / pump / leak": "eg. dripping onto the car park",
   "Hydrant / hose reel issue": "eg. hose reel by the loading dock",
-  "Fire door / passive fire": "eg. level 3 stair door won't close",
-  "Smoke alarm issue": "eg. unit 12, chirping every minute",
+  "Fire door / passive fire": "eg. stair door won't close",
+  "Smoke alarm issue": "eg. chirping every minute",
   "Defect / repair from a report": "eg. the defects from the May inspection",
   "New system / install": "eg. new fit-out, needs full detection",
   "Upgrade or replace what's there": "eg. old panel needs replacing",
@@ -601,35 +731,110 @@ function answersUrgent(){
 function isUrgentNow(){ return reqType === 'urgent' || answersUrgent(); }
 function syncUrgent(){
   const u = isUrgentNow();
-  /* the 000 line shows where the person is looking — the app never sits between a person and triple zero.
-     Urgent type picked → right under the type, first thing on screen.
-     Danger answer mid-form → next to the questions they just answered. */
-  document.getElementById('urgNoteTop').style.display = reqType === 'urgent' ? 'block' : 'none';
-  document.getElementById('urgNote').style.display = (u && reqType !== 'urgent') ? 'block' : 'none';
-  /* the send button joins the red, same as the type row, tiles and the 000 line */
+  /* the send button joins the red, same as the type row and tiles */
   document.getElementById('sendBtn').classList.toggle('urgent', u);
   /* urgent jobs don't haggle over days — no calendar, we just come */
   document.getElementById('calSection').style.display = (!u && needsVisit() && tileLabel) ? 'block' : 'none';
 }
+/* a date as a pill in the app's style; the native date input sits on top, invisible, so a tap
+   opens the phone's own date wheel (2026-09-02, Noah: raw dd/mm/yyyy looked stuck on) */
+function datePill(min, onPick){
+  const wrap = document.createElement('label'); wrap.className = 'ynbtn datepill';
+  const txt = document.createElement('span'); txt.textContent = 'Pick a date';
+  const ic = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); ic.setAttribute('viewBox', '0 0 24 24');
+  ic.innerHTML = '<rect x="3.5" y="5" width="17" height="15.5" rx="2.4"/><path d="M3.5 9.5h17"/><path d="M8 3v3.5"/><path d="M16 3v3.5"/>';
+  const di = document.createElement('input'); di.type = 'date'; di.min = min; di.className = 'datenative';
+  di.onchange = () => {
+    if(di.value){ const d = new Date(di.value + 'T00:00:00'); txt.textContent = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); wrap.classList.add('on'); }
+    else { txt.textContent = 'Pick a date'; wrap.classList.remove('on'); }
+    onPick(di.value || '');
+  };
+  wrap.appendChild(txt); wrap.appendChild(ic); wrap.appendChild(di);
+  return wrap;
+}
+/* the note and photo rows live inside the question card; park them in #noteHome before
+   anything clears #qWrap, or innerHTML = '' destroys them (crash on type change, 2026-09-03) */
+function parkNote(){
+  const home = document.getElementById('noteHome');
+  ['noteLabel','noteWrap','photoStrip','specsWrap'].forEach(id => { const el = document.getElementById(id); if(el) home.appendChild(el); });
+}
 function buildQs(){
-  const wrap = document.getElementById('qWrap'); wrap.innerHTML = '';
+  /* the note and photo rows live inside the card; park them before the card is rebuilt
+     so innerHTML = '' can't destroy them */
+  parkNote();
+  const qwrap = document.getElementById('qWrap'); qwrap.innerHTML = '';
   const set = currentQs(); qAnswers = set.map(() => null);
+  /* grouping (Noah 2026-09-02, "very top to bottom"): the tile's own questions share one
+     card with thin dividers (GOV.UK fieldset, Gestalt proximity); the where line stays
+     its own card. `wrap` below is whichever card the current item belongs in. */
+  const tileEl = document.querySelector('.tile.on .tlb');
+  const group = document.createElement('div'); group.className = 'qgroup';
+  const own = set;
+  if(own.length) qwrap.appendChild(group);   /* no heading: the folded tile row above already names it */
+  let wrap = group;
   dueDate = '';   /* a fresh question set forgets any date typed under the old one */
+  const ymdToday = (() => { const t = new Date(); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); })();
   set.forEach((item, ix) => {
-    const r = document.createElement('div'); r.className = 'qrow'; r.style.animationDelay = (ix * .08) + 's';
+    wrap = group;
+    /* a nudge line, not a question — no answer slot */
+    if(item.hint){
+      const h = document.createElement('div'); h.className = 'qhint'; h.style.animationDelay = (ix * .08) + 's';
+      h.innerHTML = (item.cam ? '<svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="2.6"/><path d="M8.7 7l1.3-2.2h4l1.3 2.2"/><circle cx="12" cy="13" r="3.4"/></svg>' : '') + '<span></span>';
+      h.querySelector('span').textContent = item.hint;
+      if(item.cam) h.onclick = () => document.getElementById('camBtn').click();
+      wrap.appendChild(h);
+      return;
+    }
+    const r = document.createElement('div'); r.className = 'qrow' + (item.kind ? ' qrow-' + item.kind : '') + (item.kind === 'text' ? ' stack' : ''); r.style.animationDelay = (ix * .08) + 's';
+    r.dataset.ix = ix;
     const t = document.createElement('div'); t.className = 'qtext'; t.textContent = item.q;
+    r.appendChild(t);
+    if(item.kind === 'text'){
+      /* research 2026-09-02: "(optional)" in the label where it's optional (Baymard); the
+         example lives as hint text under the label, not a placeholder (NN/g, GOV.UK) */
+      if(item.optional){ const o = document.createElement('span'); o.className = 'qopt'; o.textContent = 'optional'; t.appendChild(o); }
+      if(item.ph){ const hint = document.createElement('div'); hint.className = 'qhinttxt'; hint.textContent = item.ph; t.appendChild(hint); }
+      const inp = document.createElement('input'); inp.type = 'text'; inp.className = 'qtextin'; inp.autocomplete = item.where ? 'address-line2' : 'off';
+      inp.setAttribute('autocapitalize', 'off'); inp.setAttribute('inputmode', 'text');
+      inp.oninput = () => { qAnswers[ix] = inp.value.trim() || null; r.classList.remove('missing'); };
+      r.appendChild(inp); wrap.appendChild(r);
+      return;
+    }
+    if(item.kind === 'photo'){
+      /* one full-width tappable row, same shape as "Add a note" (consistency, 2026-09-02).
+         Opens the same picker as the camera button; the label flips to "N added". */
+      const row = document.createElement('button'); row.type = 'button'; row.className = 'photorow'; row.style.animationDelay = (ix * .08) + 's';
+      row.dataset.ix = ix; row.dataset.photopill = '1';
+      row.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="2.6"/><path d="M8.7 7l1.3-2.2h4l1.3 2.2"/><circle cx="12" cy="13" r="3.4"/></svg><span class="prtxt"><span class="prq"></span><span class="prsub"></span></span>';
+      row.querySelector('.prq').textContent = item.q;
+      row.querySelector('.prsub').textContent = item.sub || '';
+      row.dataset.q = item.q; row.dataset.sub = item.sub || '';
+      row.onclick = () => document.getElementById('camBtn').click();
+      wrap.appendChild(row);
+      return;
+    }
+    if(item.kind === 'date'){
+      r.classList.add('daterow-own');
+      r.appendChild(datePill(ymdToday, v => { qAnswers[ix] = v || null; dueDate = v; }));
+      wrap.appendChild(r);
+      return;
+    }
     const yn = document.createElement('div'); yn.className = 'ynrow';
-    /* a question can carry a follow-up date row (the AFSS deadline) — hidden until
+    /* a question can carry a follow-up date row (a deadline) — hidden until
        the answer that makes it matter */
     let dateRow = null;
     if(item.dateWhen){
       dateRow = document.createElement('div'); dateRow.className = 'qrow daterow'; dateRow.style.display = 'none';
       const dt = document.createElement('div'); dt.className = 'qtext'; dt.textContent = item.dateQ || 'When?';
-      const di = document.createElement('input'); di.type = 'date'; di.className = 'datein';
-      const today = new Date();
-      di.min = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-      di.onchange = () => { dueDate = di.value || ''; };
-      dateRow.appendChild(dt); dateRow.appendChild(di);
+      dateRow.appendChild(dt); dateRow.appendChild(datePill(ymdToday, v => { dueDate = v; }));
+    }
+    /* "Yes" to having a document → point at the camera button, which takes PDFs too */
+    let attachRow = null;
+    if(item.attachWhen){
+      attachRow = document.createElement('button'); attachRow.type = 'button'; attachRow.className = 'photorow attachrow'; attachRow.style.display = 'none';
+      attachRow.dataset.photopill = '1'; attachRow.dataset.q = 'Attach it'; attachRow.dataset.sub = 'PDF or photo';
+      attachRow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21.2 11.1l-8.9 8.9a5.6 5.6 0 0 1-7.9-7.9l8.9-8.9a3.7 3.7 0 0 1 5.3 5.3l-8.9 8.9a1.9 1.9 0 0 1-2.6-2.6l8.2-8.2"/></svg><span class="prtxt"><span class="prq">Attach it</span><span class="prsub">PDF or photo</span></span>';
+      attachRow.onclick = () => document.getElementById('camBtn').click();
     }
     item.o.forEach(optLabel => {
       const b = document.createElement('button'); b.className = 'ynbtn'; b.type = 'button'; b.textContent = optLabel;
@@ -639,22 +844,84 @@ function buildQs(){
         if(dateRow){
           const show = optLabel === item.dateWhen;
           dateRow.style.display = show ? '' : 'none';
-          if(!show){ dueDate = ''; dateRow.querySelector('input').value = ''; }
+          if(!show){ dueDate = ''; const dn = dateRow.querySelector('input'); dn.value = ''; dn.dispatchEvent(new Event('change')); }
         }
+        if(attachRow) attachRow.style.display = (optLabel === item.attachWhen) ? '' : 'none';
         syncUrgent();
       };
       yn.appendChild(b);
     });
-    r.appendChild(t); r.appendChild(yn); wrap.appendChild(r);
+    /* 4+ options: a stacked list, one full-width row each, all visible (GOV.UK/Baymard/NN:
+       never a dropdown, show the choices). 3 short ones stay as pills beside the question. */
+    if(item.o.length > 2 || item.o.join('').length > 12) r.classList.add('list');
+    if(item.o.length > 4 || item.o.join('').length > 30) r.classList.add('wide');
+    r.appendChild(yn); wrap.appendChild(r);
     if(dateRow) wrap.appendChild(dateRow);
+    if(attachRow) wrap.appendChild(attachRow);
   });
+  /* the card ends with note + photo rows (Noah 2026-09-02: everything about the tile in one
+     card). A tile with its own photo row (label, panel) or attach row keeps that instead. */
+  if(!set.some(x => x.kind === 'photo' || x.attachWhen)){
+    const row = document.createElement('button'); row.type = 'button'; row.className = 'photorow generic'; row.dataset.photopill = '1'; row.dataset.q = 'Add a photo';
+    row.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="2.6"/><path d="M8.7 7l1.3-2.2h4l1.3 2.2"/><circle cx="12" cy="13" r="3.4"/></svg><span class="prtxt"><span class="prq">Add a photo</span><span class="prsub"></span></span>';
+    /* on a quote with plans to attach, this row is the plans picker (specs_files) */
+    row.onclick = () => { if(row.dataset.spec){ document.getElementById('specsBtn').click(); } else { document.getElementById('camBtn').click(); } };
+    group.appendChild(row);
+  }
+  /* the plans question is a Yes/No, so it sits first in the quote card like the others */
+  if(reqType === 'quote') group.insertBefore(document.getElementById('specsWrap'), group.firstChild);
+  /* a note that IS the description (quote tiles, Something else) leads the card as a
+     labelled text row; otherwise it stays behind the "+ Add a note" link at the end */
+  if(noteRequired()){
+    group.insertBefore(document.getElementById('noteWrap'), group.firstChild);
+    group.insertBefore(document.getElementById('noteLabel'), group.firstChild);
+  } else {
+    group.appendChild(document.getElementById('noteLabel'));
+    group.appendChild(document.getElementById('noteWrap'));
+  }
+  group.appendChild(document.getElementById('photoStrip'));
+  syncPhotoPills();
 }
+let tilesOpen = true;
+function foldTiles(){
+  const t = document.querySelector('.tile.on'); if(!t) return;
+  tilesOpen = false;
+  document.getElementById('tileSelIc').innerHTML = t.querySelector('.ic').innerHTML;
+  document.getElementById('tileSelLb').textContent = t.querySelector('.tlb').textContent;
+  document.getElementById('tiles').style.display = 'none';
+  document.getElementById('whatLabel').style.display = 'none';
+  document.getElementById('tileSel').style.display = 'flex';
+  if(!(history.state && history.state.tile)) history.pushState({ picked: true, tile: true }, '');
+}
+/* Reopening the grid behaves like the type row (Noah 2026-09-03: "clicked Change and it's
+   still selected"): the highlight drops and the questions tuck away, so the question is
+   asked fresh. Nothing is destroyed — tap the same tile and it all comes back as it was. */
+function unfoldTiles(){
+  tilesOpen = true;
+  document.getElementById('tileSel').style.display = 'none';
+  document.getElementById('tiles').style.display = '';
+  document.getElementById('whatLabel').style.display = '';
+  document.querySelectorAll('.tile').forEach(x => x.classList.remove('on'));
+  ['qWrap','specsWrap'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('rest').classList.remove('showit');
+}
+document.getElementById('tileSel').onclick = () => { unfoldTiles(); window.scrollTo({ top: document.getElementById('whatLabel').offsetTop - 80, behavior: 'smooth' }); };
 document.querySelectorAll('.tile').forEach(t => {
   t.onclick = () => {
     document.querySelectorAll('.tile').forEach(x => x.classList.remove('on'));
+    const same = (t.dataset.req === tileLabel) && document.getElementById('qWrap').children.length > 0;
     t.classList.add('on'); tileLabel = t.dataset.req;
+    foldTiles();
+    document.getElementById('qWrap').style.display = '';
+    if(same){
+      /* same tile again: carry on where they left off, answers and all */
+      document.getElementById('rest').classList.add('showit');
+      syncNote(); syncUrgent(); syncSpecs(); syncEmail();
+      return;
+    }
     lastCatPick = tileLabel; autoCat = false;   /* their pick, not ours */
     document.getElementById('noteWrap').style.display = 'flex';
+    noteOpened = false;
     syncNote();
     document.getElementById('rest').classList.add('showit');
     buildQs();
@@ -681,6 +948,7 @@ const picked = new Map();
    it up. Four is the highest number that still means something: the working week
    is five days, so a cap of five would let someone tick the lot. */
 const MAX_DAYS = 4;
+document.getElementById('calHint').textContent = 'Pick up to ' + MAX_DAYS + ' days';
 function lockedDayCount(){
   let n = 0; for(const v of picked.values()) if(v.pref !== null) n++; return n;
 }
@@ -837,12 +1105,8 @@ function drawDayPrefs(){
     wrap.appendChild(picks);
   }
 
-  /* say why the rest of the calendar went quiet, rather than leaving them tapping */
-  if(atDayCap()){
-    const cap = document.createElement('div'); cap.className = 'daycap';
-    cap.textContent = "That's " + MAX_DAYS + " days, which is plenty to work with. Take one off if you'd rather a different one.";
-    wrap.appendChild(cap);
-  }
+  /* the cap is stated up front in the hint ("Pick up to 4 days") and the faded days show it
+     when it bites — no paragraph (research, Noah 2026-09-03) */
 }
 
 /* photos — opens the camera/library on a phone, compressed so they stay light.
@@ -857,7 +1121,24 @@ const MAX_DOCS = 3, MAX_DOC_BYTES = 4 * 1024 * 1024;
 let photos = [], docs = [];
 function docBytes(){ return docs.reduce((n, f) => n + (f.data ? f.data.length : 0), 0); }
 function attachFull(){ return photos.length >= MAX_PHOTOS && docs.length >= MAX_DOCS; }
+function syncPhotoPills(){
+  /* research 2026-09-03: once something's added the hint ("Helps a lot") has done its job, so it
+     goes; the file list sits right under the row that added it (proximity), not under the note.
+     Wording: "photo" when it's all photos, "file" once a PDF is in the mix. */
+  document.querySelectorAll('[data-photopill]').forEach(p => {
+    const spec = !!p.dataset.spec;
+    const n = spec ? specsFiles.length : photos.length + docs.length;
+    const noun = spec ? 'file' : (docs.length ? 'file' : 'photo');
+    const q = p.querySelector('.prq'); if(q) q.textContent = n ? (n + ' ' + noun + (n === 1 ? '' : 's') + ' added') : p.dataset.q;
+    const sub = p.querySelector('.prsub'); if(sub) sub.textContent = n ? '' : (p.dataset.sub || '');
+    p.classList.toggle('on', n > 0);
+  });
+  const strip = document.getElementById('photoStrip');
+  const pills = [...document.querySelectorAll('[data-photopill]')].filter(p => p.style.display !== 'none' && p.offsetParent !== null);
+  if(strip && pills.length) pills[pills.length - 1].insertAdjacentElement('afterend', strip);
+}
 function drawPhotos(){
+  syncPhotoPills();
   const strip = document.getElementById('photoStrip');
   strip.innerHTML = '';
   strip.style.display = (photos.length || docs.length) ? 'flex' : 'none';
@@ -921,10 +1202,13 @@ function emailRequired(){
   return reqType === 'quote' || tileLabel === 'Certificate / paperwork needed';
 }
 function syncEmail(){
-  const el = document.getElementById('fEmail');
-  el.placeholder = emailRequired()
+  /* the hint under the label says why (research: never rely on a placeholder); the optional
+     tag shows only when it really is optional */
+  const req = emailRequired();
+  document.getElementById('emailOpt').style.display = req ? 'none' : '';
+  document.getElementById('emailHint').textContent = req
     ? (reqType === 'quote' ? 'Where we send the quote' : 'Where we send the paperwork')
-    : 'Optional';
+    : "If you'd rather we email";
 }
 function emailLooksRight(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
 
@@ -963,9 +1247,23 @@ let specsHave = null, specsFiles = [];
 const SPECS_MAX_FILES = 3, SPECS_MAX_BYTES = 4 * 1024 * 1024;
 function specsBytes(){ return specsFiles.reduce((n, f) => n + (f.data ? f.data.length : 0), 0); }
 function syncSpecs(){
-  const on = (reqType === 'quote') && !!tileLabel;
+  /* a tile whose own set already asks for a document (defects report, last year's
+     AFSS) skips the plans question — one attach prompt per screen (Noah 2026-09-02) */
+  const hasOwnAttach = (QSETS[tileLabel] || []).some(x => x.attachWhen);
+  const on = (reqType === 'quote') && !!tileLabel && !hasOwnAttach;
   document.getElementById('specsWrap').style.display = on ? '' : 'none';
-  document.getElementById('specsAttach').style.display = (on && specsHave === 'Yes') ? '' : 'none';
+  /* Yes reveals a hint under the question; the attaching happens on the card's bottom row,
+     one picker per card (research, Noah 2026-09-03). The old button stays hidden. */
+  document.getElementById('specsAttach').style.display = 'none';
+  const g = document.querySelector('.qgroup .photorow.generic');
+  if(g){
+    const spec = on && specsHave === 'Yes';
+    g.dataset.q = spec ? 'Attach plans or photos' : 'Add a photo';
+    g.dataset.spec = spec ? '1' : '';
+    const sf = document.getElementById('specsFiles');
+    if(spec){ g.insertAdjacentElement('afterend', sf); } else { document.getElementById('specsAttach').appendChild(sf); }
+  }
+  syncPhotoPills();
 }
 (function(){
   const yn = document.getElementById('specsYn');
@@ -1002,6 +1300,7 @@ function drawSpecs(){
     d.appendChild(x); box.appendChild(d);
   });
   document.getElementById('specsBtn').classList.toggle('full', specsFiles.length >= SPECS_MAX_FILES);
+  syncPhotoPills();
 }
 document.getElementById('specsBtn').onclick = () => {
   if(specsFiles.length >= SPECS_MAX_FILES) return;
@@ -1068,6 +1367,7 @@ function prettyPhone(d){
 }
 
 /* no words — red marks everything still needed, the button shakes, that's it */
+function esc(x){ const d = document.createElement('div'); d.textContent = x == null ? '' : String(x); return d.innerHTML; }
 function shakeSend(){
   const btn = document.getElementById('sendBtn');
   btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
@@ -1116,13 +1416,16 @@ document.getElementById('sendBtn').onclick = async () => {
   /* unanswered yes/no questions (the AFSS date row isn't a question — skip it,
      or its presence shifts the answer indexes) */
   let unanswered = false;
-  document.querySelectorAll('#qWrap .qrow:not(.daterow)').forEach((r, ix) => {
-    if(qAnswers[ix] == null){ r.classList.add('missing'); unanswered = true; }
+  const qset = currentQs();
+  document.querySelectorAll('#qWrap .qrow[data-ix]').forEach(r => {
+    const ix = +r.dataset.ix;
+    if(qRequired(qset[ix]) && qAnswers[ix] == null){ r.classList.add('missing'); unanswered = true; }
   });
   if(unanswered) problems.push('questions');
 
   /* on a quote the specs question is the only question — it can't go unanswered */
-  if(reqType === 'quote' && !specsHave){
+  const specsAsked = document.getElementById('specsWrap').style.display !== 'none';
+  if(reqType === 'quote' && specsAsked && !specsHave){
     document.getElementById('specsRow').classList.add('missing');
     problems.push('specs');
   }
@@ -1167,37 +1470,52 @@ document.getElementById('sendBtn').onclick = async () => {
     if(i === 0 && problems.length === 1) el.focus();
   });
 
-  /* one thing missed → say which; a few → say that instead */
+  /* Send takes them to the first thing missing and says what it is, right there.
+     Noah's call 4 Sep over the GOV.UK summary list (Baymard: go to the first error, message at the field).
+     Fix it, Send again, next one. */
   const errBox = document.getElementById('formErr');
   errBox.style.display = 'none';
   if(problems.length){
     const MSG = {
-      questions: "One of the questions above still needs an answer.",
-      day:       "Pick a day that suits and you're done.",
-      site:      "Which building or address is it?",
-      name:      "Just need your name.",
-      phone:     "Just need a mobile number for updates.",
-      phonebad:  "That number doesn't look right — can you check it?",
-      fee:       "Tap Accept on the call-out cost and it's on its way.",
-      note:      "Tell us a bit about it — one line is enough.",
-      specs:     "Do you have plans or drawings? Yes or no is all we need.",
-      role:      "Pick your role from the list and it's done.",
-      email:     reqType === 'quote' ? "Just need an email to send the quote to." : "Just need an email to send it to.",
-      emailbad:  "That email doesn't look right — can you check it?"
+      questions: "Needs an answer",
+      day:       "Pick a day",
+      site:      "Which building or address?",
+      name:      "Your name",
+      phone:     "A mobile number",
+      phonebad:  "Check the mobile number",
+      fee:       "Accept the call-out cost",
+      note:      "Tell us a bit about it",
+      specs:     "Plans or drawings, yes or no",
+      role:      "Pick your role",
+      email:     reqType === 'quote' ? "An email to send the quote to" : "An email address",
+      emailbad:  "Check the email address"
     };
-    errBox.textContent = problems.length === 1 ? MSG[problems[0]] : "A few things still need filling in.";
-    errBox.style.display = 'block';
-    setTimeout(() => {
-      const fv = document.getElementById('formView');
-      errHide = () => {
-        errBox.style.display = 'none';
-        fv.removeEventListener('input', errHide);
-        fv.removeEventListener('click', errHide);
-        errHide = null;
-      };
-      fv.addEventListener('input', errHide);
-      fv.addEventListener('click', errHide);
-    }, 0);
+    /* the row the message sits under, per problem */
+    const ROW = {
+      questions: () => document.querySelector('#qWrap .qrow.missing'),
+      day:       () => document.querySelector('.cal'),
+      site:      () => document.getElementById('siteRow'),
+      name:      () => document.getElementById('fName').closest('.grow'),
+      phone:     () => document.getElementById('fPhone').closest('.grow'),
+      phonebad:  () => document.getElementById('fPhone').closest('.grow'),
+      fee:       () => document.getElementById('feeCard'),
+      note:      () => document.getElementById('noteWrap'),
+      specs:     () => document.getElementById('specsRow'),
+      role:      () => document.getElementById('roleRow'),
+      email:     () => document.getElementById('fEmail').closest('.grow'),
+      emailbad:  () => document.getElementById('fEmail').closest('.grow')
+    };
+    /* first on the page, not first in the checks */
+    const rows = problems.map(k => ({ k, row: ROW[k] && ROW[k]() })).filter(x => x.row);
+    rows.sort((x, y) => (x.row.compareDocumentPosition(y.row) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+    const first = rows[0];
+    if(first){
+      /* no words on the row — red edges only (Noah's call 4 Sep; research says colour alone
+         isn't enough, so the shake on Send and the scroll carry the rest) */
+      first.row.scrollIntoView({ behavior:'smooth', block:'center' });
+      const inp = first.row.matches('input,textarea') ? first.row : first.row.querySelector('input:not([type=hidden]),textarea');
+      if(inp && ['site','name','phone','phonebad','email','emailbad','note'].includes(first.k)) setTimeout(() => inp.focus({ preventScroll:true }), 350);
+    }
     shakeSend(); return;
   }
   const btn = document.getElementById('sendBtn'); const sendHTML = btn.innerHTML; btn.disabled = true; btn.textContent = 'Sending…';
@@ -1209,12 +1527,14 @@ document.getElementById('sendBtn').onclick = async () => {
     : [];
 
   const set = currentQs();
-  const answers = set.map((item, ix) => ({ q: item.q, a: qAnswers[ix], urg: !!(item.urg && qAnswers[ix] === item.urg) })).filter(x => x.a);
+  const answers = set.map((item, ix) => (item.hint || item.kind === 'photo') ? null : ({ q: item.q, a: qAnswers[ix], urg: !!(item.urg && qAnswers[ix] === item.urg) })).filter(x => x && x.a);
 
   try {
     const req = await Store.createRequest({
       building_code: building ? bcode : 'general',
       building_name: building ? building.name : typedSite,
+      site_lat: (!building && pickedSite && pickedSite.label === typedSite) ? pickedSite.lat : null,
+      site_lng: (!building && pickedSite && pickedSite.label === typedSite) ? pickedSite.lng : null,
       category: tileLabel,
       req_type: reqType,
       /* urgent: the figure frozen at Accept. Service: no figure yet — the card
@@ -1280,6 +1600,100 @@ document.getElementById('sendBtn').onclick = async () => {
     shakeSend();
   }
 };
+
+/* ---- address suggestions for a new site (Photon, OpenStreetMap data, free, no key) ---- */
+let pickedSite = null;
+let suggTimer = null, suggAbort = null;
+const suggBox = document.getElementById('siteSugg');
+function hideSugg(){ suggBox.style.display = 'none'; suggBox.innerHTML = ''; }
+function labelFor(f){
+  if(f.g) return f.g; /* google suggestion, already shaped */
+  const p = f.properties || {};
+  const line1 = [p.housenumber, p.street].filter(Boolean).join(' ') || p.name || '';
+  const line2 = [p.district || p.city || p.county, p.state, p.postcode].filter(Boolean).join(' ');
+  return { line1: line1, line2: line2, label: [line1, line2].filter(Boolean).join(', ') };
+}
+/* Google Places (New) — used when config has a key. REST, no SDK. Picking a row fetches the pin. */
+async function fetchSuggGoogle(q){
+  const r = await fetch('https://places.googleapis.com/v1/places:autocomplete', { method:'POST', signal: suggAbort.signal,
+    headers: { 'Content-Type':'application/json', 'X-Goog-Api-Key': C.GOOGLE_MAPS_KEY },
+    body: JSON.stringify({ input: q, includedRegionCodes: ['au'], languageCode: 'en-AU',
+      locationBias: { circle: { center: { latitude: -33.0, longitude: 151.5 }, radius: 150000 } } }) });
+  const j = await r.json();
+  return (j.suggestions || []).map(sg => sg.placePrediction).filter(Boolean).map(pp => {
+    const main = (pp.structuredFormat && pp.structuredFormat.mainText && pp.structuredFormat.mainText.text) || pp.text.text;
+    const sec  = (pp.structuredFormat && pp.structuredFormat.secondaryText && pp.structuredFormat.secondaryText.text) || '';
+    return { placeId: pp.placeId, g: { line1: main, line2: sec.replace(/, Australia$/, ''), label: pp.text.text.replace(/, Australia$/, '') } };
+  });
+}
+async function googlePin(placeId){
+  try {
+    const r = await fetch('https://places.googleapis.com/v1/places/' + encodeURIComponent(placeId) + '?fields=location',
+      { headers: { 'X-Goog-Api-Key': C.GOOGLE_MAPS_KEY } });
+    const j = await r.json();
+    return j.location ? { lat: j.location.latitude, lng: j.location.longitude } : null;
+  } catch(e){ return null; }
+}
+async function fetchSugg(q){
+  if(suggAbort) suggAbort.abort();
+  suggAbort = new AbortController();
+  try {
+    /* Google only on the live site: the key is locked to it, so a file:// test would get refused. Any Google error falls through to OSM. */
+    if(C.GOOGLE_MAPS_KEY && location.protocol !== 'file:'){
+      try { const g = await fetchSuggGoogle(q); if(g.length) return g; } catch(e){ if(e.name === 'AbortError') throw e; }
+    }
+    /* OpenStreetMap fallback: bias to Newcastle/Central Coast, AU only, dedupe, typed suburb first */
+    const u = 'https://photon.komoot.io/api/?limit=8&lang=en&lat=-33.0&lon=151.5&q=' + encodeURIComponent(q);
+    const r = await fetch(u, { signal: suggAbort.signal });
+    const j = await r.json();
+    const seen = new Set(); const ql = q.toLowerCase();
+    const list = (j.features || []).filter(f => (f.properties || {}).countrycode === 'AU').filter(f => {
+      const k = labelFor(f).label.toLowerCase(); if(seen.has(k)) return false; seen.add(k); return true; });
+    list.sort((a, b) => {
+      const sa = ((a.properties.district || a.properties.city || '') + '').toLowerCase(), sb = ((b.properties.district || b.properties.city || '') + '').toLowerCase();
+      return (sb && ql.includes(sb) ? 1 : 0) - (sa && ql.includes(sa) ? 1 : 0);
+    });
+    return list.slice(0, 5);
+  } catch(e){ return []; }
+}
+function showSugg(list){
+  if(!list.length){ hideSugg(); return; }
+  suggBox.innerHTML = list.map((f, i) => {
+    const l = labelFor(f);
+    return `<button type="button" class="suggrow" data-i="${i}"><b>${esc(l.line1)}</b>${l.line2 ? `<span>${esc(l.line2)}</span>` : ''}</button>`;
+  }).join('');
+  suggBox.style.display = '';
+  suggBox.querySelectorAll('.suggrow').forEach(b => b.onclick = () => {
+    const f = list[+b.dataset.i]; const l = labelFor(f);
+    const si = document.getElementById('siteInput');
+    si.value = l.label;
+    hideSugg();
+    if(f.placeId){
+      pickedSite = { label: l.label, lat: null, lng: null };
+      googlePin(f.placeId).then(pin => { if(pin && pickedSite && pickedSite.label === l.label){ pickedSite.lat = pin.lat; pickedSite.lng = pin.lng; } });
+    } else {
+      pickedSite = { label: l.label, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
+    }
+    si.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+}
+(function wireSiteSugg(){
+  const si = document.getElementById('siteInput');
+  if(!si) return;
+  const onType = () => {
+    const q = si.value.trim();
+    if(pickedSite && pickedSite.label !== q) pickedSite = null;
+    clearTimeout(suggTimer);
+    if(q.length < 3 || (pickedSite && pickedSite.label === q)){ hideSugg(); return; }
+    /* show something straight away so it's obvious the box is looking (Noah 7 Sep: it looked like nothing happened until Enter) */
+    if(!suggBox.querySelector('.suggrow')){ suggBox.innerHTML = '<div class="suggwait">Looking up addresses…</div>'; suggBox.style.display = ''; }
+    suggTimer = setTimeout(async () => { const list = await fetchSugg(q); if(si.value.trim() === q) showSugg(list); }, 200);
+  };
+  si.addEventListener('input', onType);
+  si.addEventListener('keyup', onType);
+  si.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); const first = suggBox.querySelector('.suggrow'); if(first) first.click(); } });
+  si.addEventListener('blur', () => setTimeout(hideSugg, 150));
+})();
 </script>
 </body>
 </html>

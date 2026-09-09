@@ -28,16 +28,27 @@
     <div class="pagepad">
       <div class="listtop">
         <h1>Requests</h1>
-        <button class="alertbtn" id="alertBtn" type="button" aria-label="Turn on urgent alerts for this device"><svg viewBox="0 0 24 24"><path d="M12 3a5.5 5.5 0 0 0-5.5 5.5c0 3.5-1.2 4.7-1.9 5.4-.4.4-.1 1.1.5 1.1h13.8c.6 0 .9-.7.5-1.1-.7-.7-1.9-1.9-1.9-5.4A5.5 5.5 0 0 0 12 3z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></svg></button>
+        <button class="alertbtn" id="alertBtn" type="button" aria-label="Turn on urgent alerts for this device"><svg viewBox="0 0 24 24"><path d="M12 3a5.5 5.5 0 0 0-5.5 5.5c0 3.5-1.2 4.7-1.9 5.4-.4.4-.1 1.1.5 1.1h13.8c.6 0 .9-.7.5-1.1-.7-.7-1.9-1.9-1.9-5.4A5.5 5.5 0 0 0 12 3z"/><path d="M10 18.5a2 2 0 0 0 4 0"/></svg><span class="alertlbl">Alerts</span></button>
       </div>
       <div class="tabs">
         <button class="tabbtn on" id="tabReq" type="button">Requests<span class="tcnt" id="cntReq" style="display:none"></span></button>
         <button class="tabbtn" id="tabAcc" type="button">Accepted<span class="tcnt" id="cntAcc" style="display:none"></span></button>
-        <button class="tabbtn" id="tabBld" type="button">Buildings</button>
+        <button class="tabbtn" id="tabBld" type="button" style="display:none">Buildings</button>
+      </div>
+      <div class="tabs" id="histTabs" style="display:none">
+        <button class="tabbtn on" id="tabDone" type="button">Completed<span class="tcnt" id="cntDone" style="display:none"></span></button>
+        <button class="tabbtn" id="tabDecl" type="button">Declined<span class="tcnt" id="cntDecl" style="display:none"></span></button>
       </div>
       <div class="catbar" id="catBar"></div>
       <div id="reqList"></div>
     </div>
+    <!-- bottom nav: sections of the office side. Two for now, more land here (Team, Settings) — Noah 7 Sep.
+         Requests/Accepted stay a segmented control inside Requests: they're two states of one thing, Buildings isn't. -->
+    <nav class="bnav" id="bnav" aria-label="Sections">
+      <button class="bnavbtn on" type="button" data-sec="req"><svg viewBox="0 0 24 24"><path d="M4 4h16v10l-3 4H7l-3-4z"/><path d="M4 14h5l1.5 2h3L15 14h5"/></svg><span>Requests</span></button>
+      <button class="bnavbtn" type="button" data-sec="hist"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
+      <button class="bnavbtn" type="button" data-sec="bld"><svg viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 10h4a1 1 0 0 1 1 1v10"/><path d="M8 8h2M8 12h2M8 16h2M11 8h1M11 12h1"/><path d="M3 21h18"/></svg><span>Buildings</span></button>
+    </nav>
   </div>
 
   <!-- QR STICKER (print this, stick it by the fire panel / in the office) -->
@@ -58,15 +69,32 @@
 
   <!-- DETAIL -->
   <div id="detailView" style="display:none">
+    <!-- 2026-09-07 research: priority is a property of the record, not an alert. The full-width strip is retired;
+         the type/urgency reads as a chip on the meta line (dTypeChip). Element kept hidden so nothing else breaks. -->
     <div class="urgstrip" id="dUrgPill" style="display:none"><span class="dot late pulse"></span>URGENT</div>
     <!-- the came-in age lives top right, out of the way — it's context, not content -->
-    <div class="topbar">
-      <button class="backlink" id="backBtn" type="button">‹ Requests</button>
-      <span class="cameline" id="dCameIn">—</span>
+    <!-- hero map, edge to edge, controls floating in white pills, no fade (Noah 7–8 Sep).
+         No coordinates = no map, the bar just sits at the top as before. -->
+    <div class="hero" id="dHero">
+      <div class="sitemap" id="dMap" style="display:none"></div>
+      <div class="topbar">
+        <button class="backlink" id="backBtn" type="button">‹ Requests</button>
+      </div>
     </div>
-    <div class="navhead" style="padding-top:16px">
+    <div class="navhead" style="padding-top:14px">
+      <!-- site leads (same identifier as the list row), the job type + their words sit under it (research 2026-09-07) -->
       <div class="what-lg" id="dWhat">—</div>
+      <!-- type + job-type chip share one line (both are "what"); ref + age under it. Chip came off the map: chip inside a pill read as odd (Noah 8 Sep). -->
+      <div class="typeline" id="dType"></div>
+      <div class="cameline" id="dCameIn"><span id="dCameTxt">—</span></div>
       <div class="notesub" id="dNote" style="display:none"></div>
+      <!-- where, before who: trades apps put the address straight under the title (research 2026-09-07) -->
+      <a class="sitecard" id="dSiteCard" target="_blank" rel="noopener">
+        <div class="siterow">
+          <div class="sitetxt"><b id="dSiteName">—</b><span id="dSiteAddr"></span></div>
+          <span class="sitego">Directions ›</span>
+        </div>
+      </a>
       <div class="duestrip" id="dDue" style="display:none"></div>
       <!-- who they are on top, how to reach them below — number reads once, the round
            buttons are the one way to call or email (Noah 2026-08-31) -->
@@ -104,18 +132,15 @@
       </button>
       </div><!-- /whocard -->
       <div class="timeline" id="tl" style="display:none"></div>
-      <a class="sitecard" id="dSiteCard" target="_blank" rel="noopener">
-        <div class="sitemap" id="dMap" style="display:none"></div>
-        <div class="siterow">
-          <div class="sitetxt"><b id="dSiteName">—</b><span id="dSiteAddr"></span></div>
-          <span class="sitego">Directions ›</span>
-        </div>
-      </a>
       <button class="cantlink" id="cantDo" type="button" style="display:none">Can't do it anymore?</button>
     </div>
     <div class="actbar" id="actBar">
-      <button class="actbtn decl" id="abDecline" type="button">Decline</button>
-      <button class="actbtn acc" id="abAccept" type="button">Accept</button>
+      <!-- what the office is agreeing to sits right above the button that agrees (research 2026-09-07) -->
+      <div class="priceline" id="abPrice" style="display:none"></div>
+      <div class="actrow">
+        <button class="actbtn decl" id="abDecline" type="button">Decline</button>
+        <button class="actbtn acc" id="abAccept" type="button">Accept</button>
+      </div>
     </div>
   </div>
 
@@ -197,10 +222,19 @@ function crewNames(list){
 }
 function avatarStack(r, pulse){
   const c = crew(r);
-  /* an urgent with nobody on it should grab the collar — red pulsing ?, not calm grey */
-  if(!c.length) return '<span class="ownc unowned' + (r.urgent && r.status === 'new' ? ' hot' : '') + '">?</span>';
+  /* nobody on it: the ? gets a word next to it. Research 2026-09-06: every trade tool
+     names this state (Tradify "Unassigned", Jobber "New"); unlabelled icons fail testing.
+     Urgent + nobody = red and pulsing, same as before. */
+  /* Noah 2026-09-06: on the Requests tab every card is unassigned by definition, so the
+     chip said nothing — nothing shows there. It only appears on an accepted job with nobody on it. */
+  if(!c.length) return r.status === 'new' ? '' : '<span class="unlab"><span class="ownc unowned">?</span><span class="unlabtxt">Unassigned</span></span>';
   return '<span class="avstack">' + c.map(n =>
     `<span class="ownc${pulse ? ' live' : ''}" style="background:${teamColor(n)}">${esc(n.charAt(0))}</span>`).join('') + '</span>';
+}
+/* exact date + time for the detail line and card tooltips — "Wed 2 Sep, 3:10 pm" */
+function whenExact(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + fmtTime(iso);
 }
 function fmtDay(iso){
   const d = new Date(iso);
@@ -219,11 +253,11 @@ function fmtTime(iso){
 const CATS = [
   { cat:'Alarm going off / beeping', label:'Alarm', ic:'<svg viewBox="0 0 24 24"><path d="M12 3.5a5.8 5.8 0 0 0-5.8 5.8v3c0 .7-.2 1.3-.6 1.9L4.3 16h15.4l-1.3-1.8a3.3 3.3 0 0 1-.6-1.9v-3A5.8 5.8 0 0 0 12 3.5z"/><path d="M9.9 19a2.2 2.2 0 0 0 4.2 0"/></svg>' },
   { cat:'Extinguisher issue', label:'Extinguisher', ic:'<svg viewBox="0 0 24 24"><rect x="9" y="8" width="6.4" height="12" rx="2.8"/><path d="M12.2 8V5.8"/><path d="M10 4.5h4.4"/><path d="M9.2 9.5C7 9.3 5.8 8 5.6 6"/><path d="M14.4 4.5l3.2-1v2l-3.2-1z"/></svg>' },
-  { cat:'Exit light or door issue', label:'Exit / emergency light', ic:'<svg viewBox="0 0 24 24"><rect x="2.5" y="5.8" width="14" height="12.4" rx="1.3"/><circle cx="10.76" cy="9.02" r="0.95" fill="currentColor" stroke="none"/><path d="M10.44 10.38l-.72 2.48"/><path d="M10.32 10.82l1.84.84"/><path d="M10.32 10.82l-1.68.44"/><path d="M9.72 12.86l1.84 1.08-.48 2"/><path d="M9.72 12.86l-1.36 1.6-1.52.48"/><path d="M18.4 12h3.1"/><path d="M20.1 10.45l1.55 1.55-1.55 1.55"/></svg>' },
-  { cat:'Sprinkler / pump / leak', label:'Leak', ic:'<svg viewBox="0 0 24 24"><path d="M12 2.3S5.8 9.7 5.8 14.4a6.2 6.2 0 0 0 12.4 0C18.2 9.7 12 2.3 12 2.3z"/><path d="M9 14.7a3.1 3.1 0 0 0 2.8 3.1"/></svg>' },
-  { cat:'Hydrant / hose reel issue', label:'Hydrant', ic:'<svg viewBox="0 0 24 24"><path d="M12 2.8v1"/><path d="M8 8a4 4 0 0 1 8 0"/><path d="M6.6 8h10.8"/><rect x="8.8" y="8" width="6.4" height="9.6"/><circle cx="7.3" cy="12.4" r="1.2"/><circle cx="16.7" cy="12.4" r="1.2"/><path d="M7 19.6h10"/></svg>' },
-  { cat:'Fire door / passive fire', label:'Fire door', ic:'<svg viewBox="0 0 24 24"><rect x="4.5" y="4" width="9.5" height="16" rx="1.2"/><path d="M9.3 8.9c.15 1.1-.4 1.85-1 2.5-.25-.35-.45-.75-.55-1.2-.8.75-1.35 1.6-1.35 2.55a2.9 2.9 0 0 0 5.8 0c0-2.05-1.75-3.3-2.9-3.85z"/><path d="M16 12h4.5"/><path d="M18.5 9.8l2.2 2.2-2.2 2.2"/></svg>' },
-  { cat:'Smoke alarm issue', label:'Smoke alarm', ic:'<svg viewBox="0 0 24 24"><path d="M4.2 9.6h15.6"/><path d="M6.6 9.6a5.4 5.4 0 0 0 10.8 0"/><circle cx="12" cy="12.4" r="1" fill="currentColor" stroke="none"/></svg>' },
+  { cat:'Exit light or door issue', label:'Exit / emergency light', ic:'<svg viewBox="0 0 24 24"><rect x="1.5" y="4" width="21" height="16" rx="1.8"/><circle cx="11.2" cy="7.6" r="1.3" fill="currentColor" stroke="none"/><g stroke-width="1.8"><path d="M10.6 9.3l-1.6 3.4"/><path d="M10.4 10l2.9.6"/><path d="M10.4 10h-3"/><path d="M9 12.7l2.7 1.1v2.6"/><path d="M9 12.7l-1.9 1.9-1.8-.9"/></g><path d="M15.6 12.2h3.2"/><path d="M17.6 10.9l1.3 1.3-1.3 1.3"/></svg>' },
+  { cat:'Sprinkler / pump / leak', label:'Leak', ic:'<svg viewBox="0 0 24 24"><rect x="4.5" y="7" width="15" height="5" rx=".6"/><rect x="2" y="6" width="2.5" height="7" rx=".6"/><rect x="19.5" y="6" width="2.5" height="7" rx=".6"/><path d="M10.6 12l.9-1 .9 1"/><path d="M12 14.2c-1.3 1.6-1.9 2.6-1.9 3.5a1.9 1.9 0 0 0 3.8 0c0-.9-.6-1.9-1.9-3.5z"/></svg>' },
+  { cat:'Hydrant / hose reel issue', label:'Hydrant', ic:'<svg viewBox="0 0 24 24"><path d="M9 6.5a3 3 0 0 1 6 0"/><path d="M7.5 6.5h9"/><path d="M9 6.5v13"/><path d="M15 6.5v13"/><path d="M9 9.3h-2.2c-.8 0-1.3.5-1.3 1.2v1c0 .7.5 1.2 1.3 1.2H9"/><path d="M15 9.3h2.2c.8 0 1.3.5 1.3 1.2v1c0 .7-.5 1.2-1.3 1.2H15"/><path d="M7 19.5h10"/><path d="M6 21.5h12"/></svg>' },
+  { cat:'Fire door / passive fire', label:'Fire door', ic:'<svg viewBox="0 0 24 24"><rect x="5.5" y="2.5" width="13" height="19" rx="1.4"/><g transform="translate(5.9 6.3) scale(0.51)"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" stroke-width="3"/></g></svg>' },
+  { cat:'Smoke alarm issue', label:'Smoke alarm', ic:'<svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="6" rx="1.6"/><path d="M6 9.5l1.6 3.5h8.8L18 9.5"/><path d="M9 16.2c-.7.8-.7 1.6 0 2.4s.7 1.6 0 2.4"/><path d="M12 16.2c-.7.8-.7 1.6 0 2.4s.7 1.6 0 2.4"/><path d="M15 16.2c-.7.8-.7 1.6 0 2.4s.7 1.6 0 2.4"/></svg>' },
   /* quote-only categories (2026-08-28, "quotes are bigger jobs") — same icons as the form */
   { cat:'New system / install', label:'New install', ic:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8.2v7.6"/><path d="M8.2 12h7.6"/></svg>' },
   { cat:"Upgrade or replace what's there", label:'Upgrade / replace', ic:'<svg viewBox="0 0 24 24"><path d="M6 12a6 6 0 0 1 10.2-4.2"/><path d="M16.6 4.6v3.4h-3.4"/><path d="M18 12a6 6 0 0 1-10.2 4.2"/><path d="M7.4 19.4V16h3.4"/></svg>' },
@@ -232,32 +266,63 @@ const CATS = [
   { cat:'Evacuation diagrams / training', label:'Evac diagrams', ic:'<svg viewBox="0 0 24 24"><path d="M4.5 6.3 9.5 4l5 2.3 5-2.3v13.4l-5 2.3-5-2.3-5 2.3V6.3z"/><path d="M9.5 4v13.4"/><path d="M14.5 6.3v13.4"/></svg>' },
   { cat:'Certificate / paperwork needed', label:'Certification / AFSS', ic:'<svg viewBox="0 0 24 24"><rect x="5" y="3.8" width="14" height="16.4" rx="2"/><path d="M8.5 8.5h7"/><path d="M8.5 11.8h7"/><circle cx="12" cy="16.2" r="1.7"/></svg>' },
   /* stored value stays 'Something else' (old requests keep rendering) — the shown word
-     is Other, Dad's ask 2026-08-25; the TYPE below took "Something else" in the swap */
+     is Other, Dad's ask 2026-08-25; the TYPE below is Other too since 2026-09-04 */
   { cat:'Something else', label:'Other', ic:'<svg viewBox="0 0 24 24"><path d="M21 11.8a8.6 8.6 0 0 1-8.6 8.6c-1.5 0-2.9-.4-4.1-1.1L4 20.2l.9-4A8.6 8.6 0 1 1 21 11.8z"/><circle cx="8.6" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="12.4" cy="12" r=".95" fill="currentColor" stroke="none"/><circle cx="16.2" cy="12" r=".95" fill="currentColor" stroke="none"/></svg>' },
 ];
 const TYPES = [
   { key:'urgent',  label:'Urgent' },
   { key:'service', label:'Service' },
   { key:'quote',   label:'Quote' },
-  { key:'other',   label:'Something else' },
+  { key:'other',   label:'Other' },   /* Noah 2026-09-04: Other on both, groups as one */
 ];
 /* the issue reads as its icon, not its name — icon + the customer's note, on cards and
    the detail header both (Noah 2026-08-17: the written-out category was too much text).
    No note → the short label; a category we don't know → plain words, never a wrong icon. */
+/* two-line inbox pattern (research 2026-09-07): the tile they picked is the headline, their exact
+   words sit under it in grey. Words become the headline only for Other / no tile (Zendesk's
+   first-comment fallback). Returns the .what html; cardNote() returns the second line or ''. */
 function cardTitle(r){
   const c = CATS.find(x => x.cat === r.category);
   if(!c) return esc(whatLine(r));
   const note = (r.note || '').trim();
-  return `<span class="wic">${c.ic}</span>` + esc(note || c.label);
+  if(r.category === 'Something else') return `<span class="wic">${c.ic}</span>` + esc(note || c.label);
+  return `<span class="wic">${c.ic}</span>` + esc(c.label);
+}
+function cardNote(r){
+  const c = CATS.find(x => x.cat === r.category);
+  const note = (r.note || '').trim();
+  if(!c || !note || r.category === 'Something else') return '';
+  return `<div class="cnote">${esc(note)}</div>`;
+}
+/* card layout research 2026-09-07: the building is the identifier so it's the bold line; the issue goes
+   under it as one grey line "Leak: sprinkler pipe burst" (their words verbatim, UX rule 15). Under an issue
+   header (one type picked) the issue is already said, so just their words. */
+function issueLine(r, inCatSection){
+  const c = CATS.find(x => x.cat === r.category);
+  const note = (r.note || '').trim();
+  if(inCatSection) return note || (c ? c.label : whatLine(r));
+  if(!c) return whatLine(r);
+  if(r.category === 'Something else') return note || c.label;
+  return note ? c.label + ': ' + note : c.label;
 }
 let requests = [];
-let showDeclined = false;
-let showDone = false; /* completed works fold away like declined — tap to open (Noah 2026-08-20) */
 let activeTab = 'req';
 let typeFilter = 'all';
 document.getElementById('tabReq').onclick = () => { activeTab = 'req'; refreshList(); };
 document.getElementById('tabAcc').onclick = () => { activeTab = 'acc'; refreshList(); };
 document.getElementById('tabBld').onclick = () => { activeTab = 'bld'; refreshList(); };
+/* bottom nav: Requests section remembers which state tab was open */
+let lastReqTab = 'req';
+const SECTION_TABS = new Set(['bld', 'hist']);
+let histTab = 'done'; /* History: Completed / Declined, same shape as Requests / Accepted (Noah 7 Sep) */
+document.getElementById('tabDone').onclick = () => { histTab = 'done'; refreshList(); };
+document.getElementById('tabDecl').onclick = () => { histTab = 'decl'; refreshList(); };
+document.querySelectorAll('.bnavbtn').forEach(b => b.onclick = () => {
+  const sec = b.dataset.sec;
+  if(SECTION_TABS.has(sec)){ if(!SECTION_TABS.has(activeTab)) lastReqTab = activeTab; activeTab = sec; }
+  else activeTab = SECTION_TABS.has(lastReqTab) ? 'req' : lastReqTab;
+  refreshList();
+});
 /* type filter chips — the four the customer picked from, All up front and on by default */
 (function buildTypeBar(){
   const bar = document.getElementById('catBar');
@@ -268,7 +333,7 @@ document.getElementById('tabBld').onclick = () => { activeTab = 'bld'; refreshLi
     bar.appendChild(b);
   };
   mkChip('all', '<span>All</span>');
-  TYPES.forEach(t => mkChip(t.key, '<span>' + t.label + '</span>'));
+  TYPES.forEach(t => mkChip(t.key, '<span>' + t.label + '</span><span class="chipn"></span>'));
 })();
 async function refreshList(){
   requests = await Store.listRequests();
@@ -301,10 +366,19 @@ async function refreshList(){
   document.getElementById('tabReq').className = 'tabbtn' + (activeTab === 'req' ? ' on' : '');
   document.getElementById('tabAcc').className = 'tabbtn' + (activeTab === 'acc' ? ' on' : '');
   document.getElementById('tabBld').className = 'tabbtn' + (activeTab === 'bld' ? ' on' : '');
+  const inSection = SECTION_TABS.has(activeTab);
+  document.getElementById('reqList').classList.toggle('rows', activeTab !== 'bld'); /* grouped-list look for request rows only */
   document.getElementById('catBar').style.display = activeTab === 'bld' ? 'none' : '';
+  /* section chrome: Buildings/History hide the state tabs and retitle the page; nav lights the current section */
+  document.querySelector('#listView .tabs').style.display = inSection ? 'none' : '';
+  document.getElementById('histTabs').style.display = activeTab === 'hist' ? '' : 'none';
+  document.querySelector('#listView h1').textContent = activeTab === 'bld' ? 'Buildings' : activeTab === 'hist' ? 'History' : 'Requests';
+  document.getElementById('alertBtn').style.visibility = inSection ? 'hidden' : '';
+  document.querySelectorAll('.bnavbtn').forEach(b => b.classList.toggle('on', inSection ? b.dataset.sec === activeTab : b.dataset.sec === 'req'));
   const cR = document.getElementById('cntReq'), cA = document.getElementById('cntAcc');
   cR.style.display = untouched.length ? '' : 'none'; cR.textContent = untouched.length;
-  cR.classList.toggle('hot', urgent.length > 0);
+  /* badge stays grey: it counts new requests, it isn't an alarm. Red means urgent and lives on the Urgent chip + section only (colour consistency, NN/g; Noah 7 Sep) */
+  cR.classList.remove('hot');
   cA.style.display = inProg.length ? '' : 'none'; cA.textContent = inProg.length;
   pingCheck(urgent);
 
@@ -322,38 +396,48 @@ async function refreshList(){
     return;
   }
   const activeCard = (r, inCatSection, inUrgentSection) => {
-    const ns = r.building_code === 'general' ? ' <span class="duepill" style="color:var(--blue)">New site</span>' : '';
-    /* the URGENT header already says it once — don't repeat it on every card under it */
-    const urg = (r.urgent && !inUrgentSection) ? '<span class="urgmeta">URGENT</span><span>· </span>' : '';
-    /* under an issue header the issue's already said (icon and all) — just their note,
-       or the bare label when they wrote nothing; never a second icon */
-    const noteTxt = (r.note || '').trim();
-    const cat = CATS.find(x => x.cat === r.category);
-    const title = inCatSection ? esc(noteTxt || (cat ? cat.label : whatLine(r))) : cardTitle(r);
-    let meta;
+    /* row anatomy (research 2026-09-07): bold identifier left = building; trailing edge = age (or booked day);
+       one grey supporting line = issue + their words; small grey words for flags (New site, URGENT), never a blue pill */
+    const flags = [];
+    if(r.urgent && !inUrgentSection) flags.push('<span class="flag hot">Urgent</span>');
+    if(r.building_code === 'general') flags.push('<span class="flag">New site</span>');
+    let trail = '';
     if(r.status === 'new'){
-      /* urgent clocks run red from minute one — no easing in through green */
       const tier = r.urgent ? 'late' : waitTier(r);
       const pulse = r.urgent ? ' pulse' : '';
-      meta = `${urg}<span class="dot ${tier}${pulse}"></span><span class="wait ${tier}">${ago(r.created_at)}</span><span>· ${esc(r.building_name)}</span>${ns}`;
-    } else {
-      const pill = (r.status === 'booked' && r.booked_label && r.booked_label !== 'ASAP') ? `<span class="duepill onwhite">${esc(r.booked_label)}</span><span>· </span>` : '';
-      meta = `${urg}${pill}<span>${esc(r.building_name)}</span>${ns}`;
+      trail = `<span class="age ${tier}" title="${esc(whenExact(r.created_at))}"><span class="dot ${tier}${pulse}"></span>${ago(r.created_at)}</span>`;
+    } else if(r.status === 'booked' && r.booked_label && r.booked_label !== 'ASAP'){
+      trail = `<span class="age">${esc(r.booked_label)}</span>`;
     }
-    card(r, `<div class="top"><div class="what">${title}</div>${avatarStack(r, r.status !== 'new')}</div>
-      <div class="meta">${meta}</div>`);
+    const shots = (Array.isArray(r.photos) && r.photos.length) ? r.photos : (r.photo ? [r.photo] : []);
+    const thumb = shots.length ? `<img class="cthumb" src="${shots[0]}" alt="">` : '';
+    card(r, `<div class="top"><div class="what">${esc(r.building_name)}</div>${trail}</div>
+      <div class="row2"><div class="cnote">${esc(issueLine(r, inCatSection))}</div>${flags.join('')}${thumb}${avatarStack(r, r.status !== 'new')}</div>`);
   };
 
   /* chip row filters both tabs */
   document.querySelectorAll('.catchip').forEach(b => b.classList.toggle('on', b.dataset.key === typeFilter));
+  /* counts on the chips: what's waiting in each type, readable without scrolling the All view.
+     Research 2026-09-06 (Jobber new-request count; queue guides: keep status visible on the main view). Noah 7 Sep.
+     Requests tab counts untouched, Accepted tab counts in-progress. Zero hides the number. */
+  {
+    const pool = activeTab === 'acc' ? inProg : activeTab === 'hist' ? (histTab === 'done' ? done : declined) : untouched;
+    document.querySelectorAll('.catchip .chipn').forEach(n => {
+      const k = n.parentElement.dataset.key;
+      const c = pool.filter(r => reqType(r) === k).length;
+      n.textContent = c || ''; n.style.display = c ? '' : 'none';
+      n.classList.toggle('hot', k === 'urgent' && c > 0 && activeTab !== 'hist'); /* closed urgent jobs aren't an alarm */
+    });
+  }
 
   /* All = one section per type; one type picked = the issue headers take over */
   const typeSections = list => {
     TYPES.forEach(t => {
       const items = order(list.filter(r => reqType(r) === t.key));
       if(!items.length) return;
+      /* no count on the type headers any more — the chips carry it (one place per number, NN/g indicators; Noah 7 Sep) */
       if(t.key === 'urgent') sec('Urgent', null, 'hot');
-      else sec(t.label, items.length);
+      else sec(t.label, null);
       /* the section header says the type once — cards don't repeat it */
       items.forEach(r => activeCard(r, false, t.key === 'urgent'));
     });
@@ -372,12 +456,13 @@ async function refreshList(){
       strays.forEach(r => activeCard(r, false, typeFilter === 'urgent'));
     }
   };
-  const EMPTY = { urgent:'Nothing urgent right now.', service:'No service calls waiting.', quote:'No quote requests waiting.', other:'Nothing else waiting.' };
+  /* NN/g empty states: say what's happening and how things get here */
+  const EMPTY = { urgent:'Nothing urgent right now.<br>Urgent requests jump to the top the moment they land.', service:'No service calls waiting.<br>Customers send them from their building link.', quote:'No quote requests waiting.<br>They come in from the Quote option on the customer link.', other:'Nothing else waiting.' };
 
   if(activeTab === 'req'){
     const f = typeFilter === 'all' ? untouched : untouched.filter(r => reqType(r) === typeFilter);
     if(!f.length){
-      wrap.innerHTML = '<div class="empty">' + (typeFilter === 'all' ? 'Nothing waiting — all caught up.' : EMPTY[typeFilter]) + '</div>';
+      wrap.innerHTML = '<div class="empty">' + (typeFilter === 'all' ? 'Nothing waiting, all caught up.<br>New requests from the customer link land here.' : EMPTY[typeFilter]) + '</div>';
       return;
     }
     if(typeFilter === 'all') typeSections(f);
@@ -385,10 +470,40 @@ async function refreshList(){
     return;
   }
 
-  /* accepted tab — same chip filter, same shape */
   const fT = arr => typeFilter === 'all' ? arr : arr.filter(r => reqType(r) === typeFilter);
-  const aProg = orderProg(fT(inProg)), aDone = fT(done), aDecl = fT(declined);
-  if(!aProg.length && !aDone.length && !aDecl.length){
+  /* History section — closed work off the working lists (Zendesk Solved / Jobber Archived pattern; Noah 7 Sep).
+     Completed and Declined both live here, newest closed first, same chip filter. */
+  if(activeTab === 'hist'){
+    const hDone = fT(done).slice().sort((a, b) => (b.done_at || b.created_at).localeCompare(a.done_at || a.created_at));
+    const hDecl = fT(declined).slice().sort((a, b) => (b.declined_at || b.created_at).localeCompare(a.declined_at || a.created_at));
+    document.getElementById('tabDone').className = 'tabbtn' + (histTab === 'done' ? ' on' : '');
+    document.getElementById('tabDecl').className = 'tabbtn' + (histTab === 'decl' ? ' on' : '');
+    const cD = document.getElementById('cntDone'), cX = document.getElementById('cntDecl');
+    cD.style.display = hDone.length ? '' : 'none'; cD.textContent = hDone.length;
+    cX.style.display = hDecl.length ? '' : 'none'; cX.textContent = hDecl.length;
+    const list = histTab === 'done' ? hDone : hDecl;
+    if(!list.length){
+      /* NN/g empty state: what it is, how things get here */
+      wrap.innerHTML = '<div class="empty">' + (histTab === 'done' ? 'No completed works yet.<br>Mark a job done and it lands here.' : 'Nothing declined.<br>Declined requests stay here as the paper trail.') + '</div>';
+      return;
+    }
+    /* section headers say the type, counts live on the tabs (one place per number) */
+    TYPES.forEach(t => {
+      const items = list.filter(r => reqType(r) === t.key);
+      if(!items.length) return;
+      if(typeFilter === 'all') sec(t.key === 'urgent' ? 'Urgent' : t.label, null);
+      items.forEach(r => {
+        const when = histTab === 'done' ? (r.done_at ? fmtDay(r.done_at) : '') : (r.declined_at ? fmtDay(r.declined_at) : '');
+        card(r, `<div class="top"><div class="what">${esc(r.building_name)}</div>${when ? `<span class="age">${when}</span>` : ''}</div>
+          <div class="row2"><div class="cnote">${esc(issueLine(r, typeFilter !== 'all'))}</div></div>`);
+      });
+    });
+    return;
+  }
+
+  /* accepted tab — live jobs only now; closed work moved to History (7 Sep) */
+  const aProg = orderProg(fT(inProg));
+  if(!aProg.length){
     wrap.innerHTML = '<div class="empty">' + (typeFilter === 'all'
       ? 'Nothing accepted yet.<br>Take a job off the Requests tab and it lands here.'
       : 'Nothing accepted here yet.') + '</div>';
@@ -396,42 +511,39 @@ async function refreshList(){
   }
   if(typeFilter === 'all') typeSections(aProg);
   else issueSections(aProg);
-  if(aDone.length){
-    /* "Completed works", collapsible — same tuck-away as declined (Noah 2026-08-20) */
-    const h = document.createElement('button'); h.type = 'button'; h.className = 'lsec good lsectoggle';
-    h.innerHTML = `<span class="seci"><span>Completed works</span><span class="secchev">${showDone ? '▾' : '▸'}</span></span><span class="cnt">${aDone.length}</span>`;
-    h.onclick = () => { showDone = !showDone; refreshList(); };
-    wrap.appendChild(h);
-    if(showDone) aDone.forEach(r => {
-      const when = r.done_at ? `<span>· ${fmtDay(r.done_at)}</span>` : '';
-      card(r, `<div class="top"><div class="what">${cardTitle(r)}</div>${avatarStack(r, false)}</div>
-        <div class="meta"><span>${esc(r.building_name)}</span>${when}</div>`);
-    });
-  }
-  /* declined: kept on record (the customer was told why — that's the paper trail),
-     but tucked away off the working list */
-  if(aDecl.length){
-    /* same section-toggle shape as Completed works, in the quiet grey (Noah 2026-08-20) */
-    const t = document.createElement('button'); t.className = 'lsec lsectoggle'; t.type = 'button';
-    t.innerHTML = `<span class="seci"><span>Declined</span><span class="secchev">${showDeclined ? '▾' : '▸'}</span></span><span class="cnt">${aDecl.length}</span>`;
-    t.onclick = () => { showDeclined = !showDeclined; refreshList(); };
-    wrap.appendChild(t);
-    if(showDeclined){
-      aDecl.forEach(r => {
-        card(r, `<div class="top"><div class="what">${cardTitle(r)}</div>${avatarStack(r, false)}</div>
-          <div class="meta"><span>${esc(r.building_name)}</span><span>· Declined</span></div>`);
-      });
-    }
-  }
 }
 
 /* ---------- detail ---------- */
 let cur = null;
 let siteMap = null;
-function renderSiteMap(bld){
+/* New sites (customer typed the address) and buildings saved without coordinates get a pin by looking the
+   address up in OpenStreetMap's free geocoder (Nominatim, AU only, cached per address, one call). Noah 7 Sep:
+   "a new site is exactly when you don't know where it is". No hit = no map, same as before. */
+const geoCache = {};
+async function geocode(addr){
+  const key = (addr || '').trim().toLowerCase();
+  if(!key) return null;
+  if(key in geoCache) return geoCache[key];
+  try {
+    const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=au&q=' + encodeURIComponent(addr), { headers: { 'Accept': 'application/json' } });
+    const j = await r.json();
+    geoCache[key] = (j && j[0]) ? { lat: +j[0].lat, lng: +j[0].lon } : null;
+  } catch(e){ geoCache[key] = null; }
+  return geoCache[key];
+}
+async function renderSiteMap(bld){
   const el = document.getElementById('dMap');
-  if(!(bld && bld.lat && bld.lng && window.L)){ el.style.display = 'none'; return; }
-  el.style.display = 'block';
+  const hero = document.getElementById('dHero');
+  const openedId = cur && cur.id;
+  if(!(bld && bld.lat && bld.lng) && cur && cur.site_lat && cur.site_lng) bld = Object.assign({}, bld || {}, { lat: cur.site_lat, lng: cur.site_lng }); /* picked on the form, no lookup needed */
+  if(!(bld && bld.lat && bld.lng) && window.L){
+    const addr = bld ? (bld.address || bld.name) : (cur && cur.building_name);
+    const hit = await geocode(addr);
+    if(!cur || cur.id !== openedId) return; /* they've moved on while we were looking it up */
+    if(hit) bld = Object.assign({}, bld || {}, hit);
+  }
+  if(!(bld && bld.lat && bld.lng && window.L)){ el.style.display = 'none'; hero.classList.remove('hasmap'); return; }
+  el.style.display = 'block'; hero.classList.add('hasmap');
   if(siteMap){ siteMap.remove(); siteMap = null; }
   /* zoom 14, not 15 — enough suburb context to recognise where you're going (Noah 2026-08-17) */
   siteMap = L.map(el, { zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false,
@@ -443,8 +555,9 @@ function renderSiteMap(bld){
   /* the pin carries the category icon — an alarm job pins a bell, a leak pins a drop */
   const catIc = (CATS.find(c => c.cat === cur.category) || {}).ic || '';
   const icInner = catIc.replace(/<\/?svg[^>]*>/g, '');
-  L.marker([bld.lat, bld.lng], { icon: L.divIcon({ className: 'sitepin', iconSize: [34, 42], iconAnchor: [17, 40],
-    html: `<div class="pinwrap"><svg class="pinbody" viewBox="0 0 24 24"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="#fa233b" stroke="#fff" stroke-width="1.4"/></svg><svg class="pinic" viewBox="0 0 24 24">${icInner}</svg></div>` }) }).addTo(siteMap);
+  /* pin colour follows the request type (same colours as the chips): urgent red, service blue, quote purple, other ink */
+  L.marker([bld.lat, bld.lng], { icon: L.divIcon({ className: 'sitepin ' + reqType(cur), iconSize: [34, 42], iconAnchor: [17, 40],
+    html: `<div class="pinwrap"><svg class="pinbody" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><path d="M12 23S3.9 16.4 3.9 10.3a8.1 8.1 0 1 1 16.2 0C20.1 16.4 12 23 12 23z" fill="currentColor" stroke="#fff" stroke-width="1.4"/></svg><svg class="pinic" viewBox="0 0 24 24">${icInner}</svg></div>` }) }).addTo(siteMap);
   setTimeout(() => siteMap && siteMap.invalidateSize(), 60);
   /* centre the glyph on its drawn shape, not its box — lopsided icons (exit arrow, subbies)
      sat off-centre in the pin head (Noah 2026-08-20) */
@@ -483,8 +596,10 @@ async function openDetail(id){
      a sentence blown up as a headline read silly (Noah 2026-08-31). Cards keep the note. */
   const dcat = CATS.find(x => x.cat === cur.category);
   const dnote = (cur.note || '').trim();
-  document.getElementById('dWhat').innerHTML = dcat
-    ? `<span class="wic">${dcat.ic}</span>` + esc(dcat.label)
+  /* research 2026-09-07: the site is the identifier, so it's the title; the job type is the line under it */
+  document.getElementById('dWhat').textContent = cur.building_name + (cur.building_code === 'general' ? '' : '');
+  document.getElementById('dType').innerHTML = dcat
+    ? `<span class="wic">${dcat.ic}</span>` + esc(dcat.label) + (cur.building_code === 'general' ? '<span class="flag"> · New site</span>' : '')
     : esc(whatLine(cur));
   const noteEl = document.getElementById('dNote');
   noteEl.textContent = (dcat && dnote) ? '\u201C' + dnote + '\u201D' : '';
@@ -492,18 +607,25 @@ async function openDetail(id){
   /* urgent lives in a sticky pill top-right (stays put while you scroll); the site moved to its own card */
   /* every type wears its header — urgent red (pulsing), service blue, quote purple, other ink (Noah 2026-08-20) */
   const strip = document.getElementById('dUrgPill');
+  strip.style.display = 'none'; /* retired 2026-09-07, chip below carries it */
   const t = reqType(cur);
-  if(cur.status === 'done' || cur.status === 'declined'){
-    strip.style.display = 'none';
-  } else {
-    strip.style.display = 'flex';
-    strip.className = 'urgstrip ' + t;
-    strip.innerHTML = (t === 'urgent' ? '<span class="dot late pulse"></span>' : '') +
-      { urgent:'URGENT', service:'SERVICE', quote:'QUOTE', other:'SOMETHING ELSE' }[t];
-  }
+  /* the chip lives inside dType, which is rewritten above; make it fresh each open or the second open throws (glitch Noah hit 8 Sep) */
+  let chip = document.getElementById('dTypeChip');
+  if(!chip){ chip = document.createElement('span'); chip.id = 'dTypeChip'; }
+  const closed = cur.status === 'done' || cur.status === 'declined';
+  chip.className = 'typechip ' + t + (closed ? ' closed' : '');
+  chip.innerHTML = (t === 'urgent' && !closed ? '<span class="dot late pulse"></span>' : '') +
+    (closed ? (cur.status === 'done' ? 'Done' : 'Declined') : { urgent:'Urgent', service:'Service', quote:'Quote', other:'Other' }[t]);
+  document.getElementById('dType').appendChild(chip); /* chip sits on the type line, one row fewer (Noah 8 Sep) */
   /* the ref rides the came-in line — small, top right, context not content.
      Same number the customer's receipt shows, so "it's about R-1024" can be found. */
-  document.getElementById('dCameIn').textContent = (cur.ref ? cur.ref + ' · ' : '') + 'came in ' + ago(cur.created_at);
+  /* ref + relative age; the exact time is one tap away (Cloudscape: relative by default, absolute on demand) */
+  const cameTxt = document.getElementById('dCameTxt');
+  let exactShown = false;
+  const paintCame = () => { cameTxt.textContent = (cur.ref ? cur.ref + ' · ' : '') + (exactShown ? whenExact(cur.created_at) : ago(cur.created_at)); };
+  paintCame();
+  cameTxt.onclick = () => { exactShown = !exactShown; paintCame(); };
+  cameTxt.title = whenExact(cur.created_at);
   /* stored normalised (0294810000) — make it readable again */
   const prettyPhone = (raw) => {
     const d = String(raw || '').replace(/\D/g, '');
@@ -552,8 +674,14 @@ async function openDetail(id){
 
   /* site card: name + address, mini map when we know where it is, tap → maps app */
   const bld = cur.building_code !== 'general' ? await Store.getBuilding(cur.building_code) : null;
-  document.getElementById('dSiteName').textContent = cur.building_name + (cur.building_code === 'general' ? ' (new site)' : '');
-  document.getElementById('dSiteAddr').textContent = (bld && bld.address) ? bld.address : '';
+  /* header already names the site; the card carries what the tech needs on arrival */
+  document.getElementById('dSiteName').textContent = (bld && bld.address) ? bld.address : (cur.building_code === 'general' ? 'New site, address unconfirmed' : cur.building_name);
+  /* the level/unit line rides in the answers; the site card is where a tech looks
+     for it, so it shows here too (managers' review, 2026-09-02) */
+  const lvl = (cur.answers || []).find(a => a.q === 'Where in the building?' || a.q === 'Level / unit / room');
+  const whereBtn = (cur.answers || []).find(a => a.q === 'Where is it?');
+  const whereBits = [lvl && lvl.a, whereBtn && whereBtn.a].filter(Boolean);
+  document.getElementById('dSiteAddr').textContent = whereBits.join(', ');
   const q = encodeURIComponent(cur.building_name + (bld && bld.address ? ' ' + bld.address : ''));
   document.getElementById('dSiteCard').href = /iPhone|iPad|Mac/.test(navigator.userAgent)
     ? 'https://maps.apple.com/?q=' + q : 'https://www.google.com/maps/search/?api=1&query=' + q;
@@ -580,22 +708,32 @@ async function openDetail(id){
     'Is someone chasing you for it?': 'Being chased for it'
   };
   const shortQ = q => SHORTQ[q] || q.replace(/\?$/, '');
-  const ansRows = answers.map(x =>
-    `<div class="ansrow"><span class="ansq">${esc(shortQ(x.q))}</span><span class="ansa">${esc(String(x.a).charAt(0).toUpperCase() + String(x.a).slice(1).toLowerCase())}</span></div>`);
+  /* research 2026-09-07: level and spot already sit on the site card, don't say them twice;
+     yes/no checks and the other details read as two labelled groups */
+  const SITE_Q = new Set(['Where in the building?', 'Level / unit / room', 'Where is it?']);
+  const row = x => `<div class="ansrow"><span class="ansq">${esc(shortQ(x.q))}</span><span class="ansa">${esc(String(x.a).charAt(0).toUpperCase() + String(x.a).slice(1).toLowerCase())}</span></div>`;
+  const kept = answers.filter(x => !SITE_Q.has(x.q));
+  const isYN = x => /^(yes|no)$/i.test(String(x.a).trim());
+  const checks = kept.filter(isYN), details = kept.filter(x => !isYN(x));
+  const ansRows = [];
+  if(checks.length && details.length){
+    ansRows.push('<div class="ansgrp">Checks</div>'); checks.forEach(x => ansRows.push(row(x)));
+    ansRows.push('<div class="ansgrp">Details</div>'); details.forEach(x => ansRows.push(row(x)));
+  } else kept.forEach(x => ansRows.push(row(x)));
   /* the certification deadline moved up to its own countdown strip under the contact
      card (Noah 2026-08-31) — it used to be a Due date row here */
   /* the accepted call-out is a fact of the request, so it sits with the other facts —
      last row of the answers card, not a loose line in the header (Noah 2026-08-17) */
+  /* the money moved out of the facts to the line above Accept (research 2026-09-07): it's what the office agrees to */
+  let priceTxt = '';
   if(cur.scc_accepted && cur.scc_amount)
-    /* the amount and the rate, not just "Yes" — an after-hours $180 should look
-       different from an everyday $75 without opening the timeline */
-    ansRows.push(`<div class="ansrow"><span class="ansq">Call-out accepted</span><span class="ansa">$${cur.scc_amount}${cur.rate_type && cur.rate_type !== 'normal hours' ? ' · ' + esc(cur.rate_type) : ''}${cur.hourly_amount ? ' · then $' + cur.hourly_amount + '/hr' : ''}</span></div>`);
+    priceTxt = `Call-out accepted · <b>$${cur.scc_amount}</b>${cur.rate_type && cur.rate_type !== 'normal hours' ? ' ' + esc(cur.rate_type) : ''}${cur.hourly_amount ? ' · then $' + cur.hourly_amount + '/hr' : ''}`;
   else if(cur.scc_accepted && cur.rate_card)
-    /* rate card accepted, no visit booked yet — both figures until the booked
-       time locks one in (then the row above takes over) */
-    ansRows.push(`<div class="ansrow"><span class="ansq">Rates accepted</span><span class="ansa">$${esc(String(cur.rate_card.normal))} / $${esc(String(cur.rate_card.after))} after hours${cur.hourly_amount ? ' · then $' + cur.hourly_amount + '/hr' : ''}</span></div>`);
+    priceTxt = `Rates accepted · <b>$${esc(String(cur.rate_card.normal))}</b> / <b>$${esc(String(cur.rate_card.after))}</b> after hours${cur.hourly_amount ? ' · then $' + cur.hourly_amount + '/hr' : ''}`;
   else if(cur.req_type === 'quote')
-    ansRows.push(`<div class="ansrow"><span class="ansq">Call-out cost</span><span class="ansa">None — quote</span></div>`);
+    priceTxt = 'No call-out cost · quote';
+  const priceEl = document.getElementById('abPrice');
+  priceEl.innerHTML = priceTxt; priceEl.style.display = priceTxt ? '' : 'none';
   /* the specs answer rides with the other facts; the files themselves sit below with the photos */
   if(cur.req_type === 'quote' && cur.specs_have){
     const nsf = Array.isArray(cur.specs_files) ? cur.specs_files.length : 0;
@@ -1399,7 +1537,7 @@ async function doDecline(){
     yes: 'Confirm' });
   if(!res || !res.reason) return;
   const reason = res.reason;
-  cur = await Store.updateRequest(cur.id, { status: 'declined', declined_reason: reason },
+  cur = await Store.updateRequest(cur.id, { status: 'declined', declined_reason: reason, declined_at: new Date().toISOString() },
     (wasBooked ? 'cancelled — ' : 'declined — ') + reason,
     'custom', /* compose() built the whole sentence — the store's declined wrap would double it */
     compose(tidyReason(reason)));
@@ -1473,34 +1611,38 @@ async function seedDemo(){
   /* URGENT — fresh alarm, nobody on it (red card, pulsing ?, ASAP row). Logged during
      the working day, so now's rate at Accept was the normal $75. */
   await mk({ ...HV, category:'Alarm going off / beeping', req_type:'urgent', urgent:true, scc_amount:RN, scc_accepted:true, rate_type:'normal hours',
-    answers:[{q:'Is it going off right now?',a:'Yes',urg:true},{q:'Is it the whole building?',a:'Yes',urg:false},{q:'Has the fire brigade shown up?',a:'No',urg:false}],
-    note:'whole building, started ten minutes ago', avail_days:[], time_pref:'per day', requester_role:'Building manager', customer_name:'Nathan Reid', customer_phone:'0413 550 291' }, 0.3);
+    answers:[{q:'Sounding or flashing right now?',a:'Yes',urg:true},{q:'Whole building or part?',a:'Whole',urg:false},{q:'Any message on the panel?',a:'ALARM ZONE 2 LEVEL 3',urg:false},{q:'Where in the building?',a:'level 3, near the lifts',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
+    note:'started ten minutes ago', avail_days:[], time_pref:'per day', requester_role:'Building manager', customer_name:'Nathan Reid', customer_phone:'0413 550 291' }, 0.3);
   /* URGENT — burst pipe at a NEW SITE, landline caller (ring chip + receipt ring note, no texts) */
   await mk({ building_code:'general', building_name:'Marina Plaza, 7 Quay Rd', category:'Sprinkler / pump / leak', req_type:'urgent', urgent:true, scc_amount:RA, scc_accepted:true, rate_type:'after hours',
-    answers:[{q:'Still leaking right now?',a:'Yes',urg:true},{q:'Causing flooding or damage?',a:'Yes',urg:true},{q:'Near any electrical gear?',a:'No',urg:false}],
-    note:'sprinkler pipe burst in the basement car park', avail_days:[], time_pref:'per day', phone_kind:'landline',
+    answers:[{q:'Still leaking right now?',a:'Yes',urg:true},{q:'Flooding or damage?',a:'Yes',urg:true},{q:'Near any electrical gear?',a:'No',urg:false},{q:"Where's it coming from?",a:'Pipework',urg:false},{q:'Where in the building?',a:'basement level 1',urg:false},{q:'Where is it?',a:'Car park',urg:false}],
+    note:'sprinkler pipe burst', avail_days:[], time_pref:'per day', phone_kind:'landline',
     requester_role:'Facilities manager', customer_name:'Bruce Hale', customer_phone:'(02) 9330 4177' }, 1.1);
   /* SERVICE, green clock — leak with two photos and offered days incl. a window */
   await mk({ ...RSL, category:'Sprinkler / pump / leak', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[{q:'Still leaking right now?',a:'No',urg:false},{q:'Causing flooding or damage?',a:'No',urg:false},{q:'Near any electrical gear?',a:'Yes',urg:false}],
+    answers:[{q:'Still leaking right now?',a:'No',urg:false},{q:'Flooding or damage?',a:'No',urg:false},{q:'Near any electrical gear?',a:'Yes',urg:false},{q:"Where's it coming from?",a:'Sprinkler head',urg:false},{q:'Where in the building?',a:'ground floor, kitchen',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
     note:'slow drip over the kitchen pass', avail_days:[fut(1,'AM'), fut(3,'Anytime')], time_pref:'per day',
     customer_name:'Tanya Brooks', customer_phone:'0407 992 615',
     photos:[photo('sample photo \u2014 kitchen pass','#cfc8b8'), photo('sample photo \u2014 close up','#b1a996')] }, 0.4);
   /* SERVICE, orange clock — no days picked (ring row + set-day) */
   await mk({ ...HV, category:'Alarm going off / beeping', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[{q:'Is it going off right now?',a:'No',urg:false},{q:'Is it the whole building?',a:'No',urg:false},{q:'Has the fire brigade shown up?',a:'No',urg:false}],
+    answers:[{q:'Sounding or flashing right now?',a:'No',urg:false},{q:'Whole building or part?',a:'Not sure',urg:false},{q:'Any message on the panel?',a:'FAULT - BATTERY',urg:false},{q:'Where in the building?',a:'ground floor foyer',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
     note:'fault light on the panel every night around 9', avail_days:[], time_pref:'per day', requester_role:'Property manager', customer_name:'Olivia Grant', customer_phone:'0439 208 774' }, 1.5);
   /* SERVICE, red clock — smoke alarm, one offered day, already opened (seen + the seen text) */
   await mk({ ...HV, category:'Smoke alarm issue', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[], note:'unit 9 chirping every minute', avail_days:[fut(2,'PM')], time_pref:'per day',
+    answers:[{q:'Smoke or fire right now?',a:'No',urg:false},{q:'Beeping or chirping right now?',a:'Yes',urg:false},{q:'Non-stop or now and then?',a:'Now and then',urg:false},{q:'More than one alarm?',a:'No',urg:false},{q:'Where in the building?',a:'unit 9, level 2',urg:false},{q:'Where is it?',a:'Apartment or unit',urg:false}], note:'chirping every minute', avail_days:[fut(2,'PM')], time_pref:'per day',
     customer_name:'Harry Chen', customer_phone:'0426 311 508' }, 5,
     null, [{ dh:0.4, text:'seen' }, { dh:0.4, text:seenTxt('Harry','service'), sms:true }]);
+  /* SERVICE gone URGENT by its answers — smoke alarm with smoke present (managers' new first question) */
+  await mk({ ...RSL, category:'Smoke alarm issue', req_type:'service', urgent:true, scc_accepted:true, rate_card:RC(),
+    answers:[{q:'Smoke or fire right now?',a:'Yes',urg:true},{q:'Beeping or chirping right now?',a:'Yes',urg:false},{q:'Non-stop or now and then?',a:'Non-stop',urg:false},{q:'More than one alarm?',a:'Yes',urg:false},{q:'Where in the building?',a:'kitchen, ground floor',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
+    note:'smoke from the deep fryer, alarms going all through the bistro', avail_days:[], time_pref:'per day', requester_role:'Building manager', customer_name:'Sam Okafor', customer_phone:'0451 902 337' }, 0.2);
   /* SERVICE — no note at all (card falls back to icon + short label) */
   await mk({ ...RSL, category:'Fire door / passive fire', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[], note:'', avail_days:[fut(2,'Anytime')], time_pref:'per day', customer_name:'Jill Marsh', customer_phone:'0400 173 262' }, 2.8);
+    answers:[{q:'Closes fully on its own?',a:'No',urg:false},{q:"Stuck open or won't open?",a:'Stuck open',urg:false},{q:'Damaged, loose or off its hinges?',a:'Yes',urg:false},{q:'More than one door?',a:'No',urg:false},{q:'Where in the building?',a:'level 1 stairwell',urg:false},{q:'Where is it?',a:'Common area',urg:false}], note:'', avail_days:[fut(2,'Anytime')], time_pref:'per day', customer_name:'Jill Marsh', customer_phone:'0400 173 262' }, 2.8);
   /* SERVICE — the long-waiting one (5+ days, deep red), opened days ago */
   await mk({ ...RSL, category:'Extinguisher issue', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[{q:'Been used or discharged?',a:'Yes',urg:false},{q:'Damaged or leaking?',a:'No',urg:false},{q:'More than one affected?',a:'No',urg:false}],
+    answers:[{q:'Been used or set off?',a:'Yes',urg:false},{q:'Damaged, leaking or missing?',a:'No',urg:false},{q:'How many?',a:'One',urg:false},{q:'Where in the building?',a:'function room',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
     note:'one let off at the staff party, needs recharging', avail_days:[], time_pref:'per day', customer_name:'Frank Novak', customer_phone:'0418 445 930' }, 130,
     null, [{ dh:2, text:'seen' }, { dh:2, text:seenTxt('Frank','service'), sms:true }]);
   /* SERVICE — category this build does not know (plain words, no icon, More section) */
@@ -1509,13 +1651,13 @@ async function seedDemo(){
     customer_name:'Ingrid Bauer', customer_phone:'0421 067 349' }, 1.2);
   /* SERVICE — Something else with a note and no questions (fee row alone on the card) */
   await mk({ ...HV, category:'Something else', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[], note:'exit sign above the gym door hanging by its wires', avail_days:[], time_pref:'per day',
+    answers:[{q:'Where in the building?',a:'level 1, gym door',urg:false},{q:'Where is it?',a:'Common area',urg:false}], note:'exit sign above the gym door hanging by its wires', avail_days:[], time_pref:'per day',
     customer_name:'Marcus Reed', customer_phone:'0416 802 553' }, 0.8);
   /* SERVICE — certification with the 2026-08-28 fields: a real due date + email.
      Paperwork job, so no visit to book; the Due date row and mailto line both show. */
   const dueSoon = new Date(Date.now() + 17 * 864e5);
   await mk({ ...RSL, category:'Certificate / paperwork needed', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[{q:'Deadline coming up?',a:'Yes',urg:false},{q:'Is it for your AFSS?',a:'Yes',urg:false},{q:'Is someone chasing you for it?',a:'Yes',urg:false}],
+    answers:[{q:'AFSS or something else?',a:'AFSS',urg:false},{q:"When's it due?",a:dueSoon.getFullYear() + '-' + String(dueSoon.getMonth()+1).padStart(2,'0') + '-' + String(dueSoon.getDate()).padStart(2,'0'),urg:false},{q:"Who's asking for it?",a:'Council',urg:false},{q:"Got last year's paperwork?",a:'Yes',urg:false}],
     afss_due: dueSoon.getFullYear() + '-' + String(dueSoon.getMonth()+1).padStart(2,'0') + '-' + String(dueSoon.getDate()).padStart(2,'0'),
     customer_email:'nadia@rossistrata.com.au',
     note:'council already sent a reminder letter', avail_days:[], time_pref:'per day', requester_role:'Strata manager',
@@ -1532,7 +1674,7 @@ async function seedDemo(){
     requester_role:'Owner', customer_name:'Dorothy Klein', customer_phone:'(02) 9948 6021' }, 28);
   /* QUOTE — defect list priced off a report, PDF + photo attached */
   await mk({ ...HV, category:'Defect / repair from a report', req_type:'quote', customer_email:'simone.perry@stratacare.com.au',
-    answers:[], note:'July inspection defects, want items 3 to 9 priced', avail_days:[], time_pref:'per day',
+    answers:[{q:'Got the defect report?',a:'Yes',urg:false},{q:'Deadline or AFSS due?',a:'No',urg:false},{q:'Did we do the inspection?',a:'Not sure',urg:false},{q:'Where in the building?',a:'levels 2 to 4',urg:false},{q:'Where is it?',a:'Common area',urg:false}], note:'July inspection defects, want items 3 to 9 priced', avail_days:[], time_pref:'per day',
     specs_have:'No', requester_role:'Strata manager', customer_name:'Simone Perry', customer_phone:'0405 337 291',
     photos:[photo('sample photo \u2014 defect notice','#d8d2c4')],
     docs:[{ name:'inspection-report-Jul.pdf', type:'application/pdf', data:PDF }] }, 8);
@@ -1541,8 +1683,8 @@ async function seedDemo(){
     answers:[], note:'new tenant — who do we call about fire stuff going forward?', avail_days:[], time_pref:'per day',
     requester_role:'Tenant', customer_name:'Kofi Mensah', customer_phone:'0431 794 226' }, 5);
   /* SOMETHING ELSE — evac diagrams, an office-reply job with nothing to book */
-  await mk({ ...RSL, category:'Evacuation diagrams / training', req_type:'other',
-    answers:[], note:'bistro layout changed, diagrams need redoing and four new staff need warden training', avail_days:[], time_pref:'per day',
+  await mk({ ...RSL, category:'Evacuation diagrams / training', req_type:'service', scc_accepted:true, rate_card:RC(),
+    answers:[{q:'What do you need?',a:'Both',urg:false},{q:'New site or an update?',a:'Update',urg:false},{q:'Need it by a date?',a:'No',urg:false},{q:'Roughly how many?',a:'4 staff, 2 floors',urg:false}], note:'bistro layout changed', avail_days:[], time_pref:'per day',
     requester_role:'Building manager', customer_name:'Elena Voss', customer_phone:'0433 890 217' }, 16);
   /* OLD-SHAPE COVERAGE, kept on purpose — a quote stored before the 2026-08-26/28 rework
      (yes/no answers + offered days on a quote, no email). Old records must keep rendering. */
@@ -1555,7 +1697,7 @@ async function seedDemo(){
   /* ---- Accepted tab ---- */
   /* URGENT booked ASAP — two crew, night job so the $180 locked */
   await mk({ ...RSL, category:'Alarm going off / beeping', req_type:'urgent', urgent:true, scc_amount:RA, scc_accepted:true, rate_type:'after hours',
-    answers:[{q:'Is it going off right now?',a:'Yes',urg:true},{q:'Is it the whole building?',a:'No',urg:false},{q:'Has the fire brigade shown up?',a:'Yes',urg:true}],
+    answers:[{q:'Sounding or flashing right now?',a:'Yes',urg:true},{q:'Whole building or part?',a:'Part',urg:false},{q:'Where in the building?',a:'function room, level 1',urg:false},{q:'Where is it?',a:'Common area',urg:false}],
     note:'function room alarm, brigade on site', avail_days:[], time_pref:'per day',
     requester_role:'Building manager', customer_name:'Paddy Doyle', customer_phone:'0421 118 007' }, 2,
     { status:'booked', assignees:['Noah','Jake'], booked_label:'ASAP' },
@@ -1566,7 +1708,7 @@ async function seedDemo(){
   /* SERVICE booked on a day the customer offered — Tom + a subbie, customer added a note after */
   const gOffer = fut(1,'AM'), gOffer2 = fut(3,'Anytime');
   await mk({ ...HV, category:'Exit light or door issue', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[{q:'Is the light completely out?',a:'No',urg:false},{q:'More than one light?',a:'Yes',urg:false},{q:'Area used at night?',a:'Yes',urg:false}],
+    answers:[{q:'Exit sign or emergency light?',a:'Emergency light',urg:false},{q:'Completely out?',a:'No',urg:false},{q:'More than one?',a:'Yes',urg:false},{q:'Area used after dark?',a:'Yes',urg:false},{q:'Where in the building?',a:'basement car park',urg:false},{q:'Where is it?',a:'Car park',urg:false}],
     note:'four car park lights flickering', avail_days:[gOffer, gOffer2], time_pref:'per day',
     customer_name:'Grace Field', customer_phone:'0404 218 664' }, 19,
     /* booked onto a weekday morning \u2014 that time locked the normal rate */
@@ -1591,7 +1733,7 @@ async function seedDemo(){
      { dh:3.2, text:"SMS\u2192 Locked in, Liam. Jake's on it. We'll be there " + whenWords(lbl(qDay)) + '. See you then.', sms:true }]);
   /* DONE — finished two days back */
   await mk({ ...HV, category:'Hydrant / hose reel issue', req_type:'service', scc_accepted:true, rate_card:RC(),
-    answers:[], note:'hose reel by the pool won\u2019t rewind', avail_days:[], time_pref:'per day',
+    answers:[{q:'Hydrant or hose reel?',a:'Hose reel',urg:false},{q:'Leaking right now?',a:'No',urg:false},{q:'Inside or outside?',a:'Outside',urg:false},{q:'Damaged or been hit?',a:'No',urg:false},{q:'Where in the building?',a:'pool deck',urg:false},{q:'Where is it?',a:'Outside',urg:false}], note:'hose reel by the pool won\u2019t rewind', avail_days:[], time_pref:'per day',
     customer_name:'Rosa Marino', customer_phone:'0428 771 340' }, 118,
     { status:'done', assignees:['Tom'], done_at: hrs(49), booked_label:'Tue 25 Aug', scc_amount:RN, rate_type:'normal hours' },
     [{ dh:28, text:'seen' },
@@ -1605,7 +1747,7 @@ async function seedDemo(){
   await mk({ building_code:'general', building_name:'Corrimal Works, 18 Foundry Ln', category:'New system / install', req_type:'quote', customer_email:'v.sharma@corrimalworks.com.au',
     answers:[], urgent:false, note:'full system for a new warehouse build', avail_days:[], time_pref:'per day',
     specs_have:'No', requester_role:'Owner', customer_name:'Viktor Sharma', customer_phone:'0466 209 118' }, 90,
-    { status:'declined', assignees:['Noah'], declined_reason:"that's construction work \u2014 we're maintenance" },
+    { status:'declined', assignees:['Noah'], declined_reason:"that's construction work \u2014 we're maintenance", declined_at: hrs(30) },
     [{ dh:2, text:'seen' },
      { dh:2, text:seenTxt('Viktor','quote'), sms:true },
      { dh:3, text:"declined \u2014 that's construction work \u2014 we're maintenance" },
@@ -1633,6 +1775,7 @@ function renderAlertBtn(){
   const b = document.getElementById('alertBtn');
   const on = alertsOn();
   b.className = 'alertbtn' + (on ? ' on' : '');
+  b.querySelector('.alertlbl').textContent = on ? 'Alerts on' : 'Alerts'; /* icon + word, never icon alone (NN/g) */
   const blocked = (typeof Notification !== 'undefined' && Notification.permission === 'denied');
   b.title = on
     ? (blocked ? 'Sound on. Notifications are blocked for this site in the browser settings.' : 'Urgent alerts are on for this device')

@@ -236,3 +236,8 @@ alter table requests add column if not exists rate_card jsonb;
 -- Safe to re-run: email + AFSS deadline added 2026-08-28 (review).
 alter table requests add column if not exists customer_email text;
 alter table requests add column if not exists afss_due date;
+alter table requests add column if not exists declined_at timestamptz;
+alter table requests add column if not exists site_lat double precision; -- 2026-09-07: picked from the address suggestions on the form
+alter table requests add column if not exists site_lng double precision;
+-- NOTE (2026-09-07): the live create_request() function lives only in Supabase, not in this file. If it names columns
+-- explicitly, add site_lat and site_lng to it, or the picked coordinates will be dropped on insert. -- 2026-09-07: History shows the date declined (records get absolute dates)

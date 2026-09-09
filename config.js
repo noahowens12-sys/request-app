@@ -87,6 +87,11 @@ window.APP_CONFIG = {
   ON_CALL: { name: 'Noah', phone: '0400 000 000' },
   URGENT_PING: { repeatMins: 5 },
 
+  /* Address suggestions on the customer form. With a Google key: Google Places (every AU address, house
+     numbers included). Without one: OpenStreetMap (free, misses many house numbers). Get the key at
+     console.cloud.google.com → APIs & Services → enable "Places API (New)" → Credentials → API key,
+     then restrict it to HTTP referrers (this site's URL) and to the Places API. Noah pastes it here himself. */
+  GOOGLE_MAPS_KEY: 'AIzaSyD8OWu2csrz8g8EfSKTVRjTELWai8irxxY',
   SUPABASE_URL: 'https://lemepuchjumwjbqbjbkw.supabase.co',                    // e.g. https://abcdefgh.supabase.co
   SUPABASE_ANON_KEY: 'sb_publishable_0_ewcS-gzck0o9jtSZIkMA_Gy08HIkB',
 

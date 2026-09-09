@@ -12,11 +12,14 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
   -webkit-font-smoothing:antialiased;font-size:16px}
 .wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:40px}
 .pagepad{padding:16px 20px 28px}
+#listView .pagepad{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 .navhead{padding:26px 20px 0}
 .largetitle{font-size:33px;font-weight:800;letter-spacing:-.6px;line-height:1.08;transition:font-size .28s cubic-bezier(.22,1,.36,1)}
 .navhead.answered .largetitle{font-size:21px;letter-spacing:-.3px}
 .lede{color:var(--sub);font-size:15px;margin-top:6px;line-height:1.45;font-weight:500}
 .brandrow{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.phonebtn{margin-left:auto;width:44px;height:44px;border-radius:14px;background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;text-decoration:none}
+.phonebtn svg{width:21px;height:21px;stroke:var(--green);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .logodot{width:28px;height:28px;border-radius:8px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
 .logodot.haslogo{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.07)}
 .logodot.haslogo svg{width:20px;height:20px;display:block}
@@ -58,9 +61,9 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
   animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
 @keyframes qin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 .qtext{font-size:15px;font-weight:600;line-height:1.3;flex:1}
-.ynrow{display:flex;gap:7px;flex:0 0 auto}
-.ynbtn{border:none;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:600;
-  padding:8px 15px;border-radius:20px;background:var(--bg);color:var(--ink);transition:all .12s}
+.ynrow{display:flex;gap:8px;flex:0 0 auto}
+.ynbtn{border:none;cursor:pointer;font-family:var(--font);font-size:15px;font-weight:600;min-height:36px;position:relative;
+  padding:7px 16px;border-radius:18px;background:var(--bg);color:var(--ink);transition:all .12s}
 .ynbtn.on{background:var(--ink);color:#fff}
 
 /* inputs */
@@ -96,7 +99,17 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .notewrap input{flex:1;border:none;background:var(--card);border-radius:13px;padding:14px 15px;font-family:var(--font);font-size:15.5px;outline:none}
 .camerabtn{flex:0 0 auto;width:48px;height:48px;border:none;border-radius:13px;background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .camerabtn svg{width:23px;height:23px;stroke:var(--sub);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.grouped{background:var(--card);border-radius:14px;margin-top:20px;overflow:hidden}
+.grouped{background:var(--card);border-radius:16px;margin-top:9px;overflow:hidden}
+/* contact card in the question-card shape (research, Noah 2026-09-03) */
+.contact .grow{flex-direction:column;align-items:stretch;gap:0;padding:6px 0;border-bottom:none}   /* 12px between fields: plain text boxes read loose at 18 */
+.contact .qtext{font-size:15px;font-weight:600}
+.contact .ginput{text-align:left;margin-top:8px}
+.contact .ginput::placeholder{color:var(--sub2)}
+.contact .rolebox{position:relative;display:flex;align-items:center;justify-content:space-between;margin-top:8px;min-height:44px;padding:9px 11px;border-radius:10px;box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.3)}
+.contact .rolebox .gv{text-align:left;color:var(--ink);font-size:16px}
+.contact .rolebox .gv.unset{color:var(--sub2)}
+.contact .grow.missing{background:none}
+.contact .grow.missing .ginput{box-shadow:inset 0 0 0 1.5px var(--red)}
 .grow{display:flex;align-items:center;padding:13px 15px;border-bottom:.5px solid var(--line);gap:12px}
 .grow:last-child{border-bottom:none}
 .gl{flex:0 0 74px;font-size:15px;font-weight:600;color:var(--ink)}
@@ -121,18 +134,20 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .sendbtn:disabled{opacity:.35}
 
 /* calendar */
-.whenopt{text-transform:none;letter-spacing:0;font-weight:500;font-size:12px;opacity:.75}
-.cal{background:var(--card);border-radius:16px;padding:16px}
-.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.mlabel{font-size:21px;font-weight:800;letter-spacing:-.3px;display:inline-flex;align-items:center;gap:6px}
-.mlabel .yr{color:var(--sub2);font-weight:500;font-size:14px}
-.calnav button{border:none;background:none;width:32px;height:32px;font-size:19px;cursor:pointer;color:var(--sub);margin-left:2px;font-weight:600}
+.calq{padding:2px 0 12px}
+.calq .qtext{font-size:15px;font-weight:600;color:var(--ink)}
+.cal{background:var(--card);border-radius:16px;padding:14px 15px 16px;margin-top:9px}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mlabel{font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.mlabel .yr{color:var(--sub2);font-weight:500;font-size:13.5px}
+.calnav button{border:none;background:none;width:36px;height:36px;font-size:19px;cursor:pointer;color:var(--sub);margin-left:2px;font-weight:600}
 .calnav button:disabled{color:var(--sub2);opacity:.5}
 .caldow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:10.5px;font-weight:700;color:var(--sub);letter-spacing:.6px;margin-bottom:8px}
-.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px 6px}
-/* pickable days wear the same white-tile-with-ring look as the rest of the app,
-   so they read as buttons; dead days are faded hard so there's no mistaking them */
-.calday{position:relative;border:none;font-family:var(--font);width:100%;aspect-ratio:1.02;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:16px;cursor:pointer;color:var(--ink);font-weight:700;background:var(--card);box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.18);transition:all .12s}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px 6px}
+/* Apple-Calendar look (research, Noah 2026-09-03): available days are plain numbers, only the
+   picked day gets the tint + ring, today keeps its dot. Boxes said nothing the number didn't. */
+.calday{position:relative;border:none;font-family:var(--font);width:100%;aspect-ratio:1.02;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:16px;cursor:pointer;color:var(--ink);font-weight:600;background:none;box-shadow:none;transition:all .12s}
+.calday::before{content:'';position:absolute;inset:-3px}   /* 44pt hit box on a ~40px cell */
 .calday.blank{pointer-events:none;background:none;box-shadow:none}
 .calday.past{color:var(--sub2);opacity:.55;pointer-events:none;background:none;box-shadow:none;font-weight:500}
 /* a day the company doesn't work — shown, but not on offer */
@@ -155,20 +170,28 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .tphead{font-size:14px;font-weight:700;margin-bottom:8px}
 .tprow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .tpopt{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 4px;font-family:var(--font);font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;text-align:center;transition:all .12s}
-.tpopt:active{transform:scale(.96);background:var(--ink);color:#fff;border-color:var(--ink)}
-.tpopt.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tpopt:active{transform:scale(.96)}
+/* customer side (research, Noah 2026-09-03): the picked time wears the same tint + ring as every
+   other picked answer, Confirm is black like Send. The company side keeps its own .actbtn colours. */
+.tpopt{min-height:44px;border-radius:14px}
+.tpopt.on{background:var(--card);color:var(--ink);border-color:transparent;box-shadow:inset 0 0 0 2px var(--ink)}
+.sheetwrap.scheme-blue .tpopt.on{background:var(--blue-soft);color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.sheetwrap.scheme-purple .tpopt.on{background:var(--purple-soft);color:var(--purple);box-shadow:inset 0 0 0 2px var(--purple)}
+.sheetwrap.scheme-red .tpopt.on{background:var(--red-soft);color:var(--red);box-shadow:inset 0 0 0 2px var(--red)}
+.sheetwrap .actbtn.acc{background:var(--ink)}
 .tplinks{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
 .tplink{border:none;background:none;color:var(--blue);font-family:var(--font);font-size:13.5px;font-weight:600;cursor:pointer;padding:8px 2px}
 .tplink.quiet{color:var(--sub)}
 .tpslots{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px;margin-top:5px}
 .daycap{margin-top:10px;font-size:13px;line-height:1.45;color:var(--sub2)}
 /* picked days as quiet rows inside the calendar card, not chips under it */
-.picks{margin-top:14px;border-top:.5px solid var(--line);padding-top:6px}
+/* picked-day rows: space, not a line, sets them apart from the grid; × gets a 44pt hit area (research, Noah 2026-09-03) */
+.picks{margin-top:16px;padding-top:0}
 .pick{display:flex;align-items:center;justify-content:space-between;width:100%;border:none;background:none;cursor:pointer;
   font-family:var(--font);padding:9px 2px;font-size:15px;color:var(--ink);text-align:left}
 .pick b{font-weight:700}
 .pick .pt{color:var(--sub);font-weight:500;margin-left:8px}
-.pick .x{color:var(--sub2);font-weight:700;font-size:14px;padding:2px 6px}
+.pick .x{color:var(--sub2);font-weight:700;font-size:14px;padding:12px 4px 12px 16px;margin:-12px -4px -12px 0}
 .pick:active{opacity:.6}
 
 /* receipt — the view fills the page so the card of content truly centres */
@@ -188,29 +211,44 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 /* company list */
 .listtop{display:flex;align-items:center;justify-content:space-between;padding:8px 0 2px}
 .listtop h1{font-size:33px;font-weight:800;letter-spacing:-.6px}
-.lsec{display:flex;align-items:center;justify-content:space-between;margin:20px 2px 8px;font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px}
+/* office list runs dense on purpose: Polaris (index pages want high density), NN/g (space on the info, not chrome). Noah 7 Sep: "very spaced out". Card 14/15 → 10/13, gap 9 → 6, header 20/8 → 14/5, title 16 → 15.5. */
+.lsec{display:flex;align-items:center;justify-content:space-between;margin:14px 2px 5px;font-size:12.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px}
 .lsec.hot{color:var(--red)}
 .lsec.good{color:var(--green)}
 .lsec .cnt{background:var(--card);border-radius:10px;min-width:22px;text-align:center;padding:1px 7px;font-size:12px}
 .lsec .seci{display:flex;align-items:center;gap:7px}
 .lsec .seci svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .lsec.hot .cnt{background:var(--red-soft);color:var(--red)}
-.req{background:var(--card);border-radius:15px;padding:14px 15px;margin-bottom:9px;cursor:pointer;transition:transform .1s;
+/* rows, not floating cards: a same-shaped queue scans faster as a divided list (NN/g cards vs lists, 7 Sep).
+   Urgent rows keep the soft red wash, that's the one colour with a meaning here. */
+.req{background:var(--card);border-radius:13px;padding:11px 14px;margin-bottom:6px;cursor:pointer;transition:transform .1s;
   animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
 .req:active{transform:scale(.985)}
 .req .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.req .what{font-size:16px;font-weight:700;letter-spacing:-.2px;line-height:1.3;flex:1}
+.req .what{font-size:15.5px;font-weight:700;letter-spacing:-.2px;line-height:1.28;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .req .what:has(.wic){padding-left:26px;text-indent:-26px}
 /* the issue's icon stands in for its name on the card title */
 .req .what .wic{display:inline-flex;vertical-align:-3.5px;margin-right:8px}
 .req .what .wic svg{width:18px;height:18px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .req.urg .what .wic svg{stroke:var(--red)}
 .req.muted .what .wic svg{stroke:var(--sub2)}
-.req .meta{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:13.5px;color:var(--sub);font-weight:500;flex-wrap:wrap}
+.req .age{display:flex;align-items:center;gap:5px;flex:0 0 auto;font-size:12.5px;font-weight:500;color:var(--sub);white-space:nowrap;padding-top:2px}
+.req .age .dot{width:7px;height:7px}
+/* grey until it's over the clock (research: red is a threshold, not a default) */
+.req .age.stale{color:var(--orange);font-weight:700}
+.req .age.late{color:var(--red);font-weight:700}
+.req .row2{display:flex;align-items:center;gap:8px;margin-top:3px}
+.req .cnote{flex:1;min-width:0;font-size:13.5px;color:var(--sub);font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.req .flag{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--sub)}
+.req .flag.hot{color:var(--red);font-weight:700}
+.req .meta{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:13px;color:var(--sub);font-weight:500;flex-wrap:wrap}
 .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
 .dot.pulse{animation:dotpulse 1.6s ease-in-out infinite}
 @keyframes dotpulse{0%,100%{opacity:1}50%{opacity:.3}}
 .req.urg{background:var(--red-soft);animation:urgbreathe 2.4s ease-in-out infinite}
+/* cards, not rows: Noah's call 7 Sep (research leans rows for homogeneous lists, but it's a lean; cards are fine for tap-in items) */
+.req .row2 .ownc{width:26px;height:26px;font-size:12px}
+.req .row2 .cthumb{width:30px;height:30px;border-radius:7px}
 @keyframes urgbreathe{
   0%,100%{box-shadow:0 0 0 0 rgba(250,35,59,.28)}
   50%{box-shadow:0 0 0 7px rgba(250,35,59,0)}
@@ -223,6 +261,11 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .wait.late{color:var(--red);font-weight:700}
 .ownc{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex:0 0 auto}
 .ownc.unowned{background:none;border:1.6px dashed var(--sub2);color:var(--sub2);font-weight:600}
+/* the "nobody on it" chip on list cards: ? plus the word (2026-09-06, research: icon + colour + label) */
+.unlab{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;color:var(--sub2);font-size:12px;font-weight:600}
+.unlab .ownc.unowned{width:26px;height:26px;font-size:12px}
+.unlab.hot{color:var(--red)}
+.cthumb{width:40px;height:40px;border-radius:9px;object-fit:cover;flex:0 0 auto;background:var(--card)}
 /* urgent + nobody on it — the ? goes red and pulses so it reads different from a routine unowned */
 .ownc.unowned.hot{border-color:var(--red);color:var(--red);animation:unownedpulse 1.6s ease-in-out infinite}
 @keyframes unownedpulse{0%,100%{opacity:1}50%{opacity:.35}}
@@ -259,6 +302,23 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .what-lg .wic svg{width:24px;height:24px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .subline{color:var(--sub);font-size:14.5px;margin-top:6px;font-weight:500}
 .notesub{color:var(--sub);font-size:15.5px;margin-top:7px;font-weight:500;line-height:1.4}
+.typeline{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:17px;font-weight:700;color:var(--ink)}
+.typeline .typechip{margin-left:2px}
+.typeline .wic{display:inline-flex}
+.typeline .wic svg{width:20px;height:20px;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.typeline .flag{font-size:13px;font-weight:600;color:var(--sub)}
+/* type/urgency as a chip on the meta line, not a banner (NN/g: priority is an indicator, banners are for change) */
+.typechip{display:inline-flex;align-items:center;gap:5px;border-radius:100px;padding:3px 9px;font-size:12px;font-weight:700;line-height:1.2;background:var(--bg);color:var(--sub)}
+.navhead .cameline{display:inline-flex;align-items:center;gap:8px;font-size:13px;margin-top:8px}
+.topbar{align-items:center}
+.typechip.urgent{background:var(--red-soft);color:var(--red)}
+.typechip.service{background:var(--blue-soft);color:var(--blue)}
+.typechip.quote{background:var(--purple-soft);color:var(--purple)}
+.typechip.other{background:var(--bg);color:var(--ink)}
+.typechip.closed{background:var(--bg);color:var(--sub)}
+.typechip .dot{width:6px;height:6px;border-radius:50%}
+.cameline #dCameTxt{cursor:pointer}
+.ansgrp{padding:9px 15px 3px;font-size:11.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;background:var(--bg)}
 /* detail header breathes — each line gets its own air (Noah 2026-08-17: too cramped) */
 .wholine{margin-top:10px;font-size:15px}
 .qaline{font-size:13.5px;margin-top:6px;font-weight:600;line-height:1.5}
@@ -272,18 +332,34 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .tabbtn .tcnt.hot{background:var(--red);color:#fff}
 .catbar{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .catbar::-webkit-scrollbar{display:none}
-.catchip{display:flex;align-items:center;gap:6px;border:none;background:var(--card);border-radius:100px;padding:8px 14px;
+.catchip{display:flex;align-items:center;gap:5px;border:none;background:var(--card);border-radius:100px;padding:7px 11px;
   font-family:var(--font);font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap;flex:0 0 auto}
 .catchip svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.catchip.on{background:var(--ink);color:#fff}
+/* selected chip: tint + bold + tick, never a solid black fill. Research 2026-09-02 (UXtweak toggle
+   study): black/white inversion had a 19% error rate, a tinted pill on a quiet background 0.9%.
+   Blue is the office side's one accent (same as the New site pill). Noah, 7 Sep. */
+.catchip.on{background:var(--blue-soft);color:var(--blue);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--blue)}
+.catchip{font-size:13.5px}
+.catchip .chipn{background:var(--bg);color:var(--sub);border-radius:9px;min-width:18px;text-align:center;padding:0 5px;font-size:11.5px;font-weight:700;line-height:18px}
+.catchip.on .chipn{background:#fff;color:var(--blue)}
+.catchip .chipn.hot{background:var(--red-soft);color:var(--red)}
+.catchip.on .chipn.hot{background:#fff;color:var(--red)}
+.catchip.on::before{content:'';width:9px;height:5px;border-left:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:rotate(-45deg) translateY(-1px);flex:0 0 auto}
 .actbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
   display:flex;gap:9px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));
   background:var(--bg);box-shadow:0 -8px 22px rgba(0,0,0,.05)}
+/* research 2026-09-07: one filled primary (Accept); Decline demoted to a quiet outlined button, narrower and
+   spaced away so an autopilot thumb doesn't land on it (NN/g proximity of consequential options). Its sheet still
+   asks for a reason, so the red lives on the confirm step. */
+.actbar{flex-direction:column;gap:8px}
+.actrow{display:flex;gap:14px}
+.priceline{font-size:13.5px;color:var(--sub);font-weight:500;text-align:center}
+.priceline b{color:var(--ink);font-weight:700}
 .actbtn{flex:1;border:none;border-radius:13px;padding:15px;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer}
-.actbtn.decl{background:var(--red);color:#fff}
+.actbtn.decl{flex:0 0 36%;background:var(--card);color:var(--red);box-shadow:inset 0 0 0 1.5px rgba(250,35,59,.35)}
 .actbtn.acc{background:var(--green);color:#fff}
 .actbtn:disabled{opacity:.55;cursor:default}
-#detailView .pagepad{padding-bottom:120px}
+#detailView .pagepad{padding-bottom:150px}
 .bookedline{margin-top:9px}
 .bookedline span{display:inline-block;background:var(--green-soft);color:var(--green);border-radius:100px;padding:6px 13px;font-size:13.5px;font-weight:700}
 .offerlist{display:flex;flex-direction:column;gap:8px}
@@ -391,10 +467,11 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .urgnote{color:var(--red);font-weight:700;font-size:14px;margin-top:12px;text-align:center;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
 #rest.showit{display:block !important;animation:qin .35s cubic-bezier(.32,.72,.35,1) both}
 .grow.missing{background:var(--red-soft);transition:background .25s}
+.contact .grow.missing{background:none}
 .qrow.missing{background:var(--red-soft)}
 .qrow.missing .ynbtn{background:var(--card)}
 .cal.missing{background:var(--red-soft)}
-.cal.missing .calday{background:var(--card)}
+.cal.missing .calday{background:none}
 .cal.missing .calday.past,.cal.missing .calday.blank,.cal.missing .calday.off,.cal.missing .calday.full{background:none}
 .cal.missing .calnav button{background:none}
 
@@ -441,10 +518,25 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .sitecard{display:block;background:var(--card);border-radius:16px;margin-top:14px;overflow:hidden;
   text-decoration:none;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .sitemap{height:128px;pointer-events:none;position:relative;z-index:0}
-.sitepin{filter:drop-shadow(0 3px 5px rgba(0,0,0,.3))}
+/* hero: map runs edge to edge under the top bar */
+.hero{position:relative}
+.hero.hasmap .sitemap{height:240px}
+.hero.hasmap .topbar{position:absolute;top:0;left:0;right:0;z-index:5;padding:14px 20px 0}
+/* no fade (Noah 8 Sep): controls float in their own white pills with a shadow, the maps-app convention (Apple/Google Maps, Airbnb) */
+.hero.hasmap .backlink{background:rgba(255,255,255,.94);border-radius:100px;
+  box-shadow:0 1px 4px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+/* back over the map = a round chevron button, the maps/Airbnb shape (text-in-a-pill read as weird, Noah 8 Sep) */
+.hero.hasmap .backlink{width:36px;height:36px;padding:0;font-size:0;color:var(--ink);display:flex;align-items:center;justify-content:center}
+.hero.hasmap .backlink::before{content:'‹';font-size:26px;line-height:1;font-weight:600;margin-top:-3px}
+.hero.hasmap + .navhead{padding-top:14px}
+.sitepin{filter:drop-shadow(0 3px 5px rgba(0,0,0,.3));color:var(--red)}
+.sitepin.service{color:var(--blue)}
+.sitepin.quote{color:var(--purple)}
+.sitepin.other{color:var(--ink)}
 .pinwrap{position:relative;width:34px;height:42px}
 .pinbody{width:34px;height:42px;display:block}
-.pinic{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:16px;height:16px;
+/* head centre: 24-unit path drawn at 34x42 (meet) = scale 1.417, 4px vertical offset, centre y = 4 + 10.3 x 1.417 = 18.6px */
+.pinic{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:15px;height:15px;
   stroke:#fff;color:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sitemap .leaflet-control-attribution{font-size:9px;background:rgba(255,255,255,.6)}
 .siterow{display:flex;align-items:center;gap:11px;padding:12px 15px}
@@ -510,12 +602,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .ttile .tlb{grid-column:2;grid-row:1;align-self:end;font-size:15.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
 .ttile .tsub{grid-column:2;grid-row:2;align-self:start;font-size:12.5px;color:var(--sub);font-weight:500}
 .ttile::after{content:'›';grid-column:3;grid-row:1/3;font-size:20px;font-weight:600;color:var(--sub2)}
-.ttile.hot .tlb{color:var(--red)}
-.ttile.c-red .ic{background:var(--red-soft)}
-.ttile.c-red .ic svg{stroke:var(--red);color:var(--red)}
-.ttile.c-red::after{color:var(--red)}
 /* each type's colour sits as a faint ring around the card, not inside it */
-.ttile.c-red{box-shadow:inset 0 0 0 1.5px rgba(250,35,59,.4), 0 1px 2px rgba(0,0,0,.04)}
 
 /* picked + closed: one compact chip, the other three tucked away behind Change */
 .typetiles.collapsed{display:flex}
@@ -540,8 +627,8 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 #formView .navhead.answered .largetitle{font-size:20px}
 
 /* call-out cost — seen up front, accepted before send */
-.feecard{background:var(--card);border-radius:15px;padding:15px;margin-top:16px;transition:background .25s;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
-.feecard.missing{background:var(--red-soft)}
+.feecard{background:var(--card);border-radius:16px;padding:15px;margin-top:9px;transition:background .25s;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.feecard.missing .feebtn{box-shadow:inset 0 0 0 2px var(--red);background:var(--red-soft)}   /* the thing they missed is the accept pill */
 .feerow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .feecol{display:flex;flex-direction:column;gap:3px;min-width:0}
 .feecol b{font-size:15.5px;font-weight:700}
@@ -550,26 +637,28 @@ body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--in
 .feeamt small{font-size:11px;font-weight:600;color:var(--sub);letter-spacing:0;margin-top:4px}
 /* the service rate card — both figures listed, the booked time picks between them */
 .feerates{display:flex;flex-direction:column;gap:7px;margin-top:12px}
-.raterow{display:flex;align-items:baseline;gap:10px}
-.rateamt{flex:0 0 auto;min-width:52px;font-size:17px;font-weight:800;letter-spacing:-.3px}
+.raterow{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.rateamt{flex:0 0 auto;font-size:16px;font-weight:700}
+.ratenote{font-size:12.5px;color:var(--sub2);font-weight:500;margin-top:2px}
 .rateamt small{font-size:10.5px;font-weight:600;color:var(--sub);letter-spacing:0;margin-left:3px}
-.ratetxt{font-size:13.5px;color:var(--sub);font-weight:500;line-height:1.35}
-.feebtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:14px;
-  padding:13px 2px 3px;border:none;border-top:1px solid var(--line);border-radius:0;background:none;cursor:pointer;
-  color:var(--ink);font-family:var(--font);font-weight:600;font-size:15px;transition:color .15s}
-.feering{flex:0 0 auto;width:25px;height:25px;border-radius:50%;border:1.7px solid var(--sub2);
-  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;
-  transition:background .15s,border-color .15s}
-.feebtn.on{color:var(--green)}
-.feeterms{margin-top:12px;border-top:1px solid var(--line);padding-top:2px}
+.ratetxt{font-size:15px;color:var(--ink);font-weight:500;line-height:1.35;text-transform:none}
+.ratetxt::first-letter{text-transform:uppercase}
+.feebtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;
+  padding:12px 13px;border:none;border-radius:13px;background:var(--card);cursor:pointer;min-height:48px;
+  box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.3);color:var(--ink);font-family:var(--font);font-weight:600;font-size:15.5px;transition:all .15s}
+/* the accept row is a picked-answer pill like everything else: ring + tint once tapped, tick on the right (research, Noah 2026-09-03) */
+.feering{display:none}
+.feebtn.on{background:var(--blue-soft);color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.scheme-red .feebtn.on,.feecard.scheme-red .feebtn.on{background:var(--red-soft);color:var(--red);box-shadow:inset 0 0 0 2px var(--red)}
+.feeterms{margin-top:4px;padding-top:0}
 .termslink{display:flex;align-items:center;gap:5px;width:100%;background:none;border:none;padding:9px 2px 7px;
-  font:inherit;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer}
+  font:inherit;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer}   /* blue link, like Add a note (Noah 2026-09-03) */
 .termslink .tchev{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;
   stroke-linejoin:round;transition:transform .2s}
 .feeterms.open .tchev{transform:rotate(180deg)}
 .termslist{margin:0;padding:0 2px 8px 20px;animation:qin .25s cubic-bezier(.32,.72,.35,1) both}
 .termslist li{font-size:13px;color:var(--sub);font-weight:500;line-height:1.45;margin-top:5px}
-.feebtn.on .feering{background:var(--green);border-color:var(--green)}
+
 .feechip{margin-top:8px;color:var(--green);background:var(--green-soft)}
 
 /* company side — accepted line on the detail
@@ -630,7 +719,7 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
 
 /* 2026-08-28 review additions */
 /* the trust line under Send — quiet, one sentence, what the details are for */
-.privline{text-align:center;font-size:12.5px;font-weight:500;color:var(--sub2);margin-top:12px}
+.privline{text-align:center;font-size:13px;font-weight:500;color:var(--sub);margin-top:12px}   /* hint grey, readable (2026-09-03) */
 /* the AFSS deadline date — a qrow whose answer is a date, styled like the other inputs */
 .daterow .datein{border:none;background:none;font-family:var(--font);font-size:15px;font-weight:600;color:var(--ink);outline:none;text-align:right;padding:0}
 .daterow .datein::-webkit-calendar-picker-indicator{opacity:.45}
@@ -669,7 +758,8 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
   padding:11px 12px;margin:0 0 12px;width:100%;box-sizing:border-box}
 
 /* the urgent ping's switch — a bell in the list header, off until it's tapped (2026-08-31) */
-.alertbtn{background:var(--card);border:none;border-radius:11px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.alertbtn{background:var(--card);border:none;border-radius:11px;height:36px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:0 12px 0 10px;font-family:var(--font);font-size:13px;font-weight:600;color:var(--sub)}
+.alertbtn.on{color:var(--red)}
 .alertbtn svg{width:19px;height:19px;stroke:var(--sub);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .alertbtn.on{background:var(--red-soft)}
 .alertbtn.on svg{stroke:var(--red)}
@@ -712,3 +802,166 @@ button.lsectoggle{background:none;border:none;width:100%;cursor:pointer;font-fam
   .noprint,.demobanner{display:none !important}
   .sticker{border-width:2px;margin:0 auto;box-shadow:none}
 }
+
+/* question kinds added 2026-09-02 (managers' review): free line, own date, hint rows */
+.qrow.stack{flex-direction:column;align-items:stretch}
+.qrow.stack .ynrow{flex-wrap:wrap;margin-top:9px}
+.qrow.stack .qtextin{margin-top:9px}
+.qtextin{flex:1 1 55%;min-width:0;width:100%;border:none;box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.3);background:var(--card);border-radius:10px;padding:9px 11px;font-family:var(--font);font-size:14.5px;outline:none;color:var(--ink)}
+.qtextin::placeholder{color:var(--sub2)}
+.qrow.missing .qtextin{background:var(--card)}
+.daterow-own .datein{border:none;background:none;font-family:var(--font);font-size:15px;font-weight:600;color:var(--ink);outline:none;text-align:right;padding:0}
+.qhint{display:flex;align-items:center;gap:9px;padding:9px 15px 0;font-size:13.5px;color:var(--sub);font-weight:500;cursor:pointer;line-height:1.35;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.qhint svg{width:18px;height:18px;flex:0 0 auto;stroke:var(--sub);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.qhint.attachhint{color:var(--blue)}
+.qhint.attachhint svg{stroke:var(--blue)}
+
+/* round 1 nitpicks + research pass (2026-09-02) */
+.zeroline{display:block;background:var(--red-soft);color:var(--red);border-radius:12px;padding:12px 14px;font-size:14.5px;font-weight:600;text-decoration:none;margin:0 0 12px}
+.zeroline b{font-weight:800}
+/* 3+ options: equal-width boxes under the question with a gap between them, picked one black
+   like Yes/No (Noah 2026-09-02: "their own rectangles"). All visible, one tap. */
+.qrow.list{flex-direction:column;align-items:stretch}
+.qrow.list .ynrow{display:flex;gap:8px;margin-top:10px}
+.qrow.list .ynbtn{flex:1;min-height:40px;padding:9px 6px;border-radius:12px;text-align:center;font-size:14.5px}
+.qrow.list .ynbtn::before{display:none}
+.qrow.missing.list .ynbtn{background:var(--card)}
+/* 5+ options: a 3-wide grid so every box is the same width (Noah 2026-09-02: "pills should be even") */
+.qrow.list.wide .ynrow{display:grid;grid-template-columns:1fr 1fr 1fr}
+.qrow.list.wide .ynbtn{width:100%}
+/* photo / attach rows */
+.qsub{font-size:13px;color:var(--sub);font-weight:500;margin-top:2px}
+.campill{display:inline-flex;align-items:center;gap:7px;background:var(--blue-soft);color:var(--blue)}
+.campill svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.campill.on{background:var(--ink);color:#fff}
+/* error box lists each problem */
+#formErr b{display:block;margin-bottom:2px}
+
+/* Noah's own icons (Illustrator, filled shapes) — colour follows the tile like the stroke ones */
+.tile .ic svg.icf{fill:currentColor;stroke:none}
+.tile .ic svg.icf *{fill:currentColor;stroke:none}
+.tile .ic svg.icf [stroke]{fill:none;stroke:currentColor}
+.wic svg.icf, .wic svg.icf *{fill:currentColor;stroke:none}
+.wic svg.icf [stroke]{fill:none;stroke:currentColor}
+.req .what .wic svg.icf{color:var(--sub)}
+.req.urg .what .wic svg.icf{color:var(--red)}
+.req.muted .what .wic svg.icf{color:var(--sub2)}
+
+/* header band (2026-09-02): brand colour across the top, everything in it white */
+.brandband{background:var(--green);padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top))}
+.brandband .brandrow{margin-bottom:0}
+.brandband .logodot.haslogo{background:rgba(255,255,255,.18);box-shadow:none;width:36px;height:36px;border-radius:10px}
+.brandband .logodot.haslogo svg{width:24px;height:24px}
+.brandband .logodot.haslogo svg path{fill:#fff}
+.brandband .brandname{color:#fff;font-size:17px;font-weight:700;letter-spacing:-.2px}
+.brandband .phonebtn{background:rgba(255,255,255,.18);box-shadow:none}
+.brandband .phonebtn svg{stroke:#fff}
+.brandband + .navhead{padding-top:18px}
+.siteline{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:15.5px;font-weight:600;color:var(--ink)}
+.siteline svg{width:17px;height:17px;stroke:var(--ink);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+#nextLine{margin-top:4px}
+.nothere{margin-left:-2px;border:none;background:none;cursor:pointer;padding:6px 4px;display:flex;align-items:center}
+.nothere svg{width:16px;height:16px;stroke:var(--blue);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* Urgent row looks like the others until it's picked (Noah 2026-09-02; research: NHS says colour
+   only helps, the words carry it; GOV.UK says don't make one option stand out). The picked
+   state (.typesel.c-red) stays red. */
+
+/* pill draws at 36 but accepts taps across 44: invisible hit box above and below (Noah 2026-09-02) */
+.ynrow .ynbtn::before{content:'';position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.qrow.list .ynbtn::before{display:none}
+
+/* picked answer = tint + ring + coloured text, same as a picked tile (2026-09-02 research:
+   black inversion misreads as pressed/primary, one consistent "chosen" look per page,
+   black stays for Send). Colour follows the request type like the tiles do. */
+.ynbtn.on{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.scheme-blue .ynbtn.on{background:var(--blue-soft);color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.scheme-purple .ynbtn.on{background:var(--purple-soft);color:var(--purple);box-shadow:inset 0 0 0 2px var(--purple)}
+.scheme-red .ynbtn.on{background:var(--red-soft);color:var(--red);box-shadow:inset 0 0 0 2px var(--red)}
+.scheme-ink .ynbtn.on{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.ynbtn.campill.on{background:var(--blue-soft);color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.qhinttxt{font-size:13.5px;color:var(--sub);font-weight:500;margin-top:3px}
+.qtextin:focus{box-shadow:inset 0 0 0 2px var(--ink)}
+.qtextin{font-size:16px;min-height:44px}
+.qopt{margin-left:8px;font-size:12.5px;font-weight:500;color:var(--sub);background:var(--bg);border-radius:6px;padding:2px 7px;vertical-align:1px}
+.notelink{flex:1;display:flex;align-items:center;gap:8px;border:none;background:var(--card);border-radius:13px;padding:14px 15px;font-family:var(--font);font-size:15.5px;font-weight:600;color:var(--blue);cursor:pointer;text-align:left;min-height:48px}
+.notelink svg{width:18px;height:18px;stroke:var(--blue);stroke-width:2;fill:none;stroke-linecap:round}
+
+/* photo / attach rows as full-width buttons, same shape as "Add a note" (2026-09-02) */
+.photorow{display:flex;align-items:center;gap:12px;width:100%;border:none;background:var(--card);border-radius:14px;padding:13px 15px;margin-top:9px;cursor:pointer;font-family:var(--font);text-align:left;min-height:48px;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.photorow svg{width:22px;height:22px;flex:0 0 auto;stroke:var(--blue);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.photorow .prtxt{display:flex;flex-direction:column;gap:2px}
+.photorow .prq{font-size:15px;font-weight:600;color:var(--blue)}
+.photorow .prsub{font-size:13px;font-weight:500;color:var(--sub)}
+.photorow .prsub:empty{display:none}
+.photorow .prsub:empty{display:none}
+.photorow.on{background:var(--blue-soft)}
+.photorow.on .prq{color:var(--blue)}
+
+/* grouped question card (2026-09-02) */
+.qgroup{background:var(--card);border-radius:16px;padding:6px 15px 8px;margin-top:9px;animation:qin .3s cubic-bezier(.32,.72,.35,1) both}
+.qgroup-h{font-size:12.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;padding:8px 0 2px}
+/* no divider lines between questions, spacing does the grouping (research, Noah 2026-09-03). To bring them back: border-top:1px solid var(--bg) here and on .notewrap, padding 13px 0 */
+.qgroup .qrow,.qgroup .photorow{background:none;border-radius:0;margin:0;padding:9px 0;border-top:none;animation:none;box-shadow:none}
+/* one even 18px rhythm between questions: text rows pull the hint and box in tight so they don't open a bigger hole */
+.qgroup .qrow.stack{gap:0}
+.qgroup .qrow.stack .qtextin{margin-top:8px}
+.qgroup .qrow.list .ynrow{margin-top:8px}
+.qgroup > :first-child{border-top:none}
+.qgroup .qrow.daterow{border-top:none;padding-top:0}
+.qgroup .qrow.missing{background:none}
+.qgroup .qrow.missing .ynbtn{background:var(--bg);box-shadow:inset 0 0 0 1.5px var(--red)}
+.qgroup .qrow.missing .qtextin{box-shadow:inset 0 0 0 1.5px var(--red)}
+.qgroup .photorow{padding:9px 0}
+.qgroup .photorow.on{background:none}
+.qgroup .photorow.on .prq::after{content:' ✓'}
+.datepill{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;flex:0 0 auto}
+.datepill svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.datepill .datenative{position:absolute;inset:0;opacity:0;width:100%;height:100%;font-size:16px}
+.datepill .datenative::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%}
+/* note + photos live inside the card now */
+.qgroup .notewrap{margin:0;padding:9px 0;border-top:none;gap:0}
+.qgroup .notewrap .camerabtn{display:none}
+.qgroup .notewrap input{background:var(--card);box-shadow:inset 0 0 0 1.5px rgba(60,60,67,.3);border-radius:12px;font-size:16px;min-height:44px}
+.qgroup .notewrap input:focus{box-shadow:inset 0 0 0 2px var(--ink)}
+.qgroup .notelink{background:none;padding:0;min-height:0;gap:12px;font-size:15px;border-radius:0}
+.qgroup .notelink svg{width:22px;height:22px;stroke-width:1.8}
+.qgroup .notelabel{padding:9px 0 0;margin:0;font-size:15px;font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0}
+.qgroup .notelabel + .notewrap{padding-top:8px}
+.qgroup #specsWrap .qrow{padding:9px 0}
+.qgroup .specattach{margin:0 0 9px}
+.qgroup .specfiles{margin:-4px 0 8px 34px;gap:6px 12px}
+.qgroup .specfiles .specchip{background:none;padding:0;border-radius:0;font-size:13.5px;font-weight:500;color:var(--sub);gap:6px}
+.qgroup .specfiles .shot{width:64px;height:64px;border-radius:10px}
+/* the attach button inside the quote card reads like the other photo rows: blue, icon left */
+.qgroup .specbtn{background:none;padding:6px 0;color:var(--blue);font-size:15.5px;gap:12px;border-radius:0}
+.qgroup .specbtn svg{width:22px;height:22px;stroke:var(--blue);stroke-width:1.8}
+/* inside the card the file list reads as the photo row's sub-line: grey, plain, no chip box,
+   lined up with the label text (Noah 2026-09-03: the boxed chip looked out of place) */
+.qgroup .shots{margin:-8px 0 8px 34px;gap:6px 12px}
+.qgroup .specchip{background:none;padding:0;border-radius:0;font-size:13.5px;font-weight:500;color:var(--sub);gap:6px}
+.qgroup .chipx{width:18px;height:18px;background:var(--bg)}
+.qgroup .shot{width:64px;height:64px;border-radius:10px}
+/* folded tile row sits 9px under the folded type row, same gap as the type list, neutral ink like it (research, Noah 2026-09-03) */
+.tilesel{margin-top:9px}
+.tilesel .ic svg{width:22px;height:22px}
+
+/* bottom nav (office side sections) — icon + label always, never icon alone (NN/g icon usability). Noah 7 Sep. */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;display:flex;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(0,0,0,.06);padding:6px 8px calc(8px + env(safe-area-inset-bottom));z-index:20}
+.bnavbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;padding:6px 0 2px;
+  font-family:var(--font);font-size:11px;font-weight:600;color:var(--sub);cursor:pointer}
+.bnavbtn svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bnavbtn.on{color:var(--blue)}
+@media print{.bnav{display:none}}
+
+/* address suggestions under the site row (customer form) */
+.sitesugg{background:var(--card);border-top:.5px solid var(--line);padding:4px 0}
+.suggrow{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;border:none;background:none;text-align:left;
+  padding:10px 15px;font-family:var(--font);cursor:pointer;border-bottom:.5px solid var(--line)}
+.suggrow:last-child{border-bottom:none}
+.suggrow b{font-size:15px;font-weight:600;color:var(--ink)}
+.suggrow span{font-size:13px;color:var(--sub)}
+.suggrow:active{background:var(--bg)}
+.suggwait{padding:10px 15px;font-size:13px;color:var(--sub)}
